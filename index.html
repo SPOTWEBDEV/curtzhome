@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,19 +5,197 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Curtz Home — Premium Real Estate & Investment</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    :root {
+      --navy: #080F1C;
+      --navy-light: #0D1F3C;
+      --navy-mid: #1A3356;
+      --gold: #C9A84C;
+      --gold-light: rgba(201,168,76,0.15);
+      --cream: #F0EAD6;
+      --text-muted: rgba(240,234,214,0.55);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--navy); font-family: 'Montserrat', sans-serif; color: var(--cream); }
+
+    .section-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .hiw-section { padding: 7rem 0; background: var(--navy-light); position: relative; overflow: hidden; }
+    .hiw-section::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(201,168,76,0.05), transparent);
+      pointer-events: none;
+    }
+    .hiw-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; position: relative; }
+    .hiw-grid::before {
+      content: '';
+      position: absolute;
+      top: 52px; left: calc(12.5% + 28px); right: calc(12.5% + 28px);
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), var(--gold), var(--gold), transparent);
+      opacity: 0.3;
+    }
+    .hiw-step { padding: 0 2rem; text-align: center; position: relative; }
+    .hiw-num {
+      width: 56px; height: 56px;
+      border: 1px solid var(--gold);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 2rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem; font-weight: 600; color: var(--gold);
+      background: var(--navy-light);
+      position: relative; z-index: 1;
+      transition: background 0.3s, color 0.3s;
+    }
+    .hiw-step:hover .hiw-num { background: var(--gold); color: var(--navy); }
+    .hiw-step h4 { font-size: 1.05rem; font-weight: 500; color: var(--cream); margin-bottom: 0.8rem; letter-spacing: 0.04em; }
+    .hiw-step p { font-size: 0.83rem; color: var(--text-muted); line-height: 1.75; }
+
+    /* ── TESTIMONIALS ── */
+    .testi-section { padding: 7rem 0; background: var(--navy); }
+    .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    .testi-card {
+      background: rgba(26,51,86,0.4);
+      border: 1px solid rgba(201,168,76,0.12);
+      padding: 2.5rem;
+      position: relative;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .testi-card:hover { border-color: rgba(201,168,76,0.35); transform: translateY(-4px); }
+    .testi-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 4rem; line-height: 1;
+      color: var(--gold); opacity: 0.3;
+      position: absolute; top: 1.2rem; left: 1.8rem;
+    }
+    .testi-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; font-style: italic;
+      color: var(--cream); line-height: 1.8;
+      margin-bottom: 2rem; padding-top: 1.5rem;
+    }
+    .testi-author { display: flex; align-items: center; gap: 1rem; }
+    .testi-avatar {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--navy-mid), var(--gold-light));
+      border: 1px solid rgba(201,168,76,0.3);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem; color: var(--gold); font-weight: 600;
+      flex-shrink: 0;
+    }
+    .testi-name { font-size: 0.9rem; font-weight: 600; color: var(--cream); margin-bottom: 0.2rem; }
+    .testi-role { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.06em; }
+    .testi-stars { color: var(--gold); font-size: 0.75rem; letter-spacing: 0.1em; margin-bottom: 1rem; }
+
+    /* ── NEWS ── */
+    .news-section { padding: 7rem 0; background: #080F1C; }
+    .news-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; }
+    .news-card {
+      border: 1px solid rgba(201,168,76,0.1);
+      background: rgba(13,31,60,0.6);
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
+      cursor: pointer;
+    }
+    .news-card:hover { border-color: rgba(201,168,76,0.3); transform: translateY(-4px); }
+    .news-thumb {
+      height: 180px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .news-tag {
+      position: absolute; bottom: 1rem; left: 1rem;
+      background: var(--gold); color: var(--navy);
+      font-size: 0.62rem; font-weight: 600; letter-spacing: 0.12em;
+      text-transform: uppercase; padding: 0.3rem 0.7rem;
+    }
+    .news-body { padding: 1.8rem; }
+    .news-date { font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.7rem; }
+    .news-title { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 400; color: var(--cream); line-height: 1.5; margin-bottom: 0.8rem; }
+    .news-excerpt { font-size: 0.8rem; color: var(--text-muted); line-height: 1.75; margin-bottom: 1.2rem; }
+    .news-read { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); text-decoration: none; }
+    .news-read:hover { opacity: 0.8; }
+
+    /* ── SHARED BUTTONS ── */
+    .btn-gold {
+      background: var(--gold); color: var(--navy);
+      padding: 0.85rem 2rem; font-size: 0.72rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      text-decoration: none; font-weight: 600; display: inline-block;
+      transition: opacity 0.2s;
+    }
+    .btn-gold:hover { opacity: 0.85; }
+    .btn-outline {
+      border: 1px solid rgba(201,168,76,0.5); color: var(--gold);
+      padding: 0.85rem 2rem; font-size: 0.72rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      text-decoration: none; display: inline-block;
+      transition: background 0.2s, color 0.2s;
+    }
+    .btn-outline:hover { background: var(--gold-light); }
+
+    /* ── HERO ── */
+    .hero-bg {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 50%, var(--navy-mid) 100%);
+      position: relative;
+    }
+    .grid-overlay {
+      position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+    .card {
+      background: rgba(13,31,60,0.7);
+      border: 1px solid rgba(201,168,76,0.12);
+      transition: border-color 0.3s;
+    }
+    .card:hover { border-color: rgba(201,168,76,0.3); }
+    .badge { font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.3rem 0.7rem; font-weight: 600; }
+    .badge-success { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+    .badge-pending { background: rgba(201,168,76,0.15); color: var(--gold); border: 1px solid rgba(201,168,76,0.3); }
+    .logo-text { font-family: 'Cormorant Garamond', serif; font-weight: 700; letter-spacing: 0.05em; }
+    .stat-strip { background: var(--navy-mid); border-top: 1px solid rgba(201,168,76,0.1); border-bottom: 1px solid rgba(201,168,76,0.1); }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:900px) {
+      .hiw-grid { grid-template-columns: 1fr 1fr !important; }
+      .hiw-grid::before { display: none; }
+      .testi-grid { grid-template-columns: 1fr 1fr !important; }
+      .news-grid { grid-template-columns: 1fr 1fr !important; }
+    }
+    @media(max-width:560px) {
+      .hiw-grid, .testi-grid, .news-grid { grid-template-columns: 1fr !important; }
+      .testi-grid .testi-card:nth-child(3) { display: none; }
+    }
+  </style>
 </head>
 <body>
 <script src="js/shared-nav.js"></script>
 <script>insertNavbar('home');</script>
 
-<!-- HERO -->
+<!-- ════════════════════════════════════════
+     HERO
+════════════════════════════════════════ -->
 <section class="hero-bg" style="display:flex;align-items:center;min-height:100vh;">
   <div class="grid-overlay"></div>
   <div style="max-width:1280px;margin:0 auto;padding:0 2rem;position:relative;z-index:2;display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;" class="hero-grid">
     <div>
       <p class="section-label fade-up" style="margin-bottom:1.5rem;">Premier Real Estate Since 2008</p>
-      <h1 class="fade-up-delay-1" style="font-size:clamp(2.8rem,5vw,4.5rem);line-height:1.1;font-weight:300;color:var(--cream);margin-bottom:1.5rem;">
+      <h1 class="fade-up-delay-1" style="font-size:clamp(2.8rem,5vw,4.5rem);line-height:1.1;font-weight:300;color:var(--cream);margin-bottom:1.5rem;font-family:'Cormorant Garamond',serif;">
         Where Luxury<br/><em style="color:var(--gold);">Meets</em> Legacy
       </h1>
       <p class="fade-up-delay-2" style="color:var(--text-muted);font-size:1.05rem;line-height:1.8;max-width:420px;margin-bottom:2.5rem;">
@@ -40,7 +217,7 @@
           </svg>
           <span class="badge badge-success" style="position:absolute;top:1rem;right:1rem;">Available</span>
         </div>
-        <h3 style="font-size:1.2rem;color:var(--cream);margin-bottom:0.5rem;">Lakeview Manor, Abuja</h3>
+        <h3 style="font-size:1.2rem;color:var(--cream);margin-bottom:0.5rem;font-family:'Cormorant Garamond',serif;">Lakeview Manor, Abuja</h3>
         <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1rem;">5 bed · 4 bath · 850 m²</p>
         <div style="display:flex;justify-content:space-between;align-items:center;">
           <span style="color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;">₦285,000,000</span>
@@ -56,7 +233,9 @@
   <style>@media(max-width:768px){.hero-grid{grid-template-columns:1fr!important;gap:3rem!important;padding-top:120px!important;}.float-anim{display:none!important;}}</style>
 </section>
 
-<!-- STATS -->
+<!-- ════════════════════════════════════════
+     STATS
+════════════════════════════════════════ -->
 <section class="stat-strip" style="padding:3.5rem 0;">
   <div style="max-width:1280px;margin:0 auto;padding:0 2rem;display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;text-align:center;" class="stats-g">
     <div>
@@ -79,17 +258,19 @@
   <style>@media(max-width:640px){.stats-g{grid-template-columns:repeat(2,1fr)!important;}}</style>
 </section>
 
-<!-- SERVICES -->
-<section style="padding:6rem 0;background:var(--navy);">
+<!-- ════════════════════════════════════════
+     SERVICES
+════════════════════════════════════════ -->
+<section style="padding:6rem 0;background:var(--navy-light);">
   <div style="max-width:1280px;margin:0 auto;padding:0 2rem;">
     <p class="section-label" style="margin-bottom:1rem;">What We Offer</p>
-    <h2 style="font-size:clamp(2rem,4vw,3rem);font-weight:300;color:var(--cream);margin-bottom:3.5rem;max-width:500px;">Two Pillars of <em style="color:var(--gold);">Excellence</em></h2>
+    <h2 style="font-size:clamp(2rem,4vw,3rem);font-weight:300;color:var(--cream);margin-bottom:3.5rem;max-width:500px;font-family:'Cormorant Garamond',serif;">Two Pillars of <em style="color:var(--gold);">Excellence</em></h2>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;" class="svc-g">
       <div class="card" style="padding:3rem;">
         <div style="width:50px;height:50px;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;margin-bottom:2rem;">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         </div>
-        <h3 style="font-size:1.8rem;font-weight:400;color:var(--cream);margin-bottom:1rem;">Estate Purchase</h3>
+        <h3 style="font-size:1.8rem;font-weight:400;color:var(--cream);margin-bottom:1rem;font-family:'Cormorant Garamond',serif;">Estate Purchase</h3>
         <p style="color:var(--text-muted);line-height:1.8;margin-bottom:2rem;">From luxury villas to urban apartments, our curated portfolio spans the country's most coveted addresses. Seamless acquisition, transparent process.</p>
         <a href="housing.html" style="color:var(--gold);font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;">Browse Properties →</a>
       </div>
@@ -97,7 +278,7 @@
         <div style="width:50px;height:50px;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;margin-bottom:2rem;">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         </div>
-        <h3 style="font-size:1.8rem;font-weight:400;color:var(--cream);margin-bottom:1rem;">Investment Plans</h3>
+        <h3 style="font-size:1.8rem;font-weight:400;color:var(--cream);margin-bottom:1rem;font-family:'Cormorant Garamond',serif;">Investment Plans</h3>
         <p style="color:var(--text-muted);line-height:1.8;margin-bottom:2rem;">Grow your wealth through expertly structured real estate investment schemes offering competitive returns of up to 35% per annum.</p>
         <a href="investment.html" style="color:var(--gold);font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;">View Plans →</a>
       </div>
@@ -106,13 +287,54 @@
   </div>
 </section>
 
-<!-- FEATURED PROPERTIES (loaded from JSON) -->
+<!-- ════════════════════════════════════════
+     HOW IT WORKS  ← NEW
+════════════════════════════════════════ -->
+<section class="hiw-section">
+  <div style="max-width:1280px;margin:0 auto;padding:0 2rem;">
+    <div style="text-align:center;margin-bottom:4rem;">
+      <p class="section-label" style="margin-bottom:1rem;">Simple. Transparent. Rewarding.</p>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3rem);font-weight:300;color:var(--cream);">
+        How It <em style="color:var(--gold);">Works</em>
+      </h2>
+    </div>
+    <div class="hiw-grid">
+      <div class="hiw-step">
+        <div class="hiw-num">01</div>
+        <h4>Create an Account</h4>
+        <p>Register in minutes. Provide your details, verify your identity, and gain immediate access to our full property and investment catalogue.</p>
+      </div>
+      <div class="hiw-step">
+        <div class="hiw-num">02</div>
+        <h4>Browse & Select</h4>
+        <p>Explore hundreds of premium listings or choose from our tiered investment plans. Filter by city, budget, or projected return.</p>
+      </div>
+      <div class="hiw-step">
+        <div class="hiw-num">03</div>
+        <h4>Consult an Advisor</h4>
+        <p>Our dedicated relationship managers walk you through due diligence, legal structuring, and financing options — at no extra cost.</p>
+      </div>
+      <div class="hiw-step">
+        <div class="hiw-num">04</div>
+        <h4>Close & Earn</h4>
+        <p>Finalise your acquisition or investment commitment and begin enjoying capital appreciation or quarterly dividend returns.</p>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:4rem;">
+      <a href="login.html" class="btn-gold">Get Started Today</a>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     FEATURED PROPERTIES
+════════════════════════════════════════ -->
 <section style="padding:6rem 0;background:#080F1C;">
   <div style="max-width:1280px;margin:0 auto;padding:0 2rem;">
     <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:3rem;flex-wrap:wrap;gap:1rem;">
       <div>
         <p class="section-label" style="margin-bottom:0.8rem;">Featured Listings</p>
-        <h2 style="font-size:clamp(1.8rem,3vw,2.5rem);font-weight:300;color:var(--cream);">Hand-Picked <em style="color:var(--gold);">Properties</em></h2>
+        <h2 style="font-size:clamp(1.8rem,3vw,2.5rem);font-weight:300;color:var(--cream);font-family:'Cormorant Garamond',serif;">Hand-Picked <em style="color:var(--gold);">Properties</em></h2>
       </div>
       <a href="housing.html" class="btn-outline">View All</a>
     </div>
@@ -123,12 +345,140 @@
   </div>
 </section>
 
-<!-- CTA -->
+<!-- ════════════════════════════════════════
+     TESTIMONIALS  ← NEW
+════════════════════════════════════════ -->
+<section class="testi-section">
+  <div style="max-width:1280px;margin:0 auto;padding:0 2rem;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:3.5rem;flex-wrap:wrap;gap:1rem;">
+      <div>
+        <p class="section-label" style="margin-bottom:1rem;">Client Testimonials</p>
+        <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3rem);font-weight:300;color:var(--cream);">
+          Trusted by <em style="color:var(--gold);">Discerning</em> Clients
+        </h2>
+      </div>
+    </div>
+    <div class="testi-grid">
+
+      <div class="testi-card">
+        <div class="testi-quote">"</div>
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">Curtz Home transformed how I think about wealth. Within 18 months of investing in their Gold Plan, my portfolio grew by 31%. The team's professionalism is unmatched in Nigeria.</p>
+        <div class="testi-author">
+          <div class="testi-avatar">EB</div>
+          <div>
+            <div class="testi-name">Emeka Blackwood</div>
+            <div class="testi-role">Managing Director, Lagos</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testi-card">
+        <div class="testi-quote">"</div>
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">I purchased a duplex in Lekki through Curtz Home and the entire process — from viewing to title transfer — was handled with remarkable efficiency. No hidden fees, no surprises.</p>
+        <div class="testi-author">
+          <div class="testi-avatar">AN</div>
+          <div>
+            <div class="testi-name">Adaeze Nwosu</div>
+            <div class="testi-role">Entrepreneur, Enugu</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testi-card">
+        <div class="testi-quote">"</div>
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">As a member of the diaspora, I was sceptical about investing remotely. My relationship manager at Curtz Home provided regular updates and handled everything on my behalf seamlessly.</p>
+        <div class="testi-author">
+          <div class="testi-avatar">TO</div>
+          <div>
+            <div class="testi-name">Tunde Oladapo</div>
+            <div class="testi-role">Software Engineer, London</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     LATEST NEWS  ← NEW
+════════════════════════════════════════ -->
+<section class="news-section">
+  <div style="max-width:1280px;margin:0 auto;padding:0 2rem;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:3.5rem;flex-wrap:wrap;gap:1rem;">
+      <div>
+        <p class="section-label" style="margin-bottom:1rem;">Insights & Updates</p>
+        <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3rem);font-weight:300;color:var(--cream);">
+          Latest <em style="color:var(--gold);">News</em>
+        </h2>
+      </div>
+      <a href="blog.html" class="btn-outline">All Articles</a>
+    </div>
+    <div class="news-grid">
+
+      <div class="news-card">
+        <div class="news-thumb" style="background:linear-gradient(135deg,#0D1F3C,#1A3356);">
+          <svg width="56" height="56" viewBox="0 0 80 80" fill="none" opacity="0.5">
+            <path d="M40 8L72 32V72H8V32L40 8Z" stroke="#C9A84C" stroke-width="1.5" fill="rgba(201,168,76,0.05)"/>
+            <rect x="28" y="48" width="24" height="24" stroke="#C9A84C" stroke-width="1" fill="none"/>
+          </svg>
+          <span class="news-tag">Market Insights</span>
+        </div>
+        <div class="news-body">
+          <div class="news-date">14 May 2025</div>
+          <h3 class="news-title">Nigeria's Real Estate Market Records 22% Growth in Q1 2025</h3>
+          <p class="news-excerpt">Driven by demand in Abuja and Lekki corridors, residential property valuations have surged — and analysts project sustained momentum through year-end.</p>
+          <a href="blog.html" class="news-read">Read Article →</a>
+        </div>
+      </div>
+
+      <div class="news-card">
+        <div class="news-thumb" style="background:linear-gradient(135deg,#1A3356,#0D1F3C);">
+          <svg width="56" height="56" viewBox="0 0 80 80" fill="none" opacity="0.5">
+            <circle cx="40" cy="40" r="28" stroke="#C9A84C" stroke-width="1.5" fill="rgba(201,168,76,0.05)"/>
+            <path d="M40 20v20l14 8" stroke="#C9A84C" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <span class="news-tag">Investment</span>
+        </div>
+        <div class="news-body">
+          <div class="news-date">02 May 2025</div>
+          <h3 class="news-title">Why Fractional Property Investment Is Reshaping Wealth in Africa</h3>
+          <p class="news-excerpt">Curtz Home's tiered investment model allows first-time investors to access institutional-grade assets with as little as ₦500,000 in initial capital.</p>
+          <a href="blog.html" class="news-read">Read Article →</a>
+        </div>
+      </div>
+
+      <div class="news-card">
+        <div class="news-thumb" style="background:linear-gradient(135deg,#0D2040,#163050);">
+          <svg width="56" height="56" viewBox="0 0 80 80" fill="none" opacity="0.5">
+            <rect x="12" y="20" width="56" height="40" rx="2" stroke="#C9A84C" stroke-width="1.5" fill="rgba(201,168,76,0.05)"/>
+            <path d="M24 36h32M24 44h20" stroke="#C9A84C" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <span class="news-tag">Company News</span>
+        </div>
+        <div class="news-body">
+          <div class="news-date">18 Apr 2025</div>
+          <h3 class="news-title">Curtz Home Expands Operations to Port Harcourt and Kano</h3>
+          <p class="news-excerpt">Following a landmark year of growth, we are proud to announce the opening of two new regional offices and the launch of city-specific property portfolios.</p>
+          <a href="blog.html" class="news-read">Read Article →</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     CTA
+════════════════════════════════════════ -->
 <section style="padding:6rem 0;background:linear-gradient(135deg,var(--navy-light),var(--navy-mid));position:relative;overflow:hidden;">
   <div style="position:absolute;inset:0;background:radial-gradient(ellipse 70% 70% at 50% 50%,rgba(201,168,76,0.06),transparent);"></div>
   <div style="max-width:700px;margin:0 auto;padding:0 2rem;text-align:center;position:relative;">
     <p class="section-label" style="margin-bottom:1rem;">Ready to Begin?</p>
-    <h2 style="font-size:clamp(2rem,4vw,3rem);font-weight:300;color:var(--cream);margin-bottom:1.5rem;">Start Your Journey to <em style="color:var(--gold);">Wealth</em></h2>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3rem);font-weight:300;color:var(--cream);margin-bottom:1.5rem;">Start Your Journey to <em style="color:var(--gold);">Wealth</em></h2>
     <p style="color:var(--text-muted);line-height:1.8;margin-bottom:2.5rem;">Open an account today and access exclusive properties, personalised investment plans, and a dedicated relationship manager.</p>
     <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
       <a href="login.html" class="btn-gold">Create Account</a>
@@ -137,8 +487,10 @@
   </div>
 </section>
 
-<!-- FOOTER -->
-<footer style="padding:4rem 0 2rem;">
+<!-- ════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════ -->
+<footer style="padding:4rem 0 2rem;background:var(--navy);">
   <div style="max-width:1280px;margin:0 auto;padding:0 2rem;">
     <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;margin-bottom:3rem;" class="ft-g">
       <div>
@@ -164,7 +516,7 @@
       <div>
         <p style="font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;">Contact</p>
         <div style="display:flex;flex-direction:column;gap:0.6rem;">
-          <p style="color:var(--text-muted);font-size:0.875rem;">info@curtzhome.com</p>
+          <p style="color:var(--text-muted);font-size:0.875rem;">support@curtzhome.top</p>
           <p style="color:var(--text-muted);font-size:0.875rem;">+1 800 000 0000</p>
           <p style="color:var(--text-muted);font-size:0.875rem;">Available Mon – Fri</p>
         </div>
@@ -180,25 +532,79 @@
 
 <script src="js/main.js"></script>
 <script>
+/* ── counter animation ── */
+const counters = document.querySelectorAll('[data-count]');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target, target = +el.dataset.count, dur = 1800;
+    let start = null;
+    const step = ts => {
+      if (!start) start = ts;
+      const pct = Math.min((ts - start) / dur, 1);
+      el.textContent = Math.floor(pct * target);
+      if (pct < 1) requestAnimationFrame(step);
+      else el.textContent = target;
+    };
+    requestAnimationFrame(step);
+    obs.unobserve(el);
+  });
+}, { threshold: 0.3 });
+counters.forEach(c => obs.observe(c));
+
+/* ── featured properties ── */
 fetch('data/properties.json')
   .then(r => r.json())
   .then(props => {
-    const featured = props.filter(p => p.featured).slice(0, 3);
+    console.log('Fetched properties:', props);
+    const featured = props.sort(p => p.property).slice(0, 6);
+    console.log('Featured properties:', featured);
     document.getElementById('featuredGrid').innerHTML = featured.map(p => `
-      <div class="card">
-        <div style="height:190px;background:linear-gradient(135deg,#0D1F3C,#1A3356);display:flex;align-items:center;justify-content:center;position:relative;">
-          <svg width="50" height="50" viewBox="0 0 80 80" fill="none"><path d="M40 8L72 32V72H8V32L40 8Z" stroke="#C9A84C" stroke-width="1.5" fill="rgba(201,168,76,0.05)"/><rect x="28" y="48" width="24" height="24" stroke="#C9A84C" stroke-width="1" fill="none"/></svg>
-          <span class="badge ${p.status==='available'?'badge-success':'badge-pending'}" style="position:absolute;top:1rem;right:1rem;">${p.status==='available'?'Available':'Reserved'}</span>
-        </div>
-        <div style="padding:1.5rem;">
-          <p style="color:var(--text-muted);font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.4rem;">${p.location}</p>
-          <h4 style="font-size:1.1rem;color:var(--cream);margin-bottom:1rem;font-weight:400;">${p.title}</h4>
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span style="color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;">₦${(p.price/1000000).toFixed(0)}M</span>
-            <a href="housing.html" class="btn-outline" style="padding:0.35rem 0.8rem;font-size:0.7rem;">Details</a>
-          </div>
-        </div>
-      </div>`).join('');
+  <div class="card">
+    <div style="height:190px;background:linear-gradient(135deg,#0D1F3C,#1A3356);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;">
+      
+      <img 
+        src="${p.property.image_urls?.[0] || ''}" 
+        style="width:100%;height:100%;object-fit:cover;opacity:0.6;position:absolute;top:0;left:0; object-position:center;"
+      />
+
+      <svg width="50" height="50" viewBox="0 0 80 80" fill="none" style="z-index:2;">
+        <path d="M40 8L72 32V72H8V32L40 8Z" stroke="#C9A84C" stroke-width="1.5" fill="rgba(201,168,76,0.05)"/>
+        <rect x="28" y="48" width="24" height="24" stroke="#C9A84C" stroke-width="1" fill="none"/>
+      </svg>
+
+      <span class="badge ${p.property.home_status === 'FOR_SALE' ? 'badge-success' : 'badge-pending'}"
+        style="position:absolute;top:1rem;right:1rem;z-index:2;">
+        ${p.property.home_status === 'FOR_SALE' ? 'Available' : 'Reserved'}
+      </span>
+    </div>
+
+    <div style="padding:1.5rem;">
+      <p style="color:var(--text-muted);font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.4rem;">
+        ${p.property.city}, ${p.property.state} ${p.property.zipcode}
+      </p>
+
+      <p style="color:var(--text-muted);font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.4rem;">
+        ${p.property.street_address}
+      </p>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="color:var(--gold);font-size:1.2rem;font-weight:600;">
+          ${p.property.currency === 'USD' ? '$' : p.property.currency}${p.property.price.toLocaleString()}
+        </span>
+
+        <a href="${p.property.url}" target="_blank" class="btn-outline"
+          style="padding:0.35rem 0.8rem;font-size:0.7rem;">
+          Details
+        </a>
+      </div>
+    </div>
+  </div>
+`).join('')
+  })
+  .catch(() => {
+    document.getElementById('featuredGrid').innerHTML =
+      '<p style="color:var(--text-muted);padding:2rem;">Properties unavailable at this time.</p>';
   });
 </script>
 </body>

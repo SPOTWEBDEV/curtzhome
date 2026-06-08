@@ -1,0 +1,1098 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>About Us — Curtz Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+      :root {
+        --navy: #080f1c;
+        --navy-light: #0d1f3c;
+        --navy-mid: #1a3356;
+        --gold: #c9a84c;
+        --gold-light: rgba(201, 168, 76, 0.12);
+        --cream: #f0ead6;
+        --text-muted: rgba(240, 234, 214, 0.55);
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--navy);
+        font-family: "Montserrat", sans-serif;
+        color: var(--cream);
+      }
+
+      .section-label {
+        font-size: 0.72rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--gold);
+      }
+
+      /* ── PAGE HERO ── */
+      .ph {
+        min-height: 68vh;
+        background: linear-gradient(
+          135deg,
+          var(--navy) 0%,
+          var(--navy-light) 60%,
+          var(--navy-mid) 100%
+        );
+        display: flex;
+        align-items: flex-end;
+        padding-bottom: 5rem;
+        position: relative;
+        overflow: hidden;
+      }
+      .ph-grid {
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(201, 168, 76, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(201, 168, 76, 0.04) 1px, transparent 1px);
+        background-size: 60px 60px;
+      }
+      .ph-glow {
+        position: absolute;
+        bottom: -30%;
+        left: -10%;
+        width: 70vw;
+        height: 70vw;
+        background: radial-gradient(
+          circle,
+          rgba(201, 168, 76, 0.06),
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+      .ph-inner {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        position: relative;
+        z-index: 2;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5rem;
+        align-items: flex-end;
+      }
+      .ph-tagline {
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(2.8rem, 5vw, 4.8rem);
+        font-weight: 300;
+        line-height: 1.1;
+        color: var(--cream);
+      }
+      .ph-border-box {
+        border: 1px solid rgba(201, 168, 76, 0.2);
+        padding: 2.5rem;
+        backdrop-filter: blur(8px);
+        background: rgba(13, 31, 60, 0.4);
+      }
+      .ph-border-box h3 {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.4rem;
+        font-weight: 400;
+        color: var(--gold);
+        margin-bottom: 1rem;
+      }
+      .ph-border-box p {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        line-height: 1.8;
+      }
+
+      /* ── MISSION / VALUES ── */
+      .mv-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        align-items: start;
+      }
+      .mv-large {
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(1.6rem, 2.5vw, 2.1rem);
+        font-weight: 300;
+        color: var(--cream);
+        line-height: 1.6;
+      }
+      .mv-large em {
+        color: var(--gold);
+        font-style: italic;
+      }
+
+      .value-item {
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+      }
+      .value-icon {
+        width: 48px;
+        height: 48px;
+        flex-shrink: 0;
+        border: 1px solid var(--gold);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .value-item h4 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--cream);
+        margin-bottom: 0.4rem;
+        letter-spacing: 0.05em;
+      }
+      .value-item p {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        line-height: 1.75;
+      }
+
+      /* ── MILESTONES TIMELINE ── */
+      .timeline {
+        position: relative;
+      }
+      .timeline::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        background: linear-gradient(
+          180deg,
+          transparent,
+          var(--gold),
+          transparent
+        );
+        opacity: 0.3;
+      }
+      .tl-item {
+        padding-left: 2.5rem;
+        padding-bottom: 3rem;
+        position: relative;
+      }
+      .tl-dot {
+        position: absolute;
+        left: -6px;
+        top: 6px;
+        width: 13px;
+        height: 13px;
+        border: 1px solid var(--gold);
+        background: var(--navy);
+        transform: rotate(45deg);
+      }
+      .tl-year {
+        font-size: 0.7rem;
+        letter-spacing: 0.15em;
+        color: var(--gold);
+        margin-bottom: 0.4rem;
+        text-transform: uppercase;
+      }
+      .tl-title {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.2rem;
+        color: var(--cream);
+        margin-bottom: 0.5rem;
+        font-weight: 400;
+      }
+      .tl-desc {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        line-height: 1.75;
+        max-width: 420px;
+      }
+
+      /* ── LEADERSHIP TEAM ── */
+      .team-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+      }
+      .team-card {
+        background: rgba(13, 31, 60, 0.6);
+        border: 1px solid rgba(201, 168, 76, 0.1);
+        padding: 2.5rem 2rem;
+        text-align: center;
+        transition:
+          border-color 0.3s,
+          transform 0.3s;
+      }
+      .team-card:hover {
+        border-color: rgba(201, 168, 76, 0.35);
+        transform: translateY(-4px);
+      }
+      .team-avatar {
+        width: 80px;
+        height: 80px;
+        border: 1px solid rgba(201, 168, 76, 0.3);
+        margin: 0 auto 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Cormorant Garamond", serif;
+        font-size: 2rem;
+        color: var(--gold);
+        background: linear-gradient(
+          135deg,
+          var(--navy-mid),
+          rgba(201, 168, 76, 0.08)
+        );
+      }
+      .team-name {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.25rem;
+        color: var(--cream);
+        margin-bottom: 0.3rem;
+      }
+      .team-role {
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 1rem;
+      }
+      .team-bio {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        line-height: 1.75;
+      }
+
+      /* ── STATS STRIP ── */
+      .about-stats {
+        background: var(--navy-mid);
+        border-top: 1px solid rgba(201, 168, 76, 0.1);
+        border-bottom: 1px solid rgba(201, 168, 76, 0.1);
+        padding: 4rem 0;
+      }
+      .about-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 2rem;
+        text-align: center;
+      }
+      .as-num {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 3rem;
+        color: var(--gold);
+        font-weight: 600;
+        line-height: 1;
+      }
+      .as-label {
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-top: 0.5rem;
+      }
+
+      /* ── PARTNERS / ACCREDITATIONS ── */
+      .partner-row {
+        display: flex;
+        gap: 2rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        padding: 3.5rem 0;
+        border-top: 1px solid rgba(201, 168, 76, 0.08);
+      }
+      .partner-chip {
+        border: 1px solid rgba(201, 168, 76, 0.2);
+        padding: 0.75rem 1.8rem;
+        font-size: 0.75rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        transition:
+          border-color 0.3s,
+          color 0.3s;
+      }
+      .partner-chip:hover {
+        border-color: var(--gold);
+        color: var(--gold);
+      }
+
+      /* ── SHARED ── */
+      .btn-gold {
+        background: var(--gold);
+        color: var(--navy);
+        padding: 0.85rem 2rem;
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-block;
+        transition: opacity 0.2s;
+      }
+      .btn-gold:hover {
+        opacity: 0.85;
+      }
+      .btn-outline {
+        border: 1px solid rgba(201, 168, 76, 0.5);
+        color: var(--gold);
+        padding: 0.85rem 2rem;
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        text-decoration: none;
+        display: inline-block;
+        transition: background 0.2s;
+      }
+      .btn-outline:hover {
+        background: var(--gold-light);
+      }
+      .logo-text {
+        font-family: "Cormorant Garamond", serif;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+      }
+
+      /* ── RESPONSIVE ── */
+      @media (max-width: 900px) {
+        .ph-inner {
+          grid-template-columns: 1fr !important;
+          gap: 2.5rem !important;
+        }
+        .mv-grid {
+          grid-template-columns: 1fr !important;
+          gap: 3rem !important;
+        }
+        .team-grid {
+          grid-template-columns: 1fr 1fr !important;
+        }
+        .about-stats-grid {
+          grid-template-columns: repeat(2, 1fr) !important;
+        }
+      }
+      @media (max-width: 560px) {
+        .team-grid {
+          grid-template-columns: 1fr !important;
+        }
+        .about-stats-grid {
+          grid-template-columns: repeat(2, 1fr) !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <script src="js/shared-nav.js"></script>
+    <script>
+      insertNavbar("about");
+    </script>
+
+    <!-- ════════════════════════════════════════
+     PAGE HERO
+════════════════════════════════════════ -->
+    <section class="ph">
+      <div class="ph-grid"></div>
+      <div class="ph-glow"></div>
+      <div class="ph-inner">
+        <div>
+          <p class="section-label" style="margin-bottom: 1.5rem">
+            Established 2008 · Nigeria
+          </p>
+          <h1 class="ph-tagline">
+            Built on<br />
+            <em style="color: var(--gold)">Integrity.</em><br />
+            Driven by<br />Results.
+          </h1>
+        </div>
+        <div class="ph-border-box">
+          <h3>Our Corporate Commitment</h3>
+          <p>
+            Curtz Home is a licensed real estate and investment firm dedicated
+            to delivering exceptional value to property buyers, sellers, and
+            investors across the United States. We combine institutional-grade
+            expertise with a client-first approach — providing transparent,
+            accountable, and results-driven services to every individual we
+            serve.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+     STATS STRIP
+════════════════════════════════════════ -->
+    <section class="about-stats">
+      <div style="max-width: 1280px; margin: 0 auto; padding: 0 2rem">
+        <div class="about-stats-grid">
+          <div>
+            <div class="as-num">
+              1,240<span style="font-size: 1.8rem">+</span>
+            </div>
+            <div class="as-label">Properties Transacted</div>
+          </div>
+          <div>
+            <div class="as-num">
+              ₦480<span style="font-size: 1.5rem">Bn</span>
+            </div>
+            <div class="as-label">Total Portfolio Value</div>
+          </div>
+          <div>
+            <div class="as-num">
+              380<span style="font-size: 1.8rem">+</span>
+            </div>
+            <div class="as-label">Active Investors</div>
+          </div>
+          <div>
+            <div class="as-num">15<span style="font-size: 1.8rem">+</span></div>
+            <div class="as-label">Cities Served</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+     MISSION & CORE VALUES
+════════════════════════════════════════ -->
+    <section style="padding: 7rem 0; background: var(--navy)">
+      <div style="max-width: 1280px; margin: 0 auto; padding: 0 2rem">
+        <p class="section-label" style="margin-bottom: 1rem">
+          Mission &amp; Values
+        </p>
+        <div class="mv-grid" style="margin-top: 3rem">
+          <!-- Mission statement -->
+          <div>
+            <p class="mv-large">
+              Our mission is to democratise access to
+              <em>premium real estate</em>, creating sustainable pathways to
+              wealth for every American — whether acquiring a first home or
+              growing a multi-asset investment portfolio.
+            </p>
+            <div
+              style="
+                margin-top: 3rem;
+                padding-top: 3rem;
+                border-top: 1px solid rgba(201, 168, 76, 0.12);
+              "
+            >
+              <h3
+                style="
+                  font-family: &quot;Cormorant Garamond&quot;, serif;
+                  font-size: 1.5rem;
+                  font-weight: 400;
+                  color: var(--cream);
+                  margin-bottom: 1rem;
+                "
+              >
+                Our Vision
+              </h3>
+              <p
+                style="
+                  font-size: 0.9rem;
+                  color: var(--text-muted);
+                  line-height: 1.85;
+                "
+              >
+                To be the most trusted real estate and investment institution in
+                the United States by 2030 — recognised for the breadth of our
+                portfolio, the integrity of our dealings, and the measurable
+                prosperity we create for clients and communities alike.
+              </p>
+            </div>
+          </div>
+
+          <!-- Core values -->
+          <div>
+            <div class="value-item">
+              <div class="value-icon">
+                <svg
+                  width="22"
+                  height="22"
+                  fill="none"
+                  stroke="var(--gold)"
+                  stroke-width="1.5"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M9 12l2 2 4-4M7.835 4.697A3.42 3.42 0 0 1 9.257 4h5.486a3.42 3.42 0 0 1 1.422.697L18 6.697A3.42 3.42 0 0 1 19.303 8.12v5.486a3.42 3.42 0 0 1-.697 1.422l-2.303 2.697A3.42 3.42 0 0 1 14.743 19H9.257a3.42 3.42 0 0 1-1.422-.697L5.697 16.02A3.42 3.42 0 0 1 4.697 14.6V9.115a3.42 3.42 0 0 1 .697-1.422l2.441-2.996z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h4>Integrity &amp; Transparency</h4>
+                <p>
+                  Every transaction is executed with full disclosure. Clients
+                  receive clear documentation, honest valuations, and no hidden
+                  fees — at every stage of the process.
+                </p>
+              </div>
+            </div>
+            <div class="value-item">
+              <div class="value-icon">
+                <svg
+                  width="22"
+                  height="22"
+                  fill="none"
+                  stroke="var(--gold)"
+                  stroke-width="1.5"
+                  viewBox="0 0 24 24"
+                >
+                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                </svg>
+              </div>
+              <div>
+                <h4>Performance-Oriented</h4>
+                <p>
+                  We structure every investment product with rigorous financial
+                  analysis, targeting above-market returns while managing risk
+                  through diversified, professionally managed portfolios.
+                </p>
+              </div>
+            </div>
+            <div class="value-item">
+              <div class="value-icon">
+                <svg
+                  width="22"
+                  height="22"
+                  fill="none"
+                  stroke="var(--gold)"
+                  stroke-width="1.5"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+              </div>
+              <div>
+                <h4>Client-Centric Excellence</h4>
+                <p>
+                  From first enquiry to final handover, every client is assigned
+                  a dedicated relationship manager who provides personalised
+                  guidance and post-transaction support.
+                </p>
+              </div>
+            </div>
+            <div class="value-item">
+              <div class="value-icon">
+                <svg
+                  width="22"
+                  height="22"
+                  fill="none"
+                  stroke="var(--gold)"
+                  stroke-width="1.5"
+                  viewBox="0 0 24 24"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 8v4l3 3" />
+                </svg>
+              </div>
+              <div>
+                <h4>Long-Term Partnership</h4>
+                <p>
+                  We do not operate transactionally. Our relationship with every
+                  client is conceived as a long-term partnership — growing
+                  alongside their evolving financial objectives.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+     CORPORATE MILESTONES
+════════════════════════════════════════ -->
+    <section style="padding: 7rem 0; background: var(--navy-light)">
+      <div style="max-width: 1280px; margin: 0 auto; padding: 0 2rem">
+        <div
+          style="
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 5rem;
+            align-items: start;
+          "
+          class="tl-outer"
+        >
+          <div>
+            <p class="section-label" style="margin-bottom: 1rem">Our Journey</p>
+            <h2
+              style="
+                font-family: &quot;Cormorant Garamond&quot;, serif;
+                font-size: clamp(2rem, 3.5vw, 2.8rem);
+                font-weight: 300;
+                color: var(--cream);
+                line-height: 1.3;
+              "
+            >
+              Seventeen Years of
+              <em style="color: var(--gold)">Measured Growth</em>
+            </h2>
+            <p
+              style="
+                margin-top: 1.5rem;
+                font-size: 0.87rem;
+                color: var(--text-muted);
+                line-height: 1.8;
+              "
+            >
+              Since our founding, Curtz Home has grown from a single-city
+              brokerage into one of the USA's most recognised real estate and
+              investment firms — a trajectory built not on speculation, but on
+              disciplined execution.
+            </p>
+          </div>
+          <div class="timeline">
+            <div class="tl-item">
+              <div class="tl-dot"></div>
+              <div class="tl-year">2008</div>
+              <h4 class="tl-title">Foundation</h4>
+              <p class="tl-desc">
+                Curtz Home was incorporated in New York with a mandate to
+                provide transparent, client-focused real estate brokerage
+                services to the USA's emerging middle and upper class.
+              </p>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot"></div>
+              <div class="tl-year">2012</div>
+              <h4 class="tl-title">Washington D.C. Expansion</h4>
+              <p class="tl-desc">
+                Our second regional office opened in Washington D.C., granting
+                clients access to the capital's rapidly developing residential
+                and commercial corridors.
+              </p>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot"></div>
+              <div class="tl-year">2016</div>
+              <h4 class="tl-title">Launch of Investment Division</h4>
+              <p class="tl-desc">
+                Recognising client demand for structured wealth management, we
+                introduced our tiered investment plan portfolio — delivering
+                consistent double-digit returns since inception.
+              </p>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot"></div>
+              <div class="tl-year">2020</div>
+              <h4 class="tl-title">Digital Platform Launch</h4>
+              <p class="tl-desc">
+                The CurtzHome.com portal launched, enabling seamless online
+                property browsing, investment subscriptions, and client account
+                management from any device.
+              </p>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot"></div>
+              <div class="tl-year">2025</div>
+              <h4 class="tl-title">West Coast &amp; Midwest Expansion</h4>
+              <p class="tl-desc">
+                New offices in Los Angeles and Chicago extend our national
+                footprint, bringing our premium real estate services to two of
+                the USA's fastest-growing economies.
+              </p>
+            </div>
+          </div>
+        </div>
+        <style>
+          @media (max-width: 900px) {
+            .tl-outer {
+              grid-template-columns: 1fr !important;
+              gap: 3rem !important;
+            }
+          }
+        </style>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+     LEADERSHIP TEAM
+════════════════════════════════════════ -->
+    <section style="padding: 7rem 0; background: var(--navy)">
+      <div style="max-width: 1280px; margin: 0 auto; padding: 0 2rem">
+        <div style="text-align: center; margin-bottom: 4rem">
+          <p class="section-label" style="margin-bottom: 1rem">Leadership</p>
+          <h2
+            style="
+              font-family: &quot;Cormorant Garamond&quot;, serif;
+              font-size: clamp(2rem, 4vw, 3rem);
+              font-weight: 300;
+              color: var(--cream);
+            "
+          >
+            The People Behind <em style="color: var(--gold)">Curtz Home</em>
+          </h2>
+        </div>
+        <div class="team-grid">
+          <div class="team-card">
+            <div class="team-avatar">DC</div>
+            <div class="team-name">David Curtz</div>
+            <div class="team-role">Founder &amp; Chief Executive Officer</div>
+            <p class="team-bio">
+              A chartered property valuation professional with over 20 years of
+              experience in United States real estate markets. David founded
+              Curtz Home with a singular conviction: that every American family
+              deserves access to premium property ownership.
+            </p>
+          </div>
+
+          <div class="team-card">
+            <div class="team-avatar">JA</div>
+            <div class="team-name">Jennifer Anderson</div>
+            <div class="team-role">Chief Investment Officer</div>
+            <p class="team-bio">
+              A former Wall Street investment banker with a decade of portfolio
+              management experience across real estate, infrastructure, and
+              fixed-income assets. Jennifer structures and oversees all Curtz
+              Home investment products.
+            </p>
+          </div>
+
+          <div class="team-card">
+            <div class="team-avatar">CM</div>
+            <div class="team-name">Christopher Miller</div>
+            <div class="team-role">Chief Operations Officer</div>
+            <p class="team-bio">
+              Christopher brings rigorous operational systems to the firm,
+              ensuring that every property transaction and investment
+              subscription is processed with speed, accuracy, and full
+              regulatory compliance across all 50 states.
+            </p>
+          </div>
+
+          <div class="team-card">
+            <div class="team-avatar">SB</div>
+            <div class="team-name">Sarah Bennett</div>
+            <div class="team-role">Head of Legal &amp; Compliance</div>
+            <p class="team-bio">
+              A seasoned attorney with specialist expertise in U.S. property and
+              contract law, Sarah ensures all title documentation, purchase
+              agreements, and investment instruments meet the highest legal and
+              federal standards.
+            </p>
+          </div>
+
+          <div class="team-card">
+            <div class="team-avatar">KM</div>
+            <div class="team-name">Kevin Mitchell</div>
+            <div class="team-role">Director of Client Relations</div>
+            <p class="team-bio">
+              Kevin leads our national relationship management team, designing
+              the client experience framework that has earned Curtz Home a 98%
+              satisfaction rating across all service lines.
+            </p>
+          </div>
+
+          <div class="team-card">
+            <div class="team-avatar">AR</div>
+            <div class="team-name">Alice Roberts</div>
+            <div class="team-role">Regional Director, East Coast</div>
+            <p class="team-bio">
+              Alice oversees operations across the Eastern region, bringing deep
+              market intelligence and a robust network of verified development
+              partners to our growing client base.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+     ACCREDITATIONS & PARTNERS
+════════════════════════════════════════ -->
+    <section style="padding: 5rem 0; background: var(--navy-light)">
+      <div
+        style="
+          max-width: 1280px;
+          margin: 0 auto;
+          padding: 0 2rem;
+          text-align: center;
+        "
+      >
+        <p class="section-label" style="margin-bottom: 3rem">
+          Accreditations &amp; Industry Affiliations
+        </p>
+        <div class="partner-row">
+          <div class="partner-chip">
+            Estate Surveyors &amp; Valuers Registration Board of Nigeria
+            (ESVARBON)
+          </div>
+          <div class="partner-chip">
+            Nigerian Institution of Estate Surveyors &amp; Valuers (NIESV)
+          </div>
+          <div class="partner-chip">
+            Real Estate Developers Association of Nigeria (REDAN)
+          </div>
+          <div class="partner-chip">
+            Securities &amp; Exchange Commission (SEC) — Registered
+          </div>
+          <div class="partner-chip">
+            Corporate Affairs Commission (CAC) — Incorporated
+          </div>
+        </div>
+        <p
+          style="color: var(--text-muted); font-size: 0.8rem; margin-top: 1rem"
+        >
+          All regulatory registrations are current and available for inspection
+          upon request.
+        </p>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+     CTA
+════════════════════════════════════════ -->
+    <section
+      style="
+        padding: 6rem 0;
+        background: linear-gradient(135deg, var(--navy-light), var(--navy-mid));
+        position: relative;
+        overflow: hidden;
+      "
+    >
+      <div
+        style="
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(
+            ellipse 70% 70% at 50% 50%,
+            rgba(201, 168, 76, 0.06),
+            transparent
+          );
+        "
+      ></div>
+      <div
+        style="
+          max-width: 700px;
+          margin: 0 auto;
+          padding: 0 2rem;
+          text-align: center;
+          position: relative;
+        "
+      >
+        <p class="section-label" style="margin-bottom: 1rem">
+          Begin Your Journey
+        </p>
+        <h2
+          style="
+            font-family: &quot;Cormorant Garamond&quot;, serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 300;
+            color: var(--cream);
+            margin-bottom: 1.5rem;
+          "
+        >
+          Partner With a Firm That <em style="color: var(--gold)">Delivers</em>
+        </h2>
+        <p
+          style="
+            color: var(--text-muted);
+            line-height: 1.8;
+            margin-bottom: 2.5rem;
+          "
+        >
+          Whether you are acquiring your first property or expanding a seasoned
+          investment portfolio, our team is ready to provide the expertise and
+          dedication your goals require.
+        </p>
+        <div
+          style="
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+          "
+        >
+          <a href="login.html" class="btn-gold">Open an Account</a>
+          <a href="contact.html" class="btn-outline">Speak to an Advisor</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════ -->
+    <footer style="padding: 4rem 0 2rem; background: var(--navy)">
+      <div style="max-width: 1280px; margin: 0 auto; padding: 0 2rem">
+        <div
+          style="
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+          "
+          class="ft-g"
+        >
+          <div>
+            <div
+              class="logo-text"
+              style="color: var(--gold); font-size: 1.4rem; margin-bottom: 1rem"
+            >
+              Curtz
+              <span style="color: var(--cream); font-weight: 300">Home</span>
+            </div>
+            <p
+              style="
+                color: var(--text-muted);
+                font-size: 0.875rem;
+                line-height: 1.7;
+                max-width: 280px;
+              "
+            >
+              A premier luxury real estate and investment platform. Building
+              wealth, one property at a time.
+            </p>
+          </div>
+          <div>
+            <p
+              style="
+                font-size: 0.72rem;
+                letter-spacing: 0.15em;
+                text-transform: uppercase;
+                color: var(--gold);
+                margin-bottom: 1rem;
+              "
+            >
+              Company
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 0.6rem">
+              <a
+                href="about.html"
+                style="
+                  color: var(--gold);
+                  text-decoration: none;
+                  font-size: 0.875rem;
+                "
+                >About Us</a
+              >
+              <a
+                href="housing.html"
+                style="
+                  color: var(--text-muted);
+                  text-decoration: none;
+                  font-size: 0.875rem;
+                "
+                >Properties</a
+              >
+              <a
+                href="investment.html"
+                style="
+                  color: var(--text-muted);
+                  text-decoration: none;
+                  font-size: 0.875rem;
+                "
+                >Investment</a
+              >
+            </div>
+          </div>
+          <div>
+            <p
+              style="
+                font-size: 0.72rem;
+                letter-spacing: 0.15em;
+                text-transform: uppercase;
+                color: var(--gold);
+                margin-bottom: 1rem;
+              "
+            >
+              Legal
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 0.6rem">
+              <a
+                href="#"
+                style="
+                  color: var(--text-muted);
+                  text-decoration: none;
+                  font-size: 0.875rem;
+                "
+                >Privacy Policy</a
+              >
+              <a
+                href="#"
+                style="
+                  color: var(--text-muted);
+                  text-decoration: none;
+                  font-size: 0.875rem;
+                "
+                >Terms of Use</a
+              >
+              <a
+                href="#"
+                style="
+                  color: var(--text-muted);
+                  text-decoration: none;
+                  font-size: 0.875rem;
+                "
+                >Disclaimer</a
+              >
+            </div>
+          </div>
+          <div>
+            <p
+              style="
+                font-size: 0.72rem;
+                letter-spacing: 0.15em;
+                text-transform: uppercase;
+                color: var(--gold);
+                margin-bottom: 1rem;
+              "
+            >
+              Contact
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 0.6rem">
+              <p style="color: var(--text-muted); font-size: 0.875rem">
+                support@curtzhome.top
+              </p>
+              <p style="color: var(--text-muted); font-size: 0.875rem">
+                +1 800 000 0000
+              </p>
+              <p style="color: var(--text-muted); font-size: 0.875rem">
+                Available Mon – Fri
+              </p>
+            </div>
+          </div>
+        </div>
+        <div
+          style="
+            border-top: 1px solid rgba(201, 168, 76, 0.1);
+            padding-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+          "
+        >
+          <p style="color: var(--text-muted); font-size: 0.8rem">
+            © 2025 Curtz Home. All rights reserved.
+          </p>
+          <p style="color: var(--text-muted); font-size: 0.8rem">
+            Licensed Real Estate Firm
+          </p>
+        </div>
+      </div>
+      <style>
+        @media (max-width: 768px) {
+          .ft-g {
+            grid-template-columns: 1fr 1fr !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .ft-g {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      </style>
+    </footer>
+
+    <script src="js/main.js"></script>
+  </body>
+</html>

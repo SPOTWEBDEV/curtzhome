@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+  <script>
+async function fetchDataAndSave() {
+  try {
+    // 1. Start job
+    const resp = await fetch("https://api.apillow.co/v1/properties", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-Key": "zs_5duGWOpJ1wgo3T0Ryg7BW7EUAJajWSreJstbYAh-Y6k",
+      },
+      body: JSON.stringify({
+        type: "sale",
+        max_items: 500,
+        zipcodes: [90210, 90211],
+      }),
+    });
+
+    const job = await resp.json();
+    const jobId = job.job_id;
+
+    console.log("Job started:", jobId);
+
+    // 2. Poll until complete
+    let resultData;
+
+    while (true) {
+      await new Promise(r => setTimeout(r, 3000)); // wait 3 sec
+
+      const pollResp = await fetch(
+        `https://api.apillow.co/v1/results/${jobId}`,
+        {
+          headers: {
+            "X-API-Key": "zs_5duGWOpJ1wgo3T0Ryg7BW7EUAJajWSreJstbYAh-Y6k",
+          },
+        }
+      );
+
+      const pollData = await pollResp.json();
+
+      console.log("Status:", pollData.status);
+
+      if (pollData.status === "complete") {
+        resultData = pollData.results;
+        break;
+      }
+
+      if (pollData.status === "failed") {
+        throw new Error("API job failed");
+      }
+    }
+
+    // 3. Convert to JSON file + download
+    const blob = new Blob([JSON.stringify(resultData, null, 2)], {
+      type: "application/json",
+    });
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "properties.json";
+    document.body.appendChild(a);
+    a.click();
+
+    a.remove();
+    URL.revokeObjectURL(url);
+
+    console.log("File downloaded successfully!");
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+fetchDataAndSave();
+</script>
+  </body>
+</html>

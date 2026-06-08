@@ -1,205 +1,663 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Properties — Elysian Estates</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="css/style.css"/>
-</head>
-<body>
-<script src="js/shared-nav.js"></script>
-<script>insertNavbar('housing');</script>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Properties — Elysian Estates</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css" />
 
-<section class="page-hero">
-  <div style="max-width:1280px;margin:0 auto;padding:0 2rem;">
-    <p class="section-label" style="margin-bottom:1rem;">Real Estate</p>
-    <h1 style="font-size:clamp(2.5rem,5vw,4rem);font-weight:300;color:var(--cream);max-width:600px;">Premium <em style="color:var(--gold);">Properties</em><br/>Across World</h1>
-  </div>
-</section>
+    <style>
+      .prop-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+      }
+      .stat-card {
+        text-align: center;
+        padding: 1rem;
+        background: rgba(201, 168, 76, 0.05);
+        border: 1px solid rgba(201, 168, 76, 0.1);
+      }
 
-<!-- FILTERS -->
-<section style="background:var(--navy-mid);border-bottom:1px solid rgba(201,168,76,0.12);padding:1.5rem 0;position:sticky;top:65px;z-index:50;">
-  <div style="max-width:1280px;margin:0 auto;padding:0 2rem;display:flex;gap:1rem;align-items:center;flex-wrap:wrap;">
-    <select id="filterCity" class="form-input" style="width:auto;min-width:140px;padding:0.55rem 0.8rem;" onchange="filterProperties()">
-      <option value="">All Cities</option>
-      <option>Lagos</option>
-      <option>Abuja</option>
-      <option>Port Harcourt</option>
-      <option>Enugu</option>
-    </select>
-    <select id="filterType" class="form-input" style="width:auto;min-width:140px;padding:0.55rem 0.8rem;" onchange="filterProperties()">
-      <option value="">All Types</option>
-      <option>Villa</option>
-      <option>Apartment</option>
-      <option>Penthouse</option>
-      <option>Mansion</option>
-    </select>
-    <select id="filterBudget" class="form-input" style="width:auto;min-width:160px;padding:0.55rem 0.8rem;" onchange="filterProperties()">
-      <option value="">Any Budget</option>
-      <option value="100">Under ₦100M</option>
-      <option value="200">Under ₦200M</option>
-      <option value="500">Under ₦500M</option>
-    </select>
-    <select id="filterStatus" class="form-input" style="width:auto;min-width:140px;padding:0.55rem 0.8rem;" onchange="filterProperties()">
-      <option value="">All Status</option>
-      <option value="available">Available</option>
-      <option value="reserved">Reserved</option>
-    </select>
-    <span id="resultCount" style="color:var(--text-muted);font-size:0.8rem;margin-left:auto;"></span>
-  </div>
-</section>
+      .stat-value {
+        font-size: 1.25rem;
+        color: var(--gold);
+        font-weight: 600;
+        margin-bottom: 0.4rem;
+      }
 
-<!-- PROPERTIES GRID -->
-<section style="padding:5rem 0;background:var(--navy);">
-  <div style="max-width:1280px;margin:0 auto;padding:0 2rem;">
-    <div id="propertiesGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;" class="prop-grid"></div>
-    <div id="noResults" style="display:none;text-align:center;padding:5rem 0;color:var(--text-muted);">
-      <p style="font-size:1.2rem;">No properties match your filters.</p>
-    </div>
-  </div>
-</section>
+      .stat-label {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
 
-<!-- PROPERTY MODAL -->
-<div id="propModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:200;overflow-y:auto;backdrop-filter:blur(4px);">
-  <div style="max-width:700px;margin:4rem auto;padding:1rem;">
-    <div style="background:var(--navy-mid);border:1px solid rgba(201,168,76,0.25);">
-      <div style="height:280px;background:linear-gradient(135deg,#0D1F3C,#1A3356);display:flex;align-items:center;justify-content:center;position:relative;">
-        <svg width="70" height="70" viewBox="0 0 80 80" fill="none"><path d="M40 8L72 32V72H8V32L40 8Z" stroke="#C9A84C" stroke-width="1.5" fill="rgba(201,168,76,0.05)"/><rect x="28" y="48" width="24" height="24" stroke="#C9A84C" stroke-width="1" fill="none"/></svg>
-        <button onclick="closeModal()" style="position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,0.1);border:none;color:white;width:36px;height:36px;cursor:pointer;font-size:1.2rem;">×</button>
-        <span id="modalBadge" class="badge" style="position:absolute;top:1rem;left:1rem;"></span>
+      @media(max-width: 900px) {
+        .prop-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media(max-width: 560px) {
+        .prop-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <script src="js/shared-nav.js"></script>
+    <script>
+      insertNavbar("housing");
+    </script>
+
+    <section class="page-hero">
+      <div style="max-width: 1280px; margin: 0 auto; padding: 0 2rem">
+        <p class="section-label" style="margin-bottom: 1rem">Real Estate</p>
+        <h1
+          style="
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 300;
+            color: var(--cream);
+            max-width: 600px;
+          "
+        >
+          Premium <em style="color: var(--gold)">Properties</em><br />Across
+          World
+        </h1>
       </div>
-      <div style="padding:2.5rem;">
-        <p id="modalLocation" style="color:var(--gold);font-size:0.75rem;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;"></p>
-        <h2 id="modalTitle" style="font-size:1.8rem;font-weight:400;color:var(--cream);margin-bottom:1rem;"></h2>
-        <p id="modalDesc" style="color:var(--text-muted);line-height:1.8;margin-bottom:1.5rem;"></p>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem;">
-          <div style="text-align:center;padding:1rem;background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.1);">
-            <p id="modalBeds" style="font-size:1.3rem;color:var(--gold);font-family:'Cormorant Garamond',serif;font-weight:600;"></p>
-            <p style="font-size:0.7rem;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;">Bedrooms</p>
+    </section>
+
+    <!-- FILTERS -->
+    <section
+      style="
+        background: var(--navy-mid);
+        border-bottom: 1px solid rgba(201, 168, 76, 0.12);
+        padding: 1.5rem 0;
+        position: sticky;
+        top: 65px;
+        z-index: 50;
+      "
+    >
+      <div
+        style="
+          max-width: 1280px;
+          margin: 0 auto;
+          padding: 0 2rem;
+          display: flex;
+          gap: 1rem;
+          align-items: center;
+          flex-wrap: wrap;
+        "
+      >
+        <select
+          id="filterCity"
+          class="form-input"
+          style="width: auto; min-width: 140px; padding: 0.55rem 0.8rem"
+          onchange="filterProperties()"
+        >
+          <option value="">All Cities</option>
+          <option>Lagos</option>
+          <option>Abuja</option>
+          <option>Port Harcourt</option>
+          <option>Enugu</option>
+        </select>
+        <select
+          id="filterType"
+          class="form-input"
+          style="width: auto; min-width: 140px; padding: 0.55rem 0.8rem"
+          onchange="filterProperties()"
+        >
+          <option value="">All Types</option>
+          <option>Villa</option>
+          <option>Apartment</option>
+          <option>Penthouse</option>
+          <option>Mansion</option>
+        </select>
+        <select
+          id="filterBudget"
+          class="form-input"
+          style="width: auto; min-width: 160px; padding: 0.55rem 0.8rem"
+          onchange="filterProperties()"
+        >
+          <option value="">Any Budget</option>
+          <option value="100">Under ₦100M</option>
+          <option value="200">Under ₦200M</option>
+          <option value="500">Under ₦500M</option>
+        </select>
+        <select
+          id="filterStatus"
+          class="form-input"
+          style="width: auto; min-width: 140px; padding: 0.55rem 0.8rem"
+          onchange="filterProperties()"
+        >
+          <option value="">All Status</option>
+          <option value="available">Available</option>
+          <option value="reserved">Reserved</option>
+        </select>
+        <span
+          id="resultCount"
+          style="color: var(--text-muted); font-size: 0.8rem; margin-left: auto"
+        ></span>
+      </div>
+    </section>
+
+    <!-- PROPERTIES GRID -->
+    <section style="padding: 5rem 0; background: var(--navy)">
+      <div style="max-width: 1280px; margin: 0 auto; padding: 0 2rem">
+        <div id="propertiesGrid" class="prop-grid"></div>
+        <div
+          id="noResults"
+          style="
+            display: none;
+            text-align: center;
+            padding: 5rem 0;
+            color: var(--text-muted);
+          "
+        >
+          <p style="font-size: 1.2rem">No properties match your filters.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROPERTY MODAL -->
+    <div
+      id="propModal"
+      style="
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.85);
+        z-index: 200;
+        overflow-y: auto;
+        backdrop-filter: blur(4px);
+      "
+    >
+      <div style="max-width: 900px; margin: 4rem auto; padding: 1rem">
+        <div
+          style="
+            background: var(--navy-mid);
+            border: 1px solid rgba(201, 168, 76, 0.25);
+            overflow: hidden;
+          "
+        >
+          <!-- IMAGE -->
+          <div style="position: relative">
+            <img
+              id="modalImage"
+              src=""
+              alt=""
+              style="
+                width: 100%;
+                height: 400px;
+                object-fit: cover;
+                display: block;
+              "
+            />
+
+            <button
+              onclick="closeModal()"
+              style="
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+                background: rgba(0, 0, 0, 0.5);
+                border: none;
+                color: white;
+                width: 40px;
+                height: 40px;
+                cursor: pointer;
+                font-size: 1.3rem;
+              "
+            >
+              ×
+            </button>
+
+            <span
+              id="modalBadge"
+              class="badge"
+              style="position: absolute; top: 1rem; left: 1rem"
+            >
+            </span>
           </div>
-          <div style="text-align:center;padding:1rem;background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.1);">
-            <p id="modalBaths" style="font-size:1.3rem;color:var(--gold);font-family:'Cormorant Garamond',serif;font-weight:600;"></p>
-            <p style="font-size:0.7rem;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;">Bathrooms</p>
-          </div>
-          <div style="text-align:center;padding:1rem;background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.1);">
-            <p id="modalArea" style="font-size:1.3rem;color:var(--gold);font-family:'Cormorant Garamond',serif;font-weight:600;"></p>
-            <p style="font-size:0.7rem;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;">Area (m²)</p>
+
+          <div style="padding: 2rem">
+            <!-- LOCATION -->
+            <p
+              id="modalLocation"
+              style="
+                color: var(--gold);
+                font-size: 0.75rem;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                margin-bottom: 0.5rem;
+              "
+            ></p>
+
+            <!-- TITLE -->
+            <h2
+              id="modalTitle"
+              style="
+                font-size: 2rem;
+                font-weight: 400;
+                color: var(--cream);
+                margin-bottom: 1rem;
+              "
+            ></h2>
+
+            <!-- DESCRIPTION -->
+            <p
+              id="modalDesc"
+              style="
+                color: var(--text-muted);
+                line-height: 1.8;
+                margin-bottom: 2rem;
+              "
+            ></p>
+
+            <!-- MAIN STATS -->
+            <div
+              style="
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 1rem;
+                margin-bottom: 2rem;
+              "
+            >
+              <div class="stat-card">
+                <p id="modalBeds" class="stat-value"></p>
+                <p class="stat-label">Bedrooms</p>
+              </div>
+
+              <div class="stat-card">
+                <p id="modalBaths" class="stat-value"></p>
+                <p class="stat-label">Bathrooms</p>
+              </div>
+
+              <div class="stat-card">
+                <p id="modalArea" class="stat-value"></p>
+                <p class="stat-label">Living Area</p>
+              </div>
+            </div>
+
+            <!-- PROPERTY DETAILS -->
+            <div
+              style="
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1rem;
+                margin-bottom: 2rem;
+              "
+            >
+              <div class="stat-card">
+                <p id="modalType" class="stat-value"></p>
+                <p class="stat-label">Property Type</p>
+              </div>
+
+              <div class="stat-card">
+                <p id="modalStatus" class="stat-value"></p>
+                <p class="stat-label">Status</p>
+              </div>
+
+              <div class="stat-card">
+                <p id="modalYear" class="stat-value"></p>
+                <p class="stat-label">Year Built</p>
+              </div>
+
+              <div class="stat-card">
+                <p id="modalLot" class="stat-value"></p>
+                <p class="stat-label">Lot Size</p>
+              </div>
+
+              <div class="stat-card">
+                <p id="modalDays" class="stat-value"></p>
+                <p class="stat-label">Days on Zillow</p>
+              </div>
+            </div>
+
+            <!-- ADDRESS -->
+            <div style="margin-bottom: 2rem">
+              <h3 style="color: var(--gold); margin-bottom: 0.75rem">
+                Property Address
+              </h3>
+
+              <p
+                id="modalAddress"
+                style="color: var(--text-muted); line-height: 1.7"
+              ></p>
+            </div>
+
+            <!-- MARKET INSIGHTS -->
+            <div
+              style="
+                background: rgba(201, 168, 76, 0.05);
+                border: 1px solid rgba(201, 168, 76, 0.15);
+                padding: 1.5rem;
+                margin-bottom: 2rem;
+              "
+            >
+              <h3 style="color: var(--gold); margin-bottom: 1rem">
+                Market Insights
+              </h3>
+
+              <div
+                style="
+                  display: grid;
+                  grid-template-columns: repeat(2, 1fr);
+                  gap: 1rem;
+                "
+              >
+                <div>
+                  <p class="stat-label">Zestimate</p>
+                  <p id="modalZestimate" class="stat-value"></p>
+                </div>
+
+                <div>
+                  <p class="stat-label">Rent Zestimate</p>
+                  <p id="modalRent" class="stat-value"></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- LISTING INFO -->
+            <div style="margin-bottom: 2rem">
+              <h3 style="color: var(--gold); margin-bottom: 1rem">
+                Listing Information
+              </h3>
+
+              <p style="margin-bottom: 0.75rem">
+                <strong>Broker:</strong>
+                <span id="modalBroker"></span>
+              </p>
+
+              <p style="margin-bottom: 0.75rem">
+                <strong>Agent:</strong>
+                <span id="modalAgent"></span>
+              </p>
+
+              <p>
+                <strong>Phone:</strong>
+                <span id="modalAgentPhone"></span>
+              </p>
+            </div>
+
+            <!-- FOOTER -->
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 1rem;
+                padding-top: 1.5rem;
+                border-top: 1px solid rgba(201, 168, 76, 0.15);
+              "
+            >
+              <div>
+                <p
+                  style="
+                    font-size: 0.75rem;
+                    color: var(--text-muted);
+                    letter-spacing: 0.1em;
+                    text-transform: uppercase;
+                  "
+                >
+                  Listing Price
+                </p>
+
+                <p
+                  id="modalPrice"
+                  style="
+                    font-family: &quot;Cormorant Garamond&quot;, serif;
+                    font-size: 2rem;
+                    color: var(--gold);
+                    font-weight: 600;
+                  "
+                ></p>
+              </div>
+
+              <div style="display: flex; gap: 1rem; flex-wrap: wrap">
+                <a
+                  id="modalZillow"
+                  target="_blank"
+                  style="
+                    padding: 0.9rem 1.5rem;
+                    border: 1px solid var(--gold);
+                    color: var(--gold);
+                    text-decoration: none;
+                  "
+                >
+                  View Listing
+                </a>
+
+                <a href="billing.html" class="btn-gold"> Initiate Purchase </a>
+              </div>
+            </div>
           </div>
         </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding-top:1.5rem;border-top:1px solid rgba(201,168,76,0.1);">
-          <div>
-            <p style="font-size:0.7rem;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.3rem;">Price</p>
-            <p id="modalPrice" style="font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--gold);font-weight:600;"></p>
-          </div>
-          <a href="billing.html" class="btn-gold">Initiate Purchase</a>
-        </div>
       </div>
     </div>
-  </div>
-</div>
 
-<footer style="padding:3rem 0 2rem;">
-  <div style="max-width:1280px;margin:0 auto;padding:0 2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;border-top:1px solid rgba(201,168,76,0.1);padding-top:2rem;">
-    <div class="logo-text" style="color:var(--gold);font-size:1.2rem;">Elysian<span style="color:var(--cream);font-weight:300;">Estates</span></div>
-    <p style="color:var(--text-muted);font-size:0.8rem;">© 2025 Elysian Estates. All rights reserved.</p>
-  </div>
-</footer>
+    <footer style="padding: 3rem 0 2rem">
+      <div
+        style="
+          max-width: 1280px;
+          margin: 0 auto;
+          padding: 0 2rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 1rem;
+          border-top: 1px solid rgba(201, 168, 76, 0.1);
+          padding-top: 2rem;
+        "
+      >
+        <div class="logo-text" style="color: var(--gold); font-size: 1.2rem">
+          Curtz<span style="color: var(--cream); font-weight: 300">Home</span>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.8rem">
+          © 2026 Curtz Home. All rights reserved.
+        </p>
+      </div>
+    </footer>
 
-<script src="js/main.js"></script>
-<script>
-const properties = [
-  { id:1, title:'Oceanfront Penthouse', location:'Victoria Island, Lagos', city:'Lagos', type:'Penthouse', price:420000000, beds:4, baths:4, area:620, status:'available', desc:'An exceptional penthouse perched above the Atlantic, offering panoramic ocean views and bespoke interiors crafted by award-winning designers.' },
-  { id:2, title:'Executive Mansion', location:'Maitama, Abuja', city:'Abuja', type:'Mansion', price:380000000, beds:7, baths:6, area:1200, status:'reserved', desc:'A stately 7-bedroom mansion in Abuja's most coveted enclave, complete with private cinema, gym, and landscaped gardens.' },
-  { id:3, title:'Heritage Villa', location:'Old GRA, Port Harcourt', city:'Port Harcourt', type:'Villa', price:195000000, beds:5, baths:4, area:850, status:'available', desc:'Classic colonial architecture blended with modern comfort across a generous corner plot in Port Harcourt's historic GRA.' },
-  { id:4, title:'Garden Terrace Apartment', location:'Lekki Phase 1, Lagos', city:'Lagos', type:'Apartment', price:85000000, beds:3, baths:3, area:320, status:'available', desc:'A chic 3-bedroom apartment with private terrace and access to resort-style amenities in one of Lekki's finest developments.' },
-  { id:5, title:'Lakeside Estate', location:'Jabi, Abuja', city:'Abuja', type:'Villa', price:260000000, beds:6, baths:5, area:950, status:'available', desc:'Commanding lakefront views from every room, this 6-bedroom estate offers unmatched privacy and a private jetty.' },
-  { id:6, title:'Sky Residence', location:'Banana Island, Lagos', city:'Lagos', type:'Penthouse', price:750000000, beds:5, baths:5, area:780, status:'reserved', desc:'The pinnacle of urban luxury, this triplex penthouse on Banana Island features a rooftop infinity pool and private lift.' },
-  { id:7, title:'Colonial Court', location:'Independence Layout, Enugu', city:'Enugu', type:'Mansion', price:120000000, beds:6, baths:5, area:900, status:'available', desc:'A gracefully restored colonial estate on a leafy boulevard, offering generous living spaces and a tropical garden.' },
-  { id:8, title:'Marina Heights', location:'Eko Atlantic, Lagos', city:'Lagos', type:'Apartment', price:180000000, beds:2, baths:2, area:240, status:'available', desc:'A luxury smart apartment in the iconic Eko Atlantic City, with breathtaking marina views and concierge services.' },
-  { id:9, title:'Presidential Lodge', location:'Asokoro, Abuja', city:'Abuja', type:'Mansion', price:500000000, beds:8, baths:7, area:1500, status:'available', desc:'An imposing diplomatic-grade residence in Asokoro with a 3-car garage, staff quarters, and a private swimming pool.' },
-];
+    <script src="js/main.js"></script>
+    <script>
+      let properties = []; // Global variable to store fetched data
+      let filtered = [];
 
-let filtered = [...properties];
+      // 1. Fetch data on load
+      fetch("data/properties.json")
+        .then((response) => response.json())
+        .then((data) => {
+          properties = data;
+          filtered = [...properties];
+          renderProperties();
+        })
+        .catch((err) => console.error("Error loading properties:", err));
 
-function filterProperties() {
-  const city = document.getElementById('filterCity').value;
-  const type = document.getElementById('filterType').value;
-  const budget = parseInt(document.getElementById('filterBudget').value) || 0;
-  const status = document.getElementById('filterStatus').value;
+      function filterProperties() {
+        const city = document.getElementById("filterCity").value;
+        const type = document.getElementById("filterType").value;
+        const budget =
+          parseInt(document.getElementById("filterBudget").value) || 0;
+        const status = document.getElementById("filterStatus").value;
 
-  filtered = properties.filter(p => {
-    if (city && p.city !== city) return false;
-    if (type && p.type !== type) return false;
-    if (budget && p.price > budget * 1000000) return false;
-    if (status && p.status !== status) return false;
-    return true;
-  });
-  renderProperties();
-}
+        filtered = properties.filter((p) => {
+          if (city && p.city !== city) return false;
+          if (type && p.type !== type) return false;
+          if (budget && p.price > budget * 1000000) return false;
+          if (status && p.status !== status) return false;
+          return true;
+        });
+        renderProperties();
+      }
 
-function renderProperties() {
-  const grid = document.getElementById('propertiesGrid');
-  const noRes = document.getElementById('noResults');
-  document.getElementById('resultCount').textContent = `${filtered.length} propert${filtered.length===1?'y':'ies'} found`;
+      function renderProperties() {
+        const grid = document.getElementById("propertiesGrid");
+        const noRes = document.getElementById("noResults");
+        document.getElementById("resultCount").textContent =
+          `${filtered.length} propert${filtered.length === 1 ? "y" : "ies"} found`;
 
-  if (filtered.length === 0) { grid.innerHTML = ''; noRes.style.display = 'block'; return; }
-  noRes.style.display = 'none';
+        if (filtered.length === 0) {
+          grid.innerHTML = "";
+          noRes.style.display = "block";
+          return;
+        }
+        noRes.style.display = "none";
 
-  grid.innerHTML = filtered.map(p => `
+        grid.innerHTML = filtered
+          .map((item) => {
+            // Accessing the nested object structure you defined
+
+            const p = item.property;
+
+            return `
     <div class="card" style="cursor:pointer;" onclick="openModal(${p.id})">
-      <div style="height:200px;background:linear-gradient(135deg,#0D1F3C,#1A3356);display:flex;align-items:center;justify-content:center;position:relative;">
-        <svg width="55" height="55" viewBox="0 0 80 80" fill="none"><path d="M40 8L72 32V72H8V32L40 8Z" stroke="#C9A84C" stroke-width="1.5" fill="rgba(201,168,76,0.05)"/><rect x="28" y="48" width="24" height="24" stroke="#C9A84C" stroke-width="1" fill="none"/></svg>
-        <span class="badge ${p.status==='available'?'badge-success':'badge-pending'}" style="position:absolute;top:1rem;right:1rem;">${p.status==='available'?'Available':'Reserved'}</span>
-        <span class="badge" style="position:absolute;top:1rem;left:1rem;background:rgba(11,22,41,0.7);color:var(--cream);">${p.type}</span>
-      </div>
-      <div style="padding:1.5rem;">
-        <p style="color:var(--text-muted);font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.4rem;">${p.location}</p>
-        <h4 style="font-size:1.1rem;color:var(--cream);margin-bottom:0.6rem;font-weight:400;">${p.title}</h4>
-        <p style="color:var(--text-muted);font-size:0.8rem;margin-bottom:1rem;">${p.beds} bed · ${p.baths} bath · ${p.area} m²</p>
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-          <span style="color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;">₦${(p.price/1000000).toFixed(0)}M</span>
-          <button class="btn-outline" style="padding:0.35rem 0.8rem;font-size:0.7rem;">Details</button>
-        </div>
+      <div style="height:200px;background:linear-gradient(135deg,#0D1F3C,#1A3356);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;">
+      
+      <img 
+        src="${p.image_urls?.[0] || ""}" 
+        style="width:100%;height:100%;object-fit:cover;opacity:0.6;position:absolute;top:0;left:0; object-position:center;"
+      />
+
+      <svg width="50" height="50" viewBox="0 0 80 80" fill="none" style="z-index:2;">
+        <path d="M40 8L72 32V72H8V32L40 8Z" stroke="#C9A84C" stroke-width="1.5" fill="rgba(201,168,76,0.05)"/>
+        <rect x="28" y="48" width="24" height="24" stroke="#C9A84C" stroke-width="1" fill="none"/>
+      </svg>
+
+      <span class="badge text-white ${p.home_status === "FOR_SALE" ? "bg-green-600" : "bg-yellow-600"}"
+        style="position:absolute;top:1rem;right:1rem;z-index:2;">
+        ${p.home_status === "FOR_SALE" ? "Available" : "Reserved"}
+      </span>
+    </div>
+
+    <div style="padding:1.5rem;">
+      <p style="color:var(--text-muted);font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.4rem;">
+        ${p.city}, ${p.state} ${p.zipcode}
+      </p>
+
+      <p style="color:var(--text-muted);font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.4rem;">
+        ${p.street_address}
+      </p>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="color:var(--gold);font-size:1.2rem;font-weight:600;">
+          ${p.currency === "USD" ? "$" : p.currency}${p.price.toLocaleString()}
+        </span>
+
+        <a href="${p.url}" target="_blank" class="btn-outline"
+          style="padding:0.35rem 0.8rem;font-size:0.7rem;">
+          Details
+        </a>
       </div>
     </div>
-  `).join('');
-}
+    </div>
+  `;
+          })
+          .join("");
+      }
 
-function openModal(id) {
-  const p = properties.find(x => x.id === id);
-  if (!p) return;
-  document.getElementById('modalLocation').textContent = p.location;
-  document.getElementById('modalTitle').textContent = p.title;
-  document.getElementById('modalDesc').textContent = p.desc;
-  document.getElementById('modalBeds').textContent = p.beds;
-  document.getElementById('modalBaths').textContent = p.baths;
-  document.getElementById('modalArea').textContent = p.area;
-  document.getElementById('modalPrice').textContent = '₦' + p.price.toLocaleString();
-  const badge = document.getElementById('modalBadge');
-  badge.textContent = p.status === 'available' ? 'Available' : 'Reserved';
-  badge.className = `badge ${p.status==='available'?'badge-success':'badge-pending'}`;
-  document.getElementById('propModal').style.display = 'block';
-  document.body.style.overflow = 'hidden';
-}
-function closeModal() {
-  document.getElementById('propModal').style.display = 'none';
-  document.body.style.overflow = '';
-}
-document.getElementById('propModal').addEventListener('click', e => { if (e.target === document.getElementById('propModal')) closeModal(); });
+      function openModal(id) {
+        let p = properties.find((x) => x.id === id);
 
-renderProperties();
+        if (!p) return;
 
-// Responsive grid
-function setGrid() {
-  const g = document.getElementById('propertiesGrid');
-  if (!g) return;
-  if (window.innerWidth < 560) g.style.gridTemplateColumns = '1fr';
-  else if (window.innerWidth < 900) g.style.gridTemplateColumns = '1fr 1fr';
-  else g.style.gridTemplateColumns = 'repeat(3,1fr)';
-}
-setGrid();
-window.addEventListener('resize', setGrid);
-</script>
-</body>
+        p = p.property;
+
+        document.getElementById("modalLocation").textContent =
+          `${p.city}, ${p.state}`;
+
+        document.getElementById("modalTitle").textContent = p.street_address;
+
+        document.getElementById("modalDesc").textContent = p.description;
+
+        document.getElementById("modalBeds").textContent = p.bedrooms ?? "-";
+
+        document.getElementById("modalBaths").textContent = p.bathrooms ?? "-";
+
+        document.getElementById("modalArea").textContent =
+          p.living_area?.toLocaleString() ?? "-";
+
+        document.getElementById("modalType").textContent =
+          p.property_type || "-";
+
+        document.getElementById("modalStatus").textContent =
+          p.home_status || "-";
+
+        document.getElementById("modalYear").textContent =
+          p.year_built || "N/A";
+
+        document.getElementById("modalLot").textContent = p.lot_size
+          ? `${p.lot_size.toLocaleString()} sqft`
+          : "N/A";
+
+        document.getElementById("modalDays").textContent =
+          p.days_on_zillow || 0;
+
+        document.getElementById("modalAddress").textContent =
+          `${p.street_address}, ${p.city}, ${p.state} ${p.zipcode}`;
+
+        document.getElementById("modalZestimate").textContent = p.zestimate
+          ? "$" + p.zestimate.toLocaleString()
+          : "N/A";
+
+        document.getElementById("modalRent").textContent = p.rent_zestimate
+          ? "$" + p.rent_zestimate.toLocaleString() + "/mo"
+          : "N/A";
+
+        document.getElementById("modalBroker").textContent =
+          p.listing_broker || "N/A";
+
+        document.getElementById("modalAgent").textContent =
+          p.listing_agent?.name || "N/A";
+
+        document.getElementById("modalAgentPhone").textContent =
+          p.listing_agent?.phone || "N/A";
+
+        document.getElementById("modalPrice").textContent =
+          "$" + p.price.toLocaleString();
+
+        document.getElementById("modalZillow").href = p.url;
+
+        document.getElementById("modalImage").src =
+          p.image_urls?.[0] ||
+          "https://via.placeholder.com/800x400?text=No+Image";
+
+        const badge = document.getElementById("modalBadge");
+
+        badge.textContent =
+          p.home_status === "FOR_SALE" ? "Available" : p.home_status;
+
+        badge.className = `badge ${
+          p.home_status === "FOR_SALE" ? "badge-success" : "badge-pending"
+        }`;
+
+        document.getElementById("propModal").style.display = "block";
+
+        document.body.style.overflow = "hidden";
+      }
+      function closeModal() {
+        document.getElementById("propModal").style.display = "none";
+        document.body.style.overflow = "";
+      }
+      document.getElementById("propModal").addEventListener("click", (e) => {
+        if (e.target === document.getElementById("propModal")) closeModal();
+      });
+
+      // Responsive grid logic
+      function setGrid() {
+        const g = document.getElementById("propertiesGrid");
+        if (!g) return;
+        if (window.innerWidth < 560) g.style.gridTemplateColumns = "1fr";
+        else if (window.innerWidth < 900)
+          g.style.gridTemplateColumns = "1fr 1fr";
+        else g.style.gridTemplateColumns = "repeat(3,1fr)";
+      }
+      setGrid();
+      window.addEventListener("resize", setGrid);
+    </script>
+  </body>
 </html>
