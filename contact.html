@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact — Elysian Estates</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+<script src="js/shared-nav.js"></script>
+<script>insertNavbar('contact');</script>
+
+<section class="page-hero">
+  <div style="max-width:1280px;margin:0 auto;padding:0 2rem;">
+    <p class="section-label" style="margin-bottom:1rem;">Get In Touch</p>
+    <h1 style="font-size:clamp(2.5rem,5vw,4rem);font-weight:300;color:var(--cream);max-width:600px;">Let's Start a <em style="color:var(--gold);">Conversation</em></h1>
+  </div>
+</section>
+
+<section style="padding:6rem 0;background:var(--navy);">
+  <div style="max-width:1280px;margin:0 auto;padding:0 2rem;display:grid;grid-template-columns:1fr 1.6fr;gap:5rem;align-items:start;" class="contact-grid">
+
+    <!-- Info -->
+    <div>
+      <p class="section-label" style="margin-bottom:1rem;">Contact Info</p>
+      <h2 style="font-size:clamp(1.5rem,2.5vw,2rem);font-weight:300;color:var(--cream);margin-bottom:2rem;">We're here to help you <em style="color:var(--gold);">every step</em> of the way.</h2>
+      
+      <div style="display:flex;flex-direction:column;gap:1.5rem;margin-bottom:3rem;">
+        <div style="display:flex;gap:1rem;align-items:flex-start;">
+          <div style="width:40px;height:40px;border:1px solid rgba(201,168,76,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.68A2 2 0 012 .38h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.49A16 16 0 0014.54 16l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          </div>
+          <div>
+            <p style="font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:0.3rem;">Phone</p>
+            <p style="color:var(--cream);">+234 800 000 0000</p>
+            <p style="color:var(--text-muted);font-size:0.85rem;">Mon–Fri, 8am–6pm WAT</p>
+          </div>
+        </div>
+        <div style="display:flex;gap:1rem;align-items:flex-start;">
+          <div style="width:40px;height:40px;border:1px solid rgba(201,168,76,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div>
+            <p style="font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:0.3rem;">Email</p>
+            <p style="color:var(--cream);">info@elysianestates.ng</p>
+            <p style="color:var(--text-muted);font-size:0.85rem;">We reply within 24 hours</p>
+          </div>
+        </div>
+        <div style="display:flex;gap:1rem;align-items:flex-start;">
+          <div style="width:40px;height:40px;border:1px solid rgba(201,168,76,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div>
+            <p style="font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:0.3rem;">Offices</p>
+            <p style="color:var(--cream);">15 Ahmadu Bello Way, Victoria Island, Lagos</p>
+            <p style="color:var(--cream);">Plot 25, Aguiyi Ironsi St, Maitama, Abuja</p>
+            <p style="color:var(--cream);">12 Stadium Road, GRA Phase 2, Port Harcourt</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:1.5rem;background:rgba(201,168,76,0.05);border-left:2px solid var(--gold);">
+        <p style="color:var(--text-muted);font-size:0.85rem;line-height:1.7;">Our advisors are available to schedule private consultations and property viewings at your convenience.</p>
+      </div>
+    </div>
+
+    <!-- Contact Form -->
+    <div class="card" style="padding:3rem;">
+      <h3 style="font-size:1.5rem;font-weight:400;color:var(--cream);margin-bottom:2rem;">Send Us a Message</h3>
+      <form id="contactForm" onsubmit="submitContact(event)">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:1.2rem;" class="form-row">
+          <div>
+            <label class="form-label">First Name</label>
+            <input type="text" name="first_name" class="form-input" placeholder="John" required/>
+          </div>
+          <div>
+            <label class="form-label">Last Name</label>
+            <input type="text" name="last_name" class="form-input" placeholder="Doe" required/>
+          </div>
+        </div>
+        <div style="margin-bottom:1.2rem;">
+          <label class="form-label">Email Address</label>
+          <input type="email" name="email" class="form-input" placeholder="you@email.com" required/>
+        </div>
+        <div style="margin-bottom:1.2rem;">
+          <label class="form-label">Phone Number</label>
+          <input type="tel" name="phone" class="form-input" placeholder="+234 xxx xxx xxxx"/>
+        </div>
+        <div style="margin-bottom:1.2rem;">
+          <label class="form-label">Interest</label>
+          <select name="interest" class="form-input">
+            <option value="property">Property Purchase</option>
+            <option value="investment">Investment Plan</option>
+            <option value="general">General Enquiry</option>
+            <option value="viewing">Schedule a Viewing</option>
+          </select>
+        </div>
+        <div style="margin-bottom:2rem;">
+          <label class="form-label">Message</label>
+          <textarea name="message" class="form-input" rows="4" placeholder="Tell us how we can help..." required style="resize:vertical;"></textarea>
+        </div>
+        <button type="submit" id="contactBtn" class="btn-gold" style="width:100%;text-align:center;">Send Message</button>
+      </form>
+    </div>
+  </div>
+  <style>@media(max-width:900px){.contact-grid{grid-template-columns:1fr!important;gap:3rem!important;}.form-row{grid-template-columns:1fr!important;}}</style>
+</section>
+
+<footer style="padding:3rem 0 2rem;">
+  <div style="max-width:1280px;margin:0 auto;padding:0 2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;border-top:1px solid rgba(201,168,76,0.1);padding-top:2rem;">
+    <div class="logo-text" style="color:var(--gold);font-size:1.2rem;">Elysian<span style="color:var(--cream);font-weight:300;">Estates</span></div>
+    <p style="color:var(--text-muted);font-size:0.8rem;">© 2025 Elysian Estates. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script>
+async function submitContact(e) {
+  e.preventDefault();
+  const btn = document.getElementById('contactBtn');
+  const originalText = btn.innerHTML;
+  setLoading(btn, true, originalText);
+  const form = document.getElementById('contactForm');
+  const data = Object.fromEntries(new FormData(form));
+
+  // AJAX to PHP backend
+  const result = await apiRequest('contact.php', 'POST', data);
+  setLoading(btn, false, originalText);
+  if (result.ok) {
+    showToast('Message sent! We\'ll be in touch soon.', 'success');
+    form.reset();
+  } else {
+    showToast(result.data.message || 'Failed to send message. Please try again.', 'error');
+  }
+}
+</script>
+</body>
+</html>
