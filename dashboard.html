@@ -1,638 +1,1784 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>My Account — Curtz Home</title>
-  <script src="./js/tailwind.js"></script>
-  <link rel="stylesheet" href="./css/style.css"/>
-  <link rel="stylesheet" href="./css/admin.css"/>
-  <style>
-    .menu-btn{
-  display:none;
-  position:fixed;
-  top:15px;
-  left:15px;
-  z-index:1002;
-  background:#060F1E;
-  color:#C9A84C;
-  border:1px solid rgba(201,168,76,0.2);
-  width:45px;
-  height:45px;
-  border-radius:8px;
-  cursor:pointer;
-  font-size:20px;
-}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Account — Curtz Home</title>
+    <script src="./js/tailwind.js"></script>
+    <link rel="stylesheet" href="./css/style.css" />
+    <link rel="stylesheet" href="./css/admin.css" />
+    <style>
+      .menu-btn {
+        display: none;
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 1002;
+        background: #060f1e;
+        color: #c9a84c;
+        border: 1px solid rgba(201, 168, 76, 0.2);
+        width: 45px;
+        height: 45px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 20px;
+      }
 
-.sidebar-overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.6);
-  opacity:0;
-  visibility:hidden;
-  transition:.3s;
-  z-index:999;
-}
+      .sidebar-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        opacity: 0;
+        visibility: hidden;
+        transition: 0.3s;
+        z-index: 999;
+        pointer-events: none;
+      }
 
-.sidebar-overlay.show{
-  opacity:1;
-  visibility:visible;
-}
+      .sidebar-overlay.show {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+      }
 
-@media (max-width:768px){
+      /* Nav link hover */
+      .nav-item:hover {
+        color: var(--gold) !important;
+        background: rgba(201, 168, 76, 0.06);
+        border-left-color: rgba(201, 168, 76, 0.4) !important;
+      }
 
-  .menu-btn{
-    display:flex;
-    align-items:center;
-    justify-content:center;
+      /* Nav link active state */
+      .nav-item.active {
+        color: var(--gold) !important;
+        background: rgba(201, 168, 76, 0.08);
+        border-left-color: var(--gold) !important;
+      }
+
+      /* Section divider label above nav groups (optional) */
+      .nav-section-label {
+        font-size: 0.62rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(138, 155, 176, 0.5);
+        padding: 1rem 1rem 0.4rem;
+      }
+
+     @media (max-width: 768px) {
+  .menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  .sidebar{
-    position:fixed;
-    top:0;
-    left:-300px;
-    width:280px;
-    height:100vh;
-    overflow-y:auto;
-    transition:left .3s ease;
-    z-index:1000;
+  .sidebar {
+    left: -300px !important;
+    z-index: 1000 !important;
   }
 
-  .sidebar.show{
-    left:0;
+  .sidebar.show {
+    left: 0 !important;
   }
 }
-  </style>
-</head>
-<body>
-<div id="toast"></div>
+    </style>
+  </head>
 
-<div style="display:grid;grid-template-columns:260px 1fr;min-height:100vh;" class="billing-layout">
+  <body>
+    <div id="toast"></div>
 
-  <!-- Sidebar -->
-  <!-- Mobile Menu Button -->
-<button id="menuBtn" class="menu-btn">
-  ☰
-</button>
+    <div
+      style="display: grid; grid-template-columns: 260px 1fr; min-height: 100vh"
+      class="billing-layout"
+    >
+      <!-- Sidebar -->
+      <!-- Mobile Menu Button -->
+      <button id="menuBtn" class="menu-btn">☰</button>
 
-<!-- Overlay -->
-<div id="sidebarOverlay" class="sidebar-overlay"></div>
+      <!-- Overlay -->
+      <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
-<!-- Sidebar -->
-<div id="sidebar" class="sidebar"
-     style="background:#060F1E;border-right:1px solid rgba(201,168,76,0.1);display:flex;flex-direction:column;padding:2rem 0;">
+      <!-- Sidebar -->
+      <div
+        id="sidebar"
+        class="sidebar"
+        style="
+  background: #060f1e;
+  border-right: 1px solid rgba(201, 168, 76, 0.1);
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 260px;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 100;
+  transition: left 0.3s ease;
+"
+      >
+        <a
+          href="index.html"
+          class="logo-text"
+          style="
+            color: var(--gold);
+            font-size: 1.3rem;
+            text-decoration: none;
+            padding: 0 1.5rem;
+            margin-bottom: 2.5rem;
+            display: block;
+          "
+        >
+          Curtz <span style="color: var(--cream); font-weight: 300">Home</span>
+        </a>
 
-  <a href="index.html" class="logo-text"
-     style="color:var(--gold);font-size:1.3rem;text-decoration:none;padding:0 1.5rem;margin-bottom:2.5rem;display:block;">
-    Curtz <span style="color:var(--cream);font-weight:300;">Home</span>
-  </a>
+        <!-- User card -->
+        <div
+          style="
+            margin: 0 1rem 2rem;
+            padding: 1rem;
+            background: rgba(201, 168, 76, 0.05);
+            border: 1px solid rgba(201, 168, 76, 0.12);
+          "
+        >
+          <div
+            style="
+              width: 44px;
+              height: 44px;
+              background: rgba(201, 168, 76, 0.15);
+              border: 1px solid var(--gold);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-family: &quot;Cormorant Garamond&quot;, serif;
+              font-size: 1.2rem;
+              color: var(--gold);
+              margin-bottom: 0.8rem;
+            "
+            id="userAvatar"
+          >
+            JD
+          </div>
 
-  <!-- User card -->
-  <div style="margin:0 1rem 2rem;padding:1rem;background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.12);">
-    <div style="width:44px;height:44px;background:rgba(201,168,76,0.15);border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--gold);margin-bottom:0.8rem;"
-         id="userAvatar">
-      JD
+          <p
+            id="userName"
+            style="color: var(--cream); font-size: 0.9rem; font-weight: 500"
+          >
+            John Doe
+          </p>
+
+          <p
+            id="userEmail"
+            style="color: var(--text-muted); font-size: 0.75rem"
+          >
+            john@email.com
+          </p>
+        </div>
+
+        <nav style="flex: 1; padding: 0 0.75rem">
+          <a
+            href="#"
+            onclick="showSection('overview')"
+            id="sOverview"
+            class="nav-item"
+            style="
+              display: flex;
+              align-items: center;
+              gap: 0.75rem;
+              padding: 0.75rem 1rem;
+              margin-bottom: 0.25rem;
+              color: var(--text-muted);
+              text-decoration: none;
+              font-size: 0.82rem;
+              letter-spacing: 0.04em;
+              border-left: 2px solid transparent;
+              transition: all 0.2s;
+            "
+          >
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              style="flex-shrink: 0"
+            >
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg>
+            Overview
+          </a>
+
+          <a
+            href="#"
+            onclick="showSection('invest')"
+            id="sInvest"
+            class="nav-item"
+            style="
+              display: flex;
+              align-items: center;
+              gap: 0.75rem;
+              padding: 0.75rem 1rem;
+              margin-bottom: 0.25rem;
+              color: var(--text-muted);
+              text-decoration: none;
+              font-size: 0.82rem;
+              letter-spacing: 0.04em;
+              border-left: 2px solid transparent;
+              transition: all 0.2s;
+            "
+          >
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              style="flex-shrink: 0"
+            >
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+            </svg>
+            New Investment
+          </a>
+
+          <a
+            href="#"
+            onclick="showSection('property')"
+            id="sProperty"
+            class="nav-item"
+            style="
+              display: flex;
+              align-items: center;
+              gap: 0.75rem;
+              padding: 0.75rem 1rem;
+              margin-bottom: 0.25rem;
+              color: var(--text-muted);
+              text-decoration: none;
+              font-size: 0.82rem;
+              letter-spacing: 0.04em;
+              border-left: 2px solid transparent;
+              transition: all 0.2s;
+            "
+          >
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              style="flex-shrink: 0"
+            >
+              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+            </svg>
+            Buy Property
+          </a>
+
+          <a
+            href="#"
+            onclick="showSection('portfolio')"
+            id="sPortfolio"
+            class="nav-item"
+            style="
+              display: flex;
+              align-items: center;
+              gap: 0.75rem;
+              padding: 0.75rem 1rem;
+              margin-bottom: 0.25rem;
+              color: var(--text-muted);
+              text-decoration: none;
+              font-size: 0.82rem;
+              letter-spacing: 0.04em;
+              border-left: 2px solid transparent;
+              transition: all 0.2s;
+            "
+          >
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              style="flex-shrink: 0"
+            >
+              <line x1="18" y1="20" x2="18" y2="10" />
+              <line x1="12" y1="20" x2="12" y2="4" />
+              <line x1="6" y1="20" x2="6" y2="14" />
+            </svg>
+            My Portfolio
+          </a>
+
+          <a
+            href="#"
+            onclick="showSection('profile')"
+            id="sProfile"
+            class="nav-item"
+            style="
+              display: flex;
+              align-items: center;
+              gap: 0.75rem;
+              padding: 0.75rem 1rem;
+              margin-bottom: 0.25rem;
+              color: var(--text-muted);
+              text-decoration: none;
+              font-size: 0.82rem;
+              letter-spacing: 0.04em;
+              border-left: 2px solid transparent;
+              transition: all 0.2s;
+            "
+          >
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              style="flex-shrink: 0"
+            >
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+            Profile
+          </a>
+        </nav>
+
+        <div style="padding: 1.5rem">
+          <button
+            onclick="logoutUser()"
+            class="btn-outline"
+            style="
+              width: 100%;
+              text-align: center;
+              padding: 0.6rem;
+              font-size: 0.75rem;
+            "
+          >
+            Sign Out
+          </button>
+        </div>
+      </div>
+
+      <!-- Main content -->
+
+      <div style="background: var(--navy); overflow-y: auto; padding: 2rem; margin-left: 260px;"></div>
+        <div style="padding: 2.5rem; max-width: 960px">
+          <!-- OVERVIEW -->
+          <div id="sec-overview">
+            <h2
+              style="
+                font-size: 1.8rem;
+                font-weight: 300;
+                color: var(--cream);
+                margin-bottom: 0.4rem;
+              "
+            >
+              Good morning,
+              <em id="greetName" style="color: var(--gold)">John</em>
+            </h2>
+            <p
+              style="
+                color: var(--text-muted);
+                margin-bottom: 2rem;
+                font-size: 0.875rem;
+              "
+            >
+              Here's a snapshot of your portfolio
+            </p>
+
+            <div
+              style="
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1.5rem;
+                margin-bottom: 2.5rem;
+              "
+              class="overview-cards"
+            >
+              <div
+                style="
+                  padding: 1.5rem;
+                  background: rgba(201, 168, 76, 0.06);
+                  border: 1px solid rgba(201, 168, 76, 0.15);
+                "
+              >
+                <p
+                  style="
+                    font-size: 0.7rem;
+                    letter-spacing: 0.12em;
+                    text-transform: uppercase;
+                    color: var(--text-muted);
+                    margin-bottom: 0.6rem;
+                  "
+                >
+                  Total Invested
+                </p>
+                <p
+                  style="
+                    font-family: &quot;Cormorant Garamond&quot;, serif;
+                    font-size: 1.8rem;
+                    color: var(--gold);
+                    font-weight: 600;
+                  "
+                  id="totalInvested"
+                >
+                  $0
+                </p>
+              </div>
+              <div
+                style="
+                  padding: 1.5rem;
+                  background: rgba(76, 175, 125, 0.06);
+                  border: 1px solid rgba(76, 175, 125, 0.15);
+                "
+              >
+                <p
+                  style="
+                    font-size: 0.7rem;
+                    letter-spacing: 0.12em;
+                    text-transform: uppercase;
+                    color: var(--text-muted);
+                    margin-bottom: 0.6rem;
+                  "
+                >
+                  Returns Earned
+                </p>
+                <p
+                  style="
+                    font-family: &quot;Cormorant Garamond&quot;, serif;
+                    font-size: 1.8rem;
+                    color: var(--success);
+                    font-weight: 600;
+                  "
+                  id="totalReturns"
+                >
+                  $0
+                </p>
+              </div>
+              <div
+                style="
+                  padding: 1.5rem;
+                  background: rgba(26, 51, 86, 0.5);
+                  border: 1px solid rgba(201, 168, 76, 0.1);
+                "
+              >
+                <p
+                  style="
+                    font-size: 0.7rem;
+                    letter-spacing: 0.12em;
+                    text-transform: uppercase;
+                    color: var(--text-muted);
+                    margin-bottom: 0.6rem;
+                  "
+                >
+                  Properties
+                </p>
+                <p
+                  style="
+                    font-family: &quot;Cormorant Garamond&quot;, serif;
+                    font-size: 1.8rem;
+                    color: var(--cream);
+                    font-weight: 600;
+                  "
+                  id="totalProps"
+                >
+                  0
+                </p>
+              </div>
+            </div>
+
+            <div
+              style="
+                background: rgba(26, 51, 86, 0.3);
+                border: 1px solid rgba(201, 168, 76, 0.1);
+                padding: 2rem;
+              "
+            >
+              <h3
+                style="
+                  font-size: 1.1rem;
+                  font-weight: 400;
+                  color: var(--cream);
+                  margin-bottom: 1.5rem;
+                "
+              >
+                Recent Transactions
+              </h3>
+              <div id="recentTx">
+                <p style="color: var(--text-muted); font-size: 0.875rem">
+                  No transactions yet.
+                  <a
+                    href="#"
+                    onclick="showSection('invest')"
+                    style="color: var(--gold)"
+                    >Start investing</a
+                  >
+                  or
+                  <a
+                    href="#"
+                    onclick="showSection('property')"
+                    style="color: var(--gold)"
+                    >buy a property</a
+                  >.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- INVESTMENT FORM -->
+          <div id="sec-invest" style="display: none">
+            <h2
+              style="
+                font-size: 1.8rem;
+                font-weight: 300;
+                color: var(--cream);
+                margin-bottom: 0.4rem;
+              "
+            >
+              New <em style="color: var(--gold)">Investment</em>
+            </h2>
+            <p
+              style="
+                color: var(--text-muted);
+                margin-bottom: 2.5rem;
+                font-size: 0.875rem;
+              "
+            >
+              Complete the form below to initiate an investment
+            </p>
+
+            <div
+              style="
+                background: rgba(26, 51, 86, 0.3);
+                border: 1px solid rgba(201, 168, 76, 0.1);
+                padding: 2.5rem;
+              "
+            >
+              <form id="investForm" onsubmit="submitInvestment(event)">
+                <!-- Account Info -->
+                <div
+                  style="
+                    margin-bottom: 2rem;
+                    padding-bottom: 2rem;
+                    border-bottom: 1px solid rgba(201, 168, 76, 0.1);
+                  "
+                >
+                  <p
+                    style="
+                      font-size: 0.72rem;
+                      letter-spacing: 0.15em;
+                      text-transform: uppercase;
+                      color: var(--gold);
+                      margin-bottom: 1.2rem;
+                    "
+                  >
+                    Account Details
+                  </p>
+                  <div
+                    style="
+                      display: grid;
+                      grid-template-columns: 1fr 1fr;
+                      gap: 1.2rem;
+                    "
+                    class="form-2col"
+                  >
+                    <div>
+                      <label class="form-label">Email</label>
+                      <input
+                        type="email"
+                        id="invEmail"
+                        name="email"
+                        class="form-input"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label class="form-label">Password (confirm)</label>
+                      <input
+                        type="password"
+                        id="invPassword"
+                        name="password"
+                        class="form-input"
+                        placeholder="Verify your account"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Investment Details -->
+                <div
+                  style="
+                    margin-bottom: 2rem;
+                    padding-bottom: 2rem;
+                    border-bottom: 1px solid rgba(201, 168, 76, 0.1);
+                  "
+                >
+                  <p
+                    style="
+                      font-size: 0.72rem;
+                      letter-spacing: 0.15em;
+                      text-transform: uppercase;
+                      color: var(--gold);
+                      margin-bottom: 1.2rem;
+                    "
+                  >
+                    Investment Details
+                  </p>
+                  <div
+                    style="
+                      display: grid;
+                      grid-template-columns: 1fr 1fr;
+                      gap: 1.2rem;
+                      margin-bottom: 1.2rem;
+                    "
+                    class="form-2col"
+                  >
+                    <div>
+                      <label class="form-label">Investment Plan</label>
+                      <select
+                        name="plan"
+                        id="invPlan"
+                        class="form-input"
+                        onchange="
+                          updateTenureOptions();
+                          updateInvPreview();
+                        "
+                      ></select>
+                    </div>
+                    <div>
+                      <label class="form-label">Amount ($)</label>
+                      <input
+                        type="number"
+                        name="amount"
+                        id="invAmount"
+                        class="form-input"
+                        placeholder="Enter amount"
+                        min="0"
+                      />
+                    </div>
+                    <div>
+                      <label class="form-label">Tenure</label>
+                      <select
+                        name="tenure"
+                        id="invTenure"
+                        class="form-input"
+                        onchange="updateInvPreview()"
+                      >
+                        <option value="12">12 Months</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="form-label">Payout Frequency</label>
+                      <select name="payout_freq" class="form-input">
+                        <option value="monthly">Monthly</option>
+                        <option value="quarterly">Quarterly</option>
+                        <option value="weekly">Weekly</option>
+                      </select>
+                    </div>
+                  </div>
+                  <!-- Preview -->
+                  <div
+                    id="invPreview"
+                    style="
+                      padding: 1.5rem;
+                      background: rgba(201, 168, 76, 0.05);
+                      border: 1px solid rgba(201, 168, 76, 0.15);
+                      display: grid;
+                      grid-template-columns: 1fr 1fr 1fr;
+                      gap: 1rem;
+                      text-align: center;
+                    "
+                  >
+                    <div>
+                      <p
+                        style="
+                          font-size: 0.68rem;
+                          color: var(--text-muted);
+                          letter-spacing: 0.1em;
+                          text-transform: uppercase;
+                          margin-bottom: 0.3rem;
+                        "
+                      >
+                        Expected Return
+                      </p>
+                      <p
+                        id="prevReturn"
+                        style="
+                          color: var(--gold);
+                          font-family: &quot;Cormorant Garamond&quot;, serif;
+                          font-size: 1.2rem;
+                        "
+                      >
+                        —
+                      </p>
+                    </div>
+                    <div>
+                      <p
+                        style="
+                          font-size: 0.68rem;
+                          color: var(--text-muted);
+                          letter-spacing: 0.1em;
+                          text-transform: uppercase;
+                          margin-bottom: 0.3rem;
+                        "
+                      >
+                        Total Value
+                      </p>
+                      <p
+                        id="prevTotal"
+                        style="
+                          color: var(--cream);
+                          font-family: &quot;Cormorant Garamond&quot;, serif;
+                          font-size: 1.2rem;
+                        "
+                      >
+                        —
+                      </p>
+                    </div>
+                    <div>
+                      <p
+                        style="
+                          font-size: 0.68rem;
+                          color: var(--text-muted);
+                          letter-spacing: 0.1em;
+                          text-transform: uppercase;
+                          margin-bottom: 0.3rem;
+                        "
+                      >
+                        Maturity Date
+                      </p>
+                      <p
+                        id="prevDate"
+                        style="
+                          color: var(--cream);
+                          font-family: &quot;Cormorant Garamond&quot;, serif;
+                          font-size: 1.2rem;
+                        "
+                      >
+                        —
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Payment -->
+                <div style="margin-bottom: 2rem">
+                  <p
+                    style="
+                      font-size: 0.72rem;
+                      letter-spacing: 0.15em;
+                      text-transform: uppercase;
+                      color: var(--gold);
+                      margin-bottom: 1.2rem;
+                    "
+                  >
+                    Payment Method
+                  </p>
+                  <div
+                    style="
+                      display: flex;
+                      gap: 1rem;
+                      margin-bottom: 1.2rem;
+                      flex-wrap: wrap;
+                    "
+                  >
+                    <label
+                      style="
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                        cursor: pointer;
+                        color: var(--cream);
+                        font-size: 0.875rem;
+                      "
+                      ><input
+                        type="radio"
+                        name="payment_method"
+                        value="bank_transfer"
+                        checked
+                        style="accent-color: var(--gold)"
+                      />
+                      Bank Transfer</label
+                    >
+                    <label
+                      style="
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                        cursor: pointer;
+                        color: var(--cream);
+                        font-size: 0.875rem;
+                      "
+                      ><input
+                        type="radio"
+                        name="payment_method"
+                        value="card"
+                        style="accent-color: var(--gold)"
+                      />
+                      Debit/Credit Card</label
+                    >
+                    <label
+                      style="
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                        cursor: pointer;
+                        color: var(--cream);
+                        font-size: 0.875rem;
+                      "
+                      ><input
+                        type="radio"
+                        name="payment_method"
+                        value="cheque"
+                        style="accent-color: var(--gold)"
+                      />
+                      Bank Cheque</label
+                    >
+                  </div>
+                  <div>
+                    <label class="form-label"
+                      >Transaction Reference / Proof</label
+                    >
+                    <input
+                      type="text"
+                      name="tx_ref"
+                      class="form-input"
+                      placeholder="Enter bank transfer reference or transaction ID"
+                    />
+                  </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap">
+                  <button
+                    type="submit"
+                    id="investBtn"
+                    class="btn-gold"
+                    style="flex: 1; text-align: center; padding: 1rem"
+                  >
+                    Submit Investment
+                  </button>
+                  <button
+                    type="button"
+                    onclick="showSection('overview')"
+                    class="btn-outline"
+                    style="padding: 1rem 2rem"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- PROPERTY PURCHASE FORM -->
+          <div id="sec-property" style="display: none">
+            <h2
+              style="
+                font-size: 1.8rem;
+                font-weight: 300;
+                color: var(--cream);
+                margin-bottom: 0.4rem;
+              "
+            >
+              Property <em style="color: var(--gold)">Purchase</em>
+            </h2>
+            <p
+              style="
+                color: var(--text-muted);
+                margin-bottom: 2.5rem;
+                font-size: 0.875rem;
+              "
+            >
+              Initiate a property acquisition request
+            </p>
+
+            <div
+              style="
+                background: rgba(26, 51, 86, 0.3);
+                border: 1px solid rgba(201, 168, 76, 0.1);
+                padding: 2.5rem;
+              "
+            >
+              <form id="propertyForm" onsubmit="submitProperty(event)">
+                <!-- Account Info -->
+                <div
+                  style="
+                    margin-bottom: 2rem;
+                    padding-bottom: 2rem;
+                    border-bottom: 1px solid rgba(201, 168, 76, 0.1);
+                  "
+                >
+                  <p
+                    style="
+                      font-size: 0.72rem;
+                      letter-spacing: 0.15em;
+                      text-transform: uppercase;
+                      color: var(--gold);
+                      margin-bottom: 1.2rem;
+                    "
+                  >
+                    Account Verification
+                  </p>
+                  <div
+                    style="
+                      display: grid;
+                      grid-template-columns: 1fr 1fr;
+                      gap: 1.2rem;
+                    "
+                    class="form-2col"
+                  >
+                    <div>
+                      <label class="form-label">Email</label>
+                      <input
+                        type="email"
+                        id="propEmail"
+                        name="email"
+                        class="form-input"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label class="form-label">Password (confirm)</label>
+                      <input
+                        type="password"
+                        name="password"
+                        class="form-input"
+                        placeholder="Verify your account"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Property selection -->
+                <div
+                  style="
+                    margin-bottom: 2rem;
+                    padding-bottom: 2rem;
+                    border-bottom: 1px solid rgba(201, 168, 76, 0.1);
+                  "
+                >
+                  <p
+                    style="
+                      font-size: 0.72rem;
+                      letter-spacing: 0.15em;
+                      text-transform: uppercase;
+                      color: var(--gold);
+                      margin-bottom: 1.2rem;
+                    "
+                  >
+                    Property Details
+                  </p>
+                  <div
+                    style="
+                      display: grid;
+                      grid-template-columns: 1fr 1fr;
+                      gap: 1.2rem;
+                      margin-bottom: 1.2rem;
+                    "
+                    class="form-2col"
+                  >
+                    <div>
+                      <label class="form-label">Property of Interest</label>
+                      <select
+                        name="property_id"
+                        id="propSelect"
+                        class="form-input"
+                      >
+                        <option value="">Loading properties…</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="form-label">Purchase Type</label>
+                      <select name="purchase_type" class="form-input">
+                        <option value="outright">Outright Purchase</option>
+                        <option value="installment">Installment Plan</option>
+                        <option value="mortgage">Mortgage Financing</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label class="form-label"
+                      >Additional Notes / Specific Property</label
+                    >
+                    <textarea
+                      name="notes"
+                      class="form-input"
+                      rows="3"
+                      placeholder="Any specific requirements, preferred property name, location, etc."
+                      style="resize: vertical"
+                    ></textarea>
+                  </div>
+                </div>
+
+                <!-- Buyer info -->
+                <div
+                  style="
+                    margin-bottom: 2rem;
+                    padding-bottom: 2rem;
+                    border-bottom: 1px solid rgba(201, 168, 76, 0.1);
+                  "
+                >
+                  <p
+                    style="
+                      font-size: 0.72rem;
+                      letter-spacing: 0.15em;
+                      text-transform: uppercase;
+                      color: var(--gold);
+                      margin-bottom: 1.2rem;
+                    "
+                  >
+                    Buyer Information
+                  </p>
+                  <div
+                    style="
+                      display: grid;
+                      grid-template-columns: 1fr 1fr;
+                      gap: 1.2rem;
+                      margin-bottom: 1.2rem;
+                    "
+                    class="form-2col"
+                  >
+                    <div>
+                      <label class="form-label">Full Legal Name</label>
+                      <input
+                        type="text"
+                        name="full_name"
+                        class="form-input"
+                        placeholder="As on ID document"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label class="form-label">Phone Number</label>
+                      <input
+                        type="tel"
+                        name="phone"
+                        class="form-input"
+                        placeholder="+234 xxx xxx xxxx"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label class="form-label">SSN</label>
+                      <input
+                        type="text"
+                        name="nin"
+                        class="form-input"
+                        placeholder="National ID Number"
+                      />
+                    </div>
+                    <div>
+                      <label class="form-label">Source of Funds</label>
+                      <select name="source_of_funds" class="form-input">
+                        <option>Personal Savings</option>
+                        <option>Business Income</option>
+                        <option>Loan / Mortgage</option>
+                        <option>Inheritance</option>
+                        <option>Other</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label class="form-label">Residential Address</label>
+                    <textarea
+                      name="address"
+                      class="form-input"
+                      rows="2"
+                      placeholder="Your current address"
+                      style="resize: none"
+                    ></textarea>
+                  </div>
+                </div>
+
+                <!-- Payment -->
+                <div style="margin-bottom: 2rem">
+                  <p
+                    style="
+                      font-size: 0.72rem;
+                      letter-spacing: 0.15em;
+                      text-transform: uppercase;
+                      color: var(--gold);
+                      margin-bottom: 1.2rem;
+                    "
+                  >
+                    Initial Deposit
+                  </p>
+                  <div
+                    style="
+                      display: grid;
+                      grid-template-columns: 1fr 1fr;
+                      gap: 1.2rem;
+                    "
+                    class="form-2col"
+                  >
+                    <div>
+                      <label class="form-label">Deposit Amount ($)</label>
+                      <input
+                        type="number"
+                        name="deposit_amount"
+                        class="form-input"
+                        placeholder="Initial deposit / commitment fee"
+                      />
+                    </div>
+                    <div>
+                      <label class="form-label">Payment Method</label>
+                      <select name="payment_method" class="form-input">
+                        <option value="bank_transfer">Bank Transfer</option>
+                        <option value="card">Debit Card</option>
+                        <option value="cheque">Bank Cheque</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div style="margin-top: 1.2rem">
+                    <label class="form-label">Transaction Reference</label>
+                    <input
+                      type="text"
+                      name="tx_ref"
+                      class="form-input"
+                      placeholder="Payment reference or proof of deposit"
+                    />
+                  </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap">
+                  <button
+                    type="submit"
+                    id="propertyBtn"
+                    class="btn-gold"
+                    style="flex: 1; text-align: center; padding: 1rem"
+                  >
+                    Submit Purchase Request
+                  </button>
+                  <button
+                    type="button"
+                    onclick="showSection('overview')"
+                    class="btn-outline"
+                    style="padding: 1rem 2rem"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- PORTFOLIO -->
+          <div id="sec-portfolio" style="display: none">
+            <h2
+              style="
+                font-size: 1.8rem;
+                font-weight: 300;
+                color: var(--cream);
+                margin-bottom: 0.4rem;
+              "
+            >
+              My <em style="color: var(--gold)">Portfolio</em>
+            </h2>
+            <p
+              style="
+                color: var(--text-muted);
+                margin-bottom: 2.5rem;
+                font-size: 0.875rem;
+              "
+            >
+              Track all your investments and property transactions
+            </p>
+
+            <div
+              style="
+                background: rgba(26, 51, 86, 0.3);
+                border: 1px solid rgba(201, 168, 76, 0.1);
+                padding: 2rem;
+                margin-bottom: 2rem;
+              "
+            >
+              <h3
+                style="
+                  font-size: 1rem;
+                  font-weight: 500;
+                  color: var(--cream);
+                  margin-bottom: 1.5rem;
+                  letter-spacing: 0.05em;
+                "
+              >
+                Investment Portfolio
+              </h3>
+              <div style="overflow-x: auto">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Plan</th>
+                      <th>Amount</th>
+                      <th>Rate</th>
+                      <th>Tenure</th>
+                      <th>Expected Return</th>
+                      <th>Status</th>
+                      <th>Date</th>
+                    </tr>
+                  </thead>
+                  <tbody id="investmentTable">
+                    <tr>
+                      <td
+                        colspan="7"
+                        style="
+                          color: var(--text-muted);
+                          text-align: center;
+                          padding: 2rem;
+                        "
+                      >
+                        No investment records found.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div
+              style="
+                background: rgba(26, 51, 86, 0.3);
+                border: 1px solid rgba(201, 168, 76, 0.1);
+                padding: 2rem;
+              "
+            >
+              <h3
+                style="
+                  font-size: 1rem;
+                  font-weight: 500;
+                  color: var(--cream);
+                  margin-bottom: 1.5rem;
+                  letter-spacing: 0.05em;
+                "
+              >
+                Property Purchases
+              </h3>
+              <div style="overflow-x: auto">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Property</th>
+                      <th>Location</th>
+                      <th>Type</th>
+                      <th>Amount</th>
+                      <th>Status</th>
+                      <th>Date</th>
+                    </tr>
+                  </thead>
+                  <tbody id="propertyTable">
+                    <tr>
+                      <td
+                        colspan="6"
+                        style="
+                          color: var(--text-muted);
+                          text-align: center;
+                          padding: 2rem;
+                        "
+                      >
+                        No property records found.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- PROFILE -->
+          <div id="sec-profile" style="display: none">
+            <h2
+              style="
+                font-size: 1.8rem;
+                font-weight: 300;
+                color: var(--cream);
+                margin-bottom: 2.5rem;
+              "
+            >
+              Account <em style="color: var(--gold)">Profile</em>
+            </h2>
+            <div
+              style="
+                background: rgba(26, 51, 86, 0.3);
+                border: 1px solid rgba(201, 168, 76, 0.1);
+                padding: 2.5rem;
+              "
+            >
+              <form id="profileForm" onsubmit="saveProfile(event)">
+                <div
+                  style="
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 1.2rem;
+                    margin-bottom: 1.2rem;
+                  "
+                  class="form-2col"
+                >
+                  <div>
+                    <label class="form-label">First Name</label
+                    ><input
+                      type="text"
+                      name="first_name"
+                      id="pfFirst"
+                      class="form-input"
+                    />
+                  </div>
+                  <div>
+                    <label class="form-label">Last Name</label
+                    ><input
+                      type="text"
+                      name="last_name"
+                      id="pfLast"
+                      class="form-input"
+                    />
+                  </div>
+                  <div>
+                    <label class="form-label">Email</label
+                    ><input
+                      type="email"
+                      name="email"
+                      id="pfEmail"
+                      class="form-input"
+                    />
+                  </div>
+                  <div>
+                    <label class="form-label">Phone</label
+                    ><input
+                      type="tel"
+                      name="phone"
+                      id="pfPhone"
+                      class="form-input"
+                    />
+                  </div>
+                </div>
+                <div style="margin-bottom: 2rem">
+                  <label class="form-label">Address</label
+                  ><textarea
+                    name="address"
+                    id="pfAddress"
+                    class="form-input"
+                    rows="2"
+                    style="resize: none"
+                  ></textarea>
+                </div>
+                <div
+                  style="
+                    padding-top: 1.5rem;
+                    border-top: 1px solid rgba(201, 168, 76, 0.1);
+                  "
+                >
+                  <p
+                    style="
+                      font-size: 0.72rem;
+                      letter-spacing: 0.15em;
+                      text-transform: uppercase;
+                      color: var(--gold);
+                      margin-bottom: 1.2rem;
+                    "
+                  >
+                    Change Password
+                  </p>
+                  <div
+                    style="
+                      display: grid;
+                      grid-template-columns: 1fr 1fr;
+                      gap: 1.2rem;
+                    "
+                    class="form-2col"
+                  >
+                    <div>
+                      <label class="form-label">Current Password</label
+                      ><input
+                        type="password"
+                        name="current_pw"
+                        class="form-input"
+                      />
+                    </div>
+                    <div>
+                      <label class="form-label">New Password</label
+                      ><input
+                        type="password"
+                        name="new_pw"
+                        class="form-input"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div style="margin-top: 2rem">
+                  <button type="submit" id="profileBtn" class="btn-gold">
+                    Save Changes
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <p id="userName" style="color:var(--cream);font-size:0.9rem;font-weight:500;">
-      John Doe
-    </p>
+    <style>
+      @media (max-width: 768px) {
+        .billing-layout {
+          grid-template-columns: 1fr !important;
+        }
 
-    <p id="userEmail" style="color:var(--text-muted);font-size:0.75rem;">
-      john@email.com
-    </p>
-  </div>
+        .billing-layout > div:first-child {
+          display: flex !important;
+        }
 
-  <nav class="sidebar-nav px-4" style="flex:1;">
-    <a href="#" onclick="showSection('overview')" class="sidebar-link active flex gap-2 nav-item" id="sOverview">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <rect x="3" y="3" width="7" height="7"/>
-        <rect x="14" y="3" width="7" height="7"/>
-        <rect x="14" y="14" width="7" height="7"/>
-        <rect x="3" y="14" width="7" height="7"/>
-      </svg>
-      Overview
-    </a>
+        .billing-layout > div:last-child {
+          margin-left: 0 !important;
+        }
 
-    <a href="#" onclick="showSection('invest')" class="sidebar-link flex gap-2 nav-item" id="sInvest">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-      </svg>
-      New Investment
-    </a>
+        .form-2col {
+          grid-template-columns: 1fr !important;
+        }
 
-    <a href="#" onclick="showSection('property')" class="sidebar-link flex gap-2 nav-item" id="sProperty">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
-      </svg>
-      Buy Property
-    </a>
+        .overview-cards {
+          grid-template-columns: 1fr !important;
+        }
+      }
+    </style>
 
-    <a href="#" onclick="showSection('portfolio')" class="sidebar-link flex gap-2 nav-item" id="sPortfolio">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <line x1="18" y1="20" x2="18" y2="10"/>
-        <line x1="12" y1="20" x2="12" y2="4"/>
-        <line x1="6" y1="20" x2="6" y2="14"/>
-      </svg>
-      My Portfolio
-    </a>
+    <script src="js/main.js"></script>
+    <script>
+      // Auth guard
+      if (!Auth.isLoggedIn()) {
+        window.location.href = "login.html";
+      }
 
-    <a href="#" onclick="showSection('profile')" class="sidebar-link flex gap-2 nav-item" id="sProfile">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
-        <circle cx="12" cy="7" r="4"/>
-      </svg>
-      Profile
-    </a>
-  </nav>
+      // Load user info
+      const user = Auth.getUser() || {
+        first_name: "John",
+        last_name: "Doe",
+        email: "john@email.com",
+      };
+      document.getElementById("userName").textContent =
+        `${user.first_name} ${user.last_name}`;
+      document.getElementById("userEmail").textContent = user.email;
+      document.getElementById("greetName").textContent = user.first_name;
+      document.getElementById("userAvatar").textContent =
+        (user.first_name?.[0] || "J") + (user.last_name?.[0] || "D");
+      document.getElementById("invEmail").value = user.email;
+      document.getElementById("propEmail").value = user.email;
+      document.getElementById("pfFirst").value = user.first_name || "";
+      document.getElementById("pfLast").value = user.last_name || "";
+      document.getElementById("pfEmail").value = user.email || "";
+      document.getElementById("pfPhone").value = user.phone || "";
 
-  <div style="padding:1.5rem;">
-    <button onclick="logoutUser()" class="btn-outline"
-            style="width:100%;text-align:center;padding:0.6rem;font-size:0.75rem;">
-      Sign Out
-    </button>
-  </div>
+      function showSection(name) {
+        ["overview", "invest", "property", "portfolio", "profile"].forEach(
+          function (s) {
+            // Show/hide content
+            document.getElementById("sec-" + s).style.display =
+              s === name ? "block" : "none";
 
-</div>
+            // Style nav link
+            var el = document.getElementById(
+              "s" + s.charAt(0).toUpperCase() + s.slice(1),
+            );
+            if (el) {
+              el.classList.toggle("active", s === name);
+              el.style.borderLeftColor =
+                s === name ? "var(--gold)" : "transparent";
+              el.style.color = s === name ? "var(--gold)" : "";
+              el.style.background = s === name ? "rgba(201,168,76,0.08)" : "";
+            }
+          },
+        );
 
-  <!-- Main content -->
-  <div style="background:var(--navy);overflow-y:auto;">
-    <div style="padding:2.5rem;max-width:960px;">
+        if (name === "portfolio") loadPortfolio();
+        if (name === "overview") loadOverview();
+      }
 
-      <!-- OVERVIEW -->
-      <div id="sec-overview">
-        <h2 style="font-size:1.8rem;font-weight:300;color:var(--cream);margin-bottom:0.4rem;">Good morning, <em id="greetName" style="color:var(--gold);">John</em></h2>
-        <p style="color:var(--text-muted);margin-bottom:2rem;font-size:0.875rem;">Here's a snapshot of your portfolio</p>
+      var PLAN_CONFIG = {}; // keyed by plan id, populated after fetch
 
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-bottom:2.5rem;" class="overview-cards">
-          <div style="padding:1.5rem;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.15);">
-            <p style="font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.6rem;">Total Invested</p>
-            <p style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--gold);font-weight:600;" id="totalInvested">$0</p>
-          </div>
-          <div style="padding:1.5rem;background:rgba(76,175,125,0.06);border:1px solid rgba(76,175,125,0.15);">
-            <p style="font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.6rem;">Returns Earned</p>
-            <p style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--success);font-weight:600;" id="totalReturns">$0</p>
-          </div>
-          <div style="padding:1.5rem;background:rgba(26,51,86,0.5);border:1px solid rgba(201,168,76,0.1);">
-            <p style="font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.6rem;">Properties</p>
-            <p style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--cream);font-weight:600;" id="totalProps">0</p>
-          </div>
-        </div>
+      function updateInvPreview() {
+        var planId = document.getElementById("invPlan").value;
+        var cfg = PLAN_CONFIG[planId];
+        if (!cfg) return;
 
-        <div style="background:rgba(26,51,86,0.3);border:1px solid rgba(201,168,76,0.1);padding:2rem;">
-          <h3 style="font-size:1.1rem;font-weight:400;color:var(--cream);margin-bottom:1.5rem;">Recent Transactions</h3>
-          <div id="recentTx">
-            <p style="color:var(--text-muted);font-size:0.875rem;">No transactions yet. <a href="#" onclick="showSection('invest')" style="color:var(--gold);">Start investing</a> or <a href="#" onclick="showSection('property')" style="color:var(--gold);">buy a property</a>.</p>
-          </div>
-        </div>
-      </div>
+        var amount =
+          parseFloat(document.getElementById("invAmount").value) || 0;
+        var tenure = parseFloat(document.getElementById("invTenure").value);
+        var rate = parseFloat(cfg.rate) / 100;
+        var ret = amount * rate * (tenure / 12);
+        var total = amount + ret;
+        var maturity = new Date();
+        maturity.setMonth(maturity.getMonth() + tenure);
 
-      <!-- INVESTMENT FORM -->
-      <div id="sec-invest" style="display:none;">
-        <h2 style="font-size:1.8rem;font-weight:300;color:var(--cream);margin-bottom:0.4rem;">New <em style="color:var(--gold);">Investment</em></h2>
-        <p style="color:var(--text-muted);margin-bottom:2.5rem;font-size:0.875rem;">Complete the form below to initiate an investment</p>
+        document.getElementById("prevReturn").textContent = amount
+          ? "$" + Math.round(ret).toLocaleString()
+          : "—";
+        document.getElementById("prevTotal").textContent = amount
+          ? "$" + Math.round(total).toLocaleString()
+          : "—";
+        document.getElementById("prevDate").textContent = amount
+          ? maturity.toLocaleDateString("en-US", {
+              month: "short",
+              year: "numeric",
+            })
+          : "—";
+      }
 
-        <div style="background:rgba(26,51,86,0.3);border:1px solid rgba(201,168,76,0.1);padding:2.5rem;">
-          <form id="investForm" onsubmit="submitInvestment(event)">
-            <!-- Account Info -->
-            <div style="margin-bottom:2rem;padding-bottom:2rem;border-bottom:1px solid rgba(201,168,76,0.1);">
-              <p style="font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem;">Account Details</p>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;" class="form-2col">
-                <div>
-                  <label class="form-label">Email</label>
-                  <input type="email" id="invEmail" name="email" class="form-input" required/>
-                </div>
-                <div>
-                  <label class="form-label">Password (confirm)</label>
-                  <input type="password" id="invPassword" name="password" class="form-input" placeholder="Verify your account" required/>
-                </div>
-              </div>
-            </div>
+      async function loadInvestmentPlans() {
+        var result = await apiRequest("admin/investment-plans.php", "GET");
+        if (!result.ok || !result.data.plans) return;
 
-            <!-- Investment Details -->
-            <div style="margin-bottom:2rem;padding-bottom:2rem;border-bottom:1px solid rgba(201,168,76,0.1);">
-              <p style="font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem;">Investment Details</p>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:1.2rem;" class="form-2col">
-                <div>
-                  <label class="form-label">Investment Plan</label>
-                  <select name="plan" id="invPlan" class="form-input" onchange="updateInvPreview()">
-                    <option value="starter">Starter — 18% p.a.</option>
-                    <option value="growth" selected>Growth — 26% p.a.</option>
-                    <option value="elite">Elite — 35% p.a.</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="form-label">Amount ($)</label>
-                  <input type="number" name="amount" id="invAmount" class="form-input" placeholder="Min. $500,000" min="500000" required oninput="updateInvPreview()"/>
-                </div>
-                <div>
-                  <label class="form-label">Tenure</label>
-                  <select name="tenure" id="invTenure" class="form-input" onchange="updateInvPreview()">
-                    <option value="6">6 Months</option>
-                    <option value="12" selected>12 Months</option>
-                    <option value="18">18 Months</option>
-                    <option value="24">24 Months</option>
-                    <option value="36">36 Months</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="form-label">Payout Frequency</label>
-                  <select name="payout_freq" class="form-input">
-                    <option value="monthly">Monthly</option>
-                    <option value="quarterly">Quarterly</option>
-                    <option value="weekly">Weekly</option>
-                  </select>
-                </div>
-              </div>
-              <!-- Preview -->
-              <div id="invPreview" style="padding:1.5rem;background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.15);display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;text-align:center;">
-                <div><p style="font-size:0.68rem;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.3rem;">Expected Return</p><p id="prevReturn" style="color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:1.2rem;">—</p></div>
-                <div><p style="font-size:0.68rem;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.3rem;">Total Value</p><p id="prevTotal" style="color:var(--cream);font-family:'Cormorant Garamond',serif;font-size:1.2rem;">—</p></div>
-                <div><p style="font-size:0.68rem;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.3rem;">Maturity Date</p><p id="prevDate" style="color:var(--cream);font-family:'Cormorant Garamond',serif;font-size:1.2rem;">—</p></div>
-              </div>
-            </div>
+        var plans = result.data.plans;
+        var planSel = document.getElementById("invPlan");
+        planSel.innerHTML = "";
 
-            <!-- Payment -->
-            <div style="margin-bottom:2rem;">
-              <p style="font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem;">Payment Method</p>
-              <div style="display:flex;gap:1rem;margin-bottom:1.2rem;flex-wrap:wrap;">
-                <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;color:var(--cream);font-size:0.875rem;"><input type="radio" name="payment_method" value="bank_transfer" checked style="accent-color:var(--gold);"/> Bank Transfer</label>
-                <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;color:var(--cream);font-size:0.875rem;"><input type="radio" name="payment_method" value="card" style="accent-color:var(--gold);"/> Debit/Credit Card</label>
-                <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;color:var(--cream);font-size:0.875rem;"><input type="radio" name="payment_method" value="ussd" style="accent-color:var(--gold);"/> USSD</label>
-              </div>
-              <div>
-                <label class="form-label">Transaction Reference / Proof</label>
-                <input type="text" name="tx_ref" class="form-input" placeholder="Enter bank transfer reference or transaction ID"/>
-              </div>
-            </div>
+        plans.forEach(function (p) {
+          // Store config for preview calc
+          PLAN_CONFIG[p.id] = p;
 
-            <div style="display:flex;gap:1rem;flex-wrap:wrap;">
-              <button type="submit" id="investBtn" class="btn-gold" style="flex:1;text-align:center;padding:1rem;">Submit Investment</button>
-              <button type="button" onclick="showSection('overview')" class="btn-outline" style="padding:1rem 2rem;">Cancel</button>
-            </div>
-          </form>
-        </div>
-      </div>
+          var opt = document.createElement("option");
+          opt.value = p.id;
+          opt.textContent = p.label + " — " + p.rate + "% p.a.";
+          if (p.featured == 1) opt.selected = true;
+          planSel.appendChild(opt);
+        });
 
-      <!-- PROPERTY PURCHASE FORM -->
-      <div id="sec-property" style="display:none;">
-        <h2 style="font-size:1.8rem;font-weight:300;color:var(--cream);margin-bottom:0.4rem;">Property <em style="color:var(--gold);">Purchase</em></h2>
-        <p style="color:var(--text-muted);margin-bottom:2.5rem;font-size:0.875rem;">Initiate a property acquisition request</p>
+        // Set tenure options for the default selected plan
+        updateTenureOptions();
 
-        <div style="background:rgba(26,51,86,0.3);border:1px solid rgba(201,168,76,0.1);padding:2.5rem;">
-          <form id="propertyForm" onsubmit="submitProperty(event)">
-            <!-- Account Info -->
-            <div style="margin-bottom:2rem;padding-bottom:2rem;border-bottom:1px solid rgba(201,168,76,0.1);">
-              <p style="font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem;">Account Verification</p>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;" class="form-2col">
-                <div>
-                  <label class="form-label">Email</label>
-                  <input type="email" id="propEmail" name="email" class="form-input" required/>
-                </div>
-                <div>
-                  <label class="form-label">Password (confirm)</label>
-                  <input type="password" name="password" class="form-input" placeholder="Verify your account" required/>
-                </div>
-              </div>
-            </div>
+        // Apply URL plan param if present
+        var urlPlan = new URLSearchParams(window.location.search).get("plan");
+        if (urlPlan && PLAN_CONFIG[urlPlan]) {
+          planSel.value = urlPlan;
+          updateTenureOptions();
+          showSection("invest");
+        }
 
-            <!-- Property selection -->
-            <div style="margin-bottom:2rem;padding-bottom:2rem;border-bottom:1px solid rgba(201,168,76,0.1);">
-              <p style="font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem;">Property Details</p>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:1.2rem;" class="form-2col">
-                <div>
-                  <label class="form-label">Property of Interest</label>
-                  <select name="property_id" class="form-input">
-                    <option value="">-- Select a property --</option>
-                    <option value="1">Oceanfront Penthouse — $420M (VI, Lagos)</option>
-                    <option value="3">Heritage Villa — $195M (PH GRA)</option>
-                    <option value="4">Garden Terrace Apt — $85M (Lekki)</option>
-                    <option value="5">Lakeside Estate — $260M (Jabi, Abuja)</option>
-                    <option value="7">Colonial Court — $120M (Enugu)</option>
-                    <option value="8">Marina Heights — $180M (Eko Atlantic)</option>
-                    <option value="9">Presidential Lodge — $500M (Asokoro)</option>
-                    <option value="other">Other (specify below)</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="form-label">Purchase Type</label>
-                  <select name="purchase_type" class="form-input">
-                    <option value="outright">Outright Purchase</option>
-                    <option value="installment">Installment Plan</option>
-                    <option value="mortgage">Mortgage Financing</option>
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label class="form-label">Additional Notes / Specific Property</label>
-                <textarea name="notes" class="form-input" rows="3" placeholder="Any specific requirements, preferred property name, location, etc." style="resize:vertical;"></textarea>
-              </div>
-            </div>
+        updateInvPreview();
+      }
 
-            <!-- Buyer info -->
-            <div style="margin-bottom:2rem;padding-bottom:2rem;border-bottom:1px solid rgba(201,168,76,0.1);">
-              <p style="font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem;">Buyer Information</p>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:1.2rem;" class="form-2col">
-                <div>
-                  <label class="form-label">Full Legal Name</label>
-                  <input type="text" name="full_name" class="form-input" placeholder="As on ID document" required/>
-                </div>
-                <div>
-                  <label class="form-label">Phone Number</label>
-                  <input type="tel" name="phone" class="form-input" placeholder="+234 xxx xxx xxxx" required/>
-                </div>
-                <div>
-                  <label class="form-label">NIN / BVN</label>
-                  <input type="text" name="nin" class="form-input" placeholder="National ID Number"/>
-                </div>
-                <div>
-                  <label class="form-label">Source of Funds</label>
-                  <select name="source_of_funds" class="form-input">
-                    <option>Personal Savings</option>
-                    <option>Business Income</option>
-                    <option>Loan / Mortgage</option>
-                    <option>Inheritance</option>
-                    <option>Other</option>
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label class="form-label">Residential Address</label>
-                <textarea name="address" class="form-input" rows="2" placeholder="Your current address" style="resize:none;"></textarea>
-              </div>
-            </div>
+      function updateTenureOptions() {
+        var planId = document.getElementById("invPlan").value;
+        var cfg = PLAN_CONFIG[planId];
+        if (!cfg) return;
 
-            <!-- Payment -->
-            <div style="margin-bottom:2rem;">
-              <p style="font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem;">Initial Deposit</p>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;" class="form-2col">
-                <div>
-                  <label class="form-label">Deposit Amount ($)</label>
-                  <input type="number" name="deposit_amount" class="form-input" placeholder="Initial deposit / commitment fee"/>
-                </div>
-                <div>
-                  <label class="form-label">Payment Method</label>
-                  <select name="payment_method" class="form-input">
-                    <option value="bank_transfer">Bank Transfer</option>
-                    <option value="card">Debit Card</option>
-                    <option value="cheque">Bank Cheque</option>
-                  </select>
-                </div>
-              </div>
-              <div style="margin-top:1.2rem;">
-                <label class="form-label">Transaction Reference</label>
-                <input type="text" name="tx_ref" class="form-input" placeholder="Payment reference or proof of deposit"/>
-              </div>
-            </div>
+        var tenureSel = document.getElementById("invTenure");
+        var min = parseInt(cfg.tenure_min);
+        var max = parseInt(cfg.tenure_max);
+        var prev = parseInt(tenureSel.value) || min;
 
-            <div style="display:flex;gap:1rem;flex-wrap:wrap;">
-              <button type="submit" id="propertyBtn" class="btn-gold" style="flex:1;text-align:center;padding:1rem;">Submit Purchase Request</button>
-              <button type="button" onclick="showSection('overview')" class="btn-outline" style="padding:1rem 2rem;">Cancel</button>
-            </div>
-          </form>
-        </div>
-      </div>
+        tenureSel.innerHTML = "";
+        // Generate options in 6-month steps within the plan's range
+        for (var m = min; m <= max; m += 6) {
+          var opt = document.createElement("option");
+          opt.value = m;
+          opt.textContent = m + " Months";
+          if (m === prev || (prev < min && m === min)) opt.selected = true;
+          tenureSel.appendChild(opt);
+        }
 
-      <!-- PORTFOLIO -->
-      <div id="sec-portfolio" style="display:none;">
-        <h2 style="font-size:1.8rem;font-weight:300;color:var(--cream);margin-bottom:0.4rem;">My <em style="color:var(--gold);">Portfolio</em></h2>
-        <p style="color:var(--text-muted);margin-bottom:2.5rem;font-size:0.875rem;">Track all your investments and property transactions</p>
+        // Update amount placeholder with plan minimum
+        document.getElementById("invAmount").placeholder =
+          "Min. $" + parseInt(cfg.min_usd).toLocaleString();
+        document.getElementById("invAmount").min = cfg.min_usd;
+      }
+      async function submitInvestment(e) {
+        e.preventDefault();
+        const btn = document.getElementById("investBtn");
+        const orig = btn.innerHTML;
+        setLoading(btn, true, orig);
+        var raw = Object.fromEntries(
+          new FormData(document.getElementById("investForm")),
+        );
+        raw.tenure_months = raw.tenure; // rename to match backend
+        raw.payout_freq = raw.payout_freq || "monthly";
+        raw.currency = "USD";
+        const result = await apiRequest("investments/create.php", "POST", raw);
+        setLoading(btn, false, orig);
+        if (result.ok) {
+          showToast("Investment submitted successfully!", "success");
+          document.getElementById("investForm").reset();
+          showSection("portfolio");
+        } else {
+          showToast(
+            result.data?.message || "Submission failed. Try again.",
+            "error",
+          );
+        }
+      }
 
-        <div style="background:rgba(26,51,86,0.3);border:1px solid rgba(201,168,76,0.1);padding:2rem;margin-bottom:2rem;">
-          <h3 style="font-size:1rem;font-weight:500;color:var(--cream);margin-bottom:1.5rem;letter-spacing:0.05em;">Investment Portfolio</h3>
-          <div style="overflow-x:auto;">
-            <table class="data-table">
-              <thead><tr><th>Plan</th><th>Amount</th><th>Rate</th><th>Tenure</th><th>Expected Return</th><th>Status</th><th>Date</th></tr></thead>
-              <tbody id="investmentTable"><tr><td colspan="7" style="color:var(--text-muted);text-align:center;padding:2rem;">No investment records found.</td></tr></tbody>
-            </table>
-          </div>
-        </div>
+      async function submitProperty(e) {
+        e.preventDefault();
+        const btn = document.getElementById("propertyBtn");
+        const orig = btn.innerHTML;
+        setLoading(btn, true, orig);
+        const data = Object.fromEntries(
+          new FormData(document.getElementById("propertyForm")),
+        );
+        const result = await apiRequest(
+          "properties/purchase.php",
+          "POST",
+          data,
+        );
+        setLoading(btn, false, orig);
+        if (result.ok) {
+          showToast(
+            "Purchase request submitted! Our team will contact you within 24 hours.",
+            "success",
+          );
+          document.getElementById("propertyForm").reset();
+          showSection("portfolio");
+        } else {
+          showToast(
+            result.data?.message || "Submission failed. Try again.",
+            "error",
+          );
+        }
+      }
 
-        <div style="background:rgba(26,51,86,0.3);border:1px solid rgba(201,168,76,0.1);padding:2rem;">
-          <h3 style="font-size:1rem;font-weight:500;color:var(--cream);margin-bottom:1.5rem;letter-spacing:0.05em;">Property Purchases</h3>
-          <div style="overflow-x:auto;">
-            <table class="data-table">
-              <thead><tr><th>Property</th><th>Location</th><th>Type</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
-              <tbody id="propertyTable"><tr><td colspan="6" style="color:var(--text-muted);text-align:center;padding:2rem;">No property records found.</td></tr></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- PROFILE -->
-      <div id="sec-profile" style="display:none;">
-        <h2 style="font-size:1.8rem;font-weight:300;color:var(--cream);margin-bottom:2.5rem;">Account <em style="color:var(--gold);">Profile</em></h2>
-        <div style="background:rgba(26,51,86,0.3);border:1px solid rgba(201,168,76,0.1);padding:2.5rem;">
-          <form id="profileForm" onsubmit="saveProfile(event)">
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:1.2rem;" class="form-2col">
-              <div><label class="form-label">First Name</label><input type="text" name="first_name" id="pfFirst" class="form-input"/></div>
-              <div><label class="form-label">Last Name</label><input type="text" name="last_name" id="pfLast" class="form-input"/></div>
-              <div><label class="form-label">Email</label><input type="email" name="email" id="pfEmail" class="form-input"/></div>
-              <div><label class="form-label">Phone</label><input type="tel" name="phone" id="pfPhone" class="form-input"/></div>
-            </div>
-            <div style="margin-bottom:2rem;"><label class="form-label">Address</label><textarea name="address" id="pfAddress" class="form-input" rows="2" style="resize:none;"></textarea></div>
-            <div style="padding-top:1.5rem;border-top:1px solid rgba(201,168,76,0.1);">
-              <p style="font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem;">Change Password</p>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;" class="form-2col">
-                <div><label class="form-label">Current Password</label><input type="password" name="current_pw" class="form-input"/></div>
-                <div><label class="form-label">New Password</label><input type="password" name="new_pw" class="form-input"/></div>
-              </div>
-            </div>
-            <div style="margin-top:2rem;"><button type="submit" id="profileBtn" class="btn-gold">Save Changes</button></div>
-          </form>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<style>
-  @media(max-width:768px) {
-    .billing-layout { grid-template-columns:1fr !important; }
-    .billing-layout > div:first-child { display:none; }
-    .form-2col { grid-template-columns:1fr !important; }
-    .overview-cards { grid-template-columns:1fr !important; }
-  }
-</style>
-
-<script src="js/main.js"></script>
-<script>
-// Auth guard
-if (!Auth.isLoggedIn()) {
-  window.location.href = 'login.html';
-}
-
-// Load user info
-const user = Auth.getUser() || { first_name:'John', last_name:'Doe', email:'john@email.com' };
-document.getElementById('userName').textContent = `${user.first_name} ${user.last_name}`;
-document.getElementById('userEmail').textContent = user.email;
-document.getElementById('greetName').textContent = user.first_name;
-document.getElementById('userAvatar').textContent = (user.first_name?.[0]||'J') + (user.last_name?.[0]||'D');
-document.getElementById('invEmail').value = user.email;
-document.getElementById('propEmail').value = user.email;
-document.getElementById('pfFirst').value = user.first_name || '';
-document.getElementById('pfLast').value = user.last_name || '';
-document.getElementById('pfEmail').value = user.email || '';
-document.getElementById('pfPhone').value = user.phone || '';
-
-// Read URL param for plan
-const urlPlan = new URLSearchParams(window.location.search).get('plan');
-if (urlPlan) { document.getElementById('invPlan').value = urlPlan; showSection('invest'); }
-
-function showSection(name) {
-  ['overview','invest','property','portfolio','profile'].forEach(s => {
-    document.getElementById('sec-'+s).style.display = s===name ? 'block' : 'none';
-    const el = document.getElementById('s'+s.charAt(0).toUpperCase()+s.slice(1));
-    if (el) { el.classList.toggle('active', s===name); }
-  });
-  if (name === 'portfolio') loadPortfolio();
-  if (name === 'overview') loadOverview();
-}
-
-function updateInvPreview() {
-  const planRates = { starter:18, growth:26, elite:35 };
-  const amount = parseFloat(document.getElementById('invAmount').value) || 0;
-  const tenure = parseFloat(document.getElementById('invTenure').value);
-  const plan = document.getElementById('invPlan').value;
-  const rate = planRates[plan] / 100;
-  const ret = amount * rate * (tenure / 12);
-  const total = amount + ret;
-  const maturity = new Date();
-  maturity.setMonth(maturity.getMonth() + tenure);
-  document.getElementById('prevReturn').textContent = amount ? '$' + Math.round(ret).toLocaleString() : '—';
-  document.getElementById('prevTotal').textContent = amount ? '$' + Math.round(total).toLocaleString() : '—';
-  document.getElementById('prevDate').textContent = amount ? maturity.toLocaleDateString('en-NG',{month:'short',year:'numeric'}) : '—';
-}
-
-async function submitInvestment(e) {
-  e.preventDefault();
-  const btn = document.getElementById('investBtn');
-  const orig = btn.innerHTML;
-  setLoading(btn, true, orig);
-  const data = Object.fromEntries(new FormData(document.getElementById('investForm')));
-  const result = await apiRequest('investments/create.php', 'POST', data);
-  setLoading(btn, false, orig);
-  if (result.ok) {
-    showToast('Investment submitted successfully!', 'success');
-    document.getElementById('investForm').reset();
-    showSection('portfolio');
-  } else {
-    showToast(result.data?.message || 'Submission failed. Try again.', 'error');
-  }
-}
-
-async function submitProperty(e) {
-  e.preventDefault();
-  const btn = document.getElementById('propertyBtn');
-  const orig = btn.innerHTML;
-  setLoading(btn, true, orig);
-  const data = Object.fromEntries(new FormData(document.getElementById('propertyForm')));
-  const result = await apiRequest('properties/purchase.php', 'POST', data);
-  setLoading(btn, false, orig);
-  if (result.ok) {
-    showToast('Purchase request submitted! Our team will contact you within 24 hours.', 'success');
-    document.getElementById('propertyForm').reset();
-    showSection('portfolio');
-  } else {
-    showToast(result.data?.message || 'Submission failed. Try again.', 'error');
-  }
-}
-
-async function loadPortfolio() {
-  const investRes = await apiRequest('investments/my.php');
-  const propRes = await apiRequest('properties/my.php');
-  if (investRes.ok && investRes.data.investments) {
-    const tbody = document.getElementById('investmentTable');
-    if (investRes.data.investments.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="7" style="color:var(--text-muted);text-align:center;padding:2rem;">No investment records found.</td></tr>`;
-    } else {
-      tbody.innerHTML = investRes.data.investments.map(i => `
+      async function loadPortfolio() {
+        const investRes = await apiRequest("investments/my.php");
+        const propRes = await apiRequest("properties/my.php");
+        if (investRes.ok && investRes.data.investments) {
+          const tbody = document.getElementById("investmentTable");
+          if (investRes.data.investments.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" style="color:var(--text-muted);text-align:center;padding:2rem;">No investment records found.</td></tr>`;
+          } else {
+            tbody.innerHTML = investRes.data.investments
+              .map(
+                (i) => `
         <tr>
           <td>${i.plan}</td>
           <td>$${parseInt(i.amount).toLocaleString()}</td>
           <td>${i.rate}%</td>
           <td>${i.tenure} months</td>
           <td style="color:var(--gold);">$${parseInt(i.expected_return).toLocaleString()}</td>
-          <td><span class="badge badge-${i.status==='active'?'success':'pending'}">${i.status}</span></td>
+          <td><span class="badge badge-${i.status === "active" ? "success" : "pending"}">${i.status}</span></td>
           <td>${formatDate(i.created_at)}</td>
-        </tr>`).join('');
-    }
-  }
-  if (propRes.ok && propRes.data.properties) {
-    const tbody = document.getElementById('propertyTable');
-    if (propRes.data.properties.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="6" style="color:var(--text-muted);text-align:center;padding:2rem;">No property records found.</td></tr>`;
-    } else {
-      tbody.innerHTML = propRes.data.properties.map(p => `
+        </tr>`,
+              )
+              .join("");
+          }
+        }
+        if (propRes.ok && propRes.data.properties) {
+          const tbody = document.getElementById("propertyTable");
+          if (propRes.data.properties.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="color:var(--text-muted);text-align:center;padding:2rem;">No property records found.</td></tr>`;
+          } else {
+            tbody.innerHTML = propRes.data.properties
+              .map(
+                (p) => `
         <tr>
           <td>${p.property_name}</td>
           <td>${p.location}</td>
           <td>${p.purchase_type}</td>
           <td>$${parseInt(p.price).toLocaleString()}</td>
-          <td><span class="badge badge-${p.status==='completed'?'success':'pending'}">${p.status}</span></td>
+          <td><span class="badge badge-${p.status === "completed" ? "success" : "pending"}">${p.status}</span></td>
           <td>${formatDate(p.created_at)}</td>
-        </tr>`).join('');
-    }
-  }
-}
+        </tr>`,
+              )
+              .join("");
+          }
+        }
+      }
 
-async function loadOverview() {
-  const res = await apiRequest('user/overview.php');
-  if (res.ok && res.data) {
-    document.getElementById('totalInvested').textContent = '$' + parseInt(res.data.total_invested||0).toLocaleString();
-    document.getElementById('totalReturns').textContent = '$' + parseInt(res.data.total_returns||0).toLocaleString();
-    document.getElementById('totalProps').textContent = res.data.total_properties || 0;
-  }
-}
+      async function loadOverview() {
+        const res = await apiRequest("user/overview.php");
+        if (res.ok && res.data) {
+          document.getElementById("totalInvested").textContent =
+            "$" + parseInt(res.data.total_invested || 0).toLocaleString();
+          document.getElementById("totalReturns").textContent =
+            "$" + parseInt(res.data.total_returns || 0).toLocaleString();
+          document.getElementById("totalProps").textContent =
+            res.data.total_properties || 0;
+        }
+      }
 
-async function saveProfile(e) {
-  e.preventDefault();
-  const btn = document.getElementById('profileBtn');
-  const orig = btn.innerHTML;
-  setLoading(btn, true, orig);
-  const data = Object.fromEntries(new FormData(document.getElementById('profileForm')));
-  const result = await apiRequest('user/update.php', 'POST', data);
-  setLoading(btn, false, orig);
-  if (result.ok) showToast('Profile updated successfully!', 'success');
-  else showToast(result.data?.message || 'Update failed.', 'error');
-}
+      async function saveProfile(e) {
+        e.preventDefault();
+        const btn = document.getElementById("profileBtn");
+        const orig = btn.innerHTML;
+        setLoading(btn, true, orig);
+        const data = Object.fromEntries(
+          new FormData(document.getElementById("profileForm")),
+        );
+        const result = await apiRequest("user/update.php", "POST", data);
+        setLoading(btn, false, orig);
+        if (result.ok) showToast("Profile updated successfully!", "success");
+        else showToast(result.data?.message || "Update failed.", "error");
+      }
 
-function logoutUser() {
-  Auth.clear();
-  showToast('Logged out.', 'success');
-  setTimeout(() => window.location.href = 'index.html', 1000);
-}
+      function logoutUser() {
+        Auth.clear();
+        showToast("Logged out.", "success");
+        setTimeout(() => (window.location.href = "index.html"), 1000);
+      }
 
-loadOverview();
-</script>
-<script>
-const menuBtn = document.getElementById("menuBtn");
-const sidebar = document.getElementById("sidebar");
-const overlay = document.getElementById("sidebarOverlay");
-const navItems = document.querySelectorAll(".nav-item");
+      const menuBtn = document.getElementById("menuBtn");
+      const sidebar = document.getElementById("sidebar");
+      const overlay = document.getElementById("sidebarOverlay");
+      const navItems = document.querySelectorAll(".nav-item");
 
-function openSidebar() {
-  sidebar.classList.add("show");
-  overlay.classList.add("show");
-}
+      function openSidebar() {
+        sidebar.classList.add("show");
+        overlay.classList.add("show");
+      }
 
-function closeSidebar() {
-  sidebar.classList.remove("show");
-  overlay.classList.remove("show");
-}
+      function closeSidebar() {
+        sidebar.classList.remove("show");
+        overlay.classList.remove("show");
+      }
 
-menuBtn.addEventListener("click", openSidebar);
+      menuBtn.addEventListener("click", openSidebar);
 
-overlay.addEventListener("click", closeSidebar);
+      overlay.addEventListener("click", closeSidebar);
 
-navItems.forEach(item => {
-  item.addEventListener("click", () => {
-    if (window.innerWidth <= 768) {
-      closeSidebar();
-    }
-  });
-});
-</script>
-</body>
+      navItems.forEach((item) => {
+        item.addEventListener("click", () => {
+          if (window.innerWidth <= 768) {
+            closeSidebar();
+          }
+        });
+      });
+
+      async function loadProperties() {
+        try {
+          var res = await fetch("data/properties.json");
+          var data = await res.json();
+          var sel = document.getElementById("propSelect");
+          sel.innerHTML = '<option value="">-- Select a property --</option>';
+
+          data.forEach(function (item) {
+            var p = item.property;
+            var opt = document.createElement("option");
+            opt.value = p.zpid;
+            opt.textContent =
+              p.street_address +
+              ", " +
+              p.city +
+              ", " +
+              p.state +
+              " — $" +
+              parseInt(p.price).toLocaleString();
+            sel.appendChild(opt);
+          });
+
+          // Add "Other" at the end
+          var other = document.createElement("option");
+          other.value = "other";
+          other.textContent = "Other (specify in notes)";
+          sel.appendChild(other);
+        } catch (e) {
+          document.getElementById("propSelect").innerHTML =
+            '<option value="other">Other (specify in notes)</option>';
+        }
+      }
+
+      showSection("overview");
+      loadInvestmentPlans();
+      loadProperties();
+    </script>
+  </body>
 </html>

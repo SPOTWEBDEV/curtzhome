@@ -63,7 +63,7 @@
             max-width: 600px;
           "
         >
-          Premium <em style="color: var(--gold)">Properties</em><br />Across
+          Premium <em style="color: var(--gold)">Properties</em><br />Across the
           World
         </h1>
       </div>
@@ -91,40 +91,46 @@
           flex-wrap: wrap;
         "
       >
+        <input
+          id="filterSearch"
+          class="form-input"
+          style="width: auto; min-width: 200px; padding: 0.55rem 0.8rem"
+          placeholder="Search address, city…"
+          oninput="filterProperties()"
+        />
         <select
-          id="filterCity"
+          id="filterState"
           class="form-input"
           style="width: auto; min-width: 140px; padding: 0.55rem 0.8rem"
           onchange="filterProperties()"
         >
-          <option value="">All Cities</option>
-          <option>Lagos</option>
-          <option>Abuja</option>
-          <option>Port Harcourt</option>
-          <option>Enugu</option>
+          <option value="">All States</option>
         </select>
         <select
           id="filterType"
           class="form-input"
-          style="width: auto; min-width: 140px; padding: 0.55rem 0.8rem"
+          style="width: auto; min-width: 160px; padding: 0.55rem 0.8rem"
           onchange="filterProperties()"
         >
           <option value="">All Types</option>
-          <option>Villa</option>
-          <option>Apartment</option>
-          <option>Penthouse</option>
-          <option>Mansion</option>
+          <option value="SINGLE_FAMILY">Single Family</option>
+          <option value="CONDO">Condo</option>
+          <option value="TOWNHOUSE">Townhouse</option>
+          <option value="APARTMENT">Apartment</option>
+          <option value="MULTI_FAMILY">Multi Family</option>
         </select>
         <select
           id="filterBudget"
           class="form-input"
-          style="width: auto; min-width: 160px; padding: 0.55rem 0.8rem"
+          style="width: auto; min-width: 180px; padding: 0.55rem 0.8rem"
           onchange="filterProperties()"
         >
           <option value="">Any Budget</option>
-          <option value="100">Under $100M</option>
-          <option value="200">Under $200M</option>
-          <option value="500">Under $500M</option>
+          <option value="1000000">Under $1M</option>
+          <option value="5000000">Under $5M</option>
+          <option value="10000000">Under $10M</option>
+          <option value="20000000">Under $20M</option>
+          <option value="50000000">Under $50M</option>
         </select>
         <select
           id="filterStatus"
@@ -133,9 +139,17 @@
           onchange="filterProperties()"
         >
           <option value="">All Status</option>
-          <option value="available">Available</option>
-          <option value="reserved">Reserved</option>
+          <option value="FOR_SALE">Available</option>
+          <option value="FOR_RENT">For Rent</option>
+          <option value="RECENTLY_SOLD">Recently Sold</option>
         </select>
+        <button
+          onclick="clearFilters()"
+          class="btn-outline"
+          style="padding: 0.55rem 1rem; font-size: 0.78rem; white-space: nowrap"
+        >
+          Clear
+        </button>
         <span
           id="resultCount"
           style="color: var(--text-muted); font-size: 0.8rem; margin-left: auto"
@@ -431,7 +445,9 @@
                   View Listing
                 </a>
 
-                <a onclick="purchases()" class="btn-gold"> Initiate Purchase </a>
+                <a onclick="purchases()" class="btn-gold">
+                  Initiate Purchase
+                </a>
               </div>
             </div>
           </div>
@@ -440,103 +456,239 @@
     </div>
 
     <!-- PURCHASE MODAL -->
-<div id="purchaseModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:300;overflow-y:auto;backdrop-filter:blur(4px);">
-  <div style="max-width:520px;margin:3rem auto;padding:1rem;">
-    <div style="background:#0D1F3C;border:1px solid rgba(201,168,76,0.25);">
-
-      <div style="padding:1.5rem;border-bottom:1px solid rgba(201,168,76,0.1);display:flex;justify-content:space-between;align-items:center;">
-        <h3 style="font-size:1.1rem;font-weight:400;color:var(--cream);">Initiate Purchase</h3>
-        <button onclick="closePurchaseModal()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.3rem;">×</button>
-      </div>
-
-      <div style="padding:1.5rem;">
-
-        <!-- Property summary (read-only) -->
-        <div style="background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.12);padding:1rem;margin-bottom:1.5rem;">
-          <p id="purchasePropName" style="color:var(--gold);font-size:0.85rem;font-weight:600;margin-bottom:0.3rem;"></p>
-          <p id="purchasePropPrice" style="color:var(--cream);font-size:1.1rem;"></p>
-        </div>
-
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
-          <div>
-            <label class="form-label">Full Name</label>
-            <input type="text" id="pFullName" class="form-input" placeholder="Your legal name"/>
+    <div
+      id="purchaseModal"
+      style="
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.88);
+        z-index: 300;
+        overflow-y: auto;
+        backdrop-filter: blur(4px);
+      "
+    >
+      <div style="max-width: 520px; margin: 3rem auto; padding: 1rem">
+        <div
+          style="
+            background: #0d1f3c;
+            border: 1px solid rgba(201, 168, 76, 0.25);
+          "
+        >
+          <div
+            style="
+              padding: 1.5rem;
+              border-bottom: 1px solid rgba(201, 168, 76, 0.1);
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            "
+          >
+            <h3
+              style="font-size: 1.1rem; font-weight: 400; color: var(--cream)"
+            >
+              Initiate Purchase
+            </h3>
+            <button
+              onclick="closePurchaseModal()"
+              style="
+                background: none;
+                border: none;
+                color: var(--text-muted);
+                cursor: pointer;
+                font-size: 1.3rem;
+              "
+            >
+              ×
+            </button>
           </div>
-          <div>
-            <label class="form-label">Phone</label>
-            <input type="tel" id="pPhone" class="form-input" placeholder="+234..."/>
+
+          <div style="padding: 1.5rem">
+            <!-- Property summary (read-only) -->
+            <div
+              style="
+                background: rgba(201, 168, 76, 0.05);
+                border: 1px solid rgba(201, 168, 76, 0.12);
+                padding: 1rem;
+                margin-bottom: 1.5rem;
+              "
+            >
+              <p
+                id="purchasePropName"
+                style="
+                  color: var(--gold);
+                  font-size: 0.85rem;
+                  font-weight: 600;
+                  margin-bottom: 0.3rem;
+                "
+              ></p>
+              <p
+                id="purchasePropPrice"
+                style="color: var(--cream); font-size: 1.1rem"
+              ></p>
+            </div>
+
+            <div
+              style="
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+                margin-bottom: 1rem;
+              "
+            >
+              <div>
+                <label class="form-label">Full Name</label>
+                <input
+                  type="text"
+                  id="pFullName"
+                  class="form-input"
+                  placeholder="Your legal name"
+                />
+              </div>
+              <div>
+                <label class="form-label">Phone</label>
+                <input
+                  type="tel"
+                  id="pPhone"
+                  class="form-input"
+                  placeholder="+234..."
+                />
+              </div>
+            </div>
+
+            <div
+              style="
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+                margin-bottom: 1rem;
+              "
+            >
+              <div>
+                <label class="form-label">Purchase Type</label>
+                <select id="pPurchaseType" class="form-input">
+                  <option value="outright">Outright</option>
+                  <option value="mortgage">Mortgage</option>
+                  <option value="installment">Installment</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label">Payment Method</label>
+                <select id="pPayMethod" class="form-input">
+                  <option value="bank_transfer">Bank Transfer</option>
+                  <option value="card">Card</option>
+                  <option value="crypto">Crypto</option>
+                  <option value="cheque">Bank Cheque</option>
+                </select>
+              </div>
+            </div>
+
+            <div
+              style="
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+                margin-bottom: 1rem;
+              "
+            >
+              <div>
+                <label class="form-label">Deposit Amount (USD)</label>
+                <input
+                  type="number"
+                  id="pDeposit"
+                  class="form-input"
+                  placeholder="Optional"
+                />
+              </div>
+              <div>
+                <label class="form-label">SSN / ID Number</label>
+                <input
+                  type="text"
+                  id="pNin"
+                  class="form-input"
+                  placeholder="Optional"
+                />
+              </div>
+            </div>
+
+            <div style="margin-bottom: 1rem">
+              <label class="form-label">Residential Address</label>
+              <input
+                type="text"
+                id="pAddress"
+                class="form-input"
+                placeholder="Your current address"
+              />
+            </div>
+
+            <div style="margin-bottom: 1rem">
+              <label class="form-label">Source of Funds</label>
+              <select id="pSourceFunds" class="form-input">
+                <option value="">Select…</option>
+                <option value="salary">Salary / Employment</option>
+                <option value="business">Business Income</option>
+                <option value="investment">Investment Returns</option>
+                <option value="inheritance">Inheritance</option>
+                <option value="savings">Personal Savings</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div style="margin-bottom: 1rem">
+              <label class="form-label"
+                >Transaction Reference
+                <span style="color: var(--text-muted); font-weight: 400"
+                  >(optional)</span
+                ></label
+              >
+              <input
+                type="text"
+                id="pTxRef"
+                class="form-input"
+                placeholder="Bank / payment ref"
+              />
+            </div>
+
+            <div style="margin-bottom: 1.5rem">
+              <label class="form-label"
+                >Additional Notes
+                <span style="color: var(--text-muted); font-weight: 400"
+                  >(optional)</span
+                ></label
+              >
+              <textarea
+                id="pNotes"
+                class="form-input"
+                rows="3"
+                style="resize: vertical"
+                placeholder="Any questions or special requirements…"
+              ></textarea>
+            </div>
+
+            <button
+              id="submitPurchaseBtn"
+              onclick="submitPurchase()"
+              class="btn-gold"
+              style="width: 100%; text-align: center; padding: 1rem"
+            >
+              Submit Purchase Request
+            </button>
+            <p
+              style="
+                color: var(--text-muted);
+                font-size: 0.74rem;
+                text-align: center;
+                margin-top: 1rem;
+                line-height: 1.6;
+              "
+            >
+              Our team will contact you within 24 hours to confirm details and
+              next steps.
+            </p>
           </div>
         </div>
-
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
-          <div>
-            <label class="form-label">Purchase Type</label>
-            <select id="pPurchaseType" class="form-input">
-              <option value="outright">Outright</option>
-              <option value="mortgage">Mortgage</option>
-              <option value="installment">Installment</option>
-            </select>
-          </div>
-          <div>
-            <label class="form-label">Payment Method</label>
-            <select id="pPayMethod" class="form-input">
-              <option value="bank_transfer">Bank Transfer</option>
-              <option value="card">Card</option>
-              <option value="crypto">Crypto</option>
-            </select>
-          </div>
-        </div>
-
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
-          <div>
-            <label class="form-label">Deposit Amount (USD)</label>
-            <input type="number" id="pDeposit" class="form-input" placeholder="Optional"/>
-          </div>
-          <div>
-            <label class="form-label">NIN / ID Number</label>
-            <input type="text" id="pNin" class="form-input" placeholder="Optional"/>
-          </div>
-        </div>
-
-        <div style="margin-bottom:1rem;">
-          <label class="form-label">Residential Address</label>
-          <input type="text" id="pAddress" class="form-input" placeholder="Your current address"/>
-        </div>
-
-        <div style="margin-bottom:1rem;">
-          <label class="form-label">Source of Funds</label>
-          <select id="pSourceFunds" class="form-input">
-            <option value="">Select…</option>
-            <option value="salary">Salary / Employment</option>
-            <option value="business">Business Income</option>
-            <option value="investment">Investment Returns</option>
-            <option value="inheritance">Inheritance</option>
-            <option value="savings">Personal Savings</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-
-        <div style="margin-bottom:1rem;">
-          <label class="form-label">Transaction Reference <span style="color:var(--text-muted);font-weight:400;">(optional)</span></label>
-          <input type="text" id="pTxRef" class="form-input" placeholder="Bank / payment ref"/>
-        </div>
-
-        <div style="margin-bottom:1.5rem;">
-          <label class="form-label">Additional Notes <span style="color:var(--text-muted);font-weight:400;">(optional)</span></label>
-          <textarea id="pNotes" class="form-input" rows="3" style="resize:vertical;" placeholder="Any questions or special requirements…"></textarea>
-        </div>
-
-        <button id="submitPurchaseBtn" onclick="submitPurchase()" class="btn-gold" style="width:100%;text-align:center;padding:1rem;">
-          Submit Purchase Request
-        </button>
-        <p style="color:var(--text-muted);font-size:0.74rem;text-align:center;margin-top:1rem;line-height:1.6;">
-          Our team will contact you within 24 hours to confirm details and next steps.
-        </p>
-
       </div>
     </div>
-  </div>
-</div>
 
     <footer style="padding: 3rem 0 2rem">
       <div
@@ -574,23 +726,64 @@
           properties = data;
           filtered = [...properties];
           renderProperties();
+          // Build state dropdown from actual data
+          var states = [
+            ...new Set(
+              data
+                .map(function (item) {
+                  return item.property.state;
+                })
+                .filter(Boolean),
+            ),
+          ].sort();
+          var stateSelect = document.getElementById("filterState");
+          states.forEach(function (s) {
+            var opt = document.createElement("option");
+            opt.value = s;
+            opt.textContent = s;
+            stateSelect.appendChild(opt);
+          });
         })
         .catch((err) => console.error("Error loading properties:", err));
 
       function filterProperties() {
-        const city = document.getElementById("filterCity").value;
-        const type = document.getElementById("filterType").value;
-        const budget =
+        var search = (
+          document.getElementById("filterSearch").value || ""
+        ).toLowerCase();
+        var state = document.getElementById("filterState").value;
+        var type = document.getElementById("filterType").value;
+        var budget =
           parseInt(document.getElementById("filterBudget").value) || 0;
-        const status = document.getElementById("filterStatus").value;
+        var status = document.getElementById("filterStatus").value;
 
-        filtered = properties.filter((p) => {
-          if (city && p.city !== city) return false;
-          if (type && p.type !== type) return false;
-          if (budget && p.price > budget * 1000000) return false;
-          if (status && p.status !== status) return false;
+        filtered = properties.filter(function (item) {
+          var p = item.property;
+          if (
+            search &&
+            !(
+              (p.street_address || "").toLowerCase().includes(search) ||
+              (p.city || "").toLowerCase().includes(search) ||
+              (p.state || "").toLowerCase().includes(search) ||
+              (p.zipcode || "").toLowerCase().includes(search)
+            )
+          )
+            return false;
+          if (state && p.state !== state) return false;
+          if (type && p.property_type !== type) return false;
+          if (budget && p.price > budget) return false;
+          if (status && p.home_status !== status) return false;
           return true;
         });
+        renderProperties();
+      }
+
+      function clearFilters() {
+        document.getElementById("filterSearch").value = "";
+        document.getElementById("filterState").value = "";
+        document.getElementById("filterType").value = "";
+        document.getElementById("filterBudget").value = "";
+        document.getElementById("filterStatus").value = "";
+        filtered = [...properties];
         renderProperties();
       }
 
@@ -612,7 +805,8 @@
             // Accessing the nested object structure you defined
 
             const p = item.property;
-           
+
+            console.log("Rendering property:", p); // Debug log to check the structure
 
             return `
     <div class="card" style="cursor:pointer;" onclick="openModal(${p.zpid})">
@@ -660,18 +854,16 @@
           .join("");
       }
 
-      let  purchaseId = null
+      let purchaseId = null;
 
       function openModal(id) {
         console.log("Opening modal for property ID:", id);
         let p = properties.find((x) => x.property.zpid === id);
 
-
-
         if (!p) return;
 
         p = p.property;
-        purchaseId =  p.zpid
+        purchaseId = p.zpid;
 
         document.getElementById("modalLocation").textContent =
           `${p.city}, ${p.state}`;
@@ -765,92 +957,118 @@
       setGrid();
       window.addEventListener("resize", setGrid);
 
-     function purchases() {
-  if (typeof Auth !== 'undefined' && !Auth.isLoggedIn()) {
-    window.location.href = 'login.html?redirect=' + encodeURIComponent('housing.html');
-    return;
-  }
+      function purchases() {
+        if (typeof Auth !== "undefined" && !Auth.isLoggedIn()) {
+          window.location.href =
+            "login.html?redirect=" + encodeURIComponent("housing.html");
+          return;
+        }
 
-  // Find the current property from the stored zpid
-  var prop = properties.find(function(x){ return x.property.zpid === purchaseId; });
-  if (!prop) return;
-  prop = prop.property;
+        // Find the current property from the stored zpid
+        var prop = properties.find(function (x) {
+          return x.property.zpid === purchaseId;
+        });
+        if (!prop) return;
+        prop = prop.property;
 
-  // Pre-fill the summary strip
-  document.getElementById('purchasePropName').textContent  = prop.street_address + ', ' + prop.city + ', ' + prop.state;
-  document.getElementById('purchasePropPrice').textContent = '$' + prop.price.toLocaleString();
+        // Pre-fill the summary strip
+        document.getElementById("purchasePropName").textContent =
+          prop.street_address + ", " + prop.city + ", " + prop.state;
+        document.getElementById("purchasePropPrice").textContent =
+          "$" + prop.price.toLocaleString();
 
-  // Pre-fill name/phone from logged-in user if available
-  var user = typeof Auth !== 'undefined' ? Auth.getUser() : null;
-  if (user) {
-    document.getElementById('pFullName').value = (user.first_name || '') + ' ' + (user.last_name || '');
-    document.getElementById('pPhone').value    = user.phone || '';
-  }
+        // Pre-fill name/phone from logged-in user if available
+        var user = typeof Auth !== "undefined" ? Auth.getUser() : null;
+        if (user) {
+          document.getElementById("pFullName").value =
+            (user.first_name || "") + " " + (user.last_name || "");
+          document.getElementById("pPhone").value = user.phone || "";
+        }
 
-  // Clear previous values
-  ['pDeposit','pNin','pAddress','pTxRef','pNotes'].forEach(function(id){
-    document.getElementById(id).value = '';
-  });
-  document.getElementById('pPurchaseType').value = 'outright';
-  document.getElementById('pPayMethod').value    = 'bank_transfer';
-  document.getElementById('pSourceFunds').value  = '';
+        // Clear previous values
+        ["pDeposit", "pNin", "pAddress", "pTxRef", "pNotes"].forEach(
+          function (id) {
+            document.getElementById(id).value = "";
+          },
+        );
+        document.getElementById("pPurchaseType").value = "outright";
+        document.getElementById("pPayMethod").value = "bank_transfer";
+        document.getElementById("pSourceFunds").value = "";
 
-  document.getElementById('purchaseModal').style.display = 'block';
-}
+        document.getElementById("purchaseModal").style.display = "block";
+      }
 
-function closePurchaseModal() {
-  document.getElementById('purchaseModal').style.display = 'none';
-}
+      function closePurchaseModal() {
+        document.getElementById("purchaseModal").style.display = "none";
+      }
 
-// Close on backdrop click
-document.getElementById('purchaseModal').addEventListener('click', function(e){
-  if (e.target === this) closePurchaseModal();
-});
+      // Close on backdrop click
+      document
+        .getElementById("purchaseModal")
+        .addEventListener("click", function (e) {
+          if (e.target === this) closePurchaseModal();
+        });
 
-async function submitPurchase() {
-  var fullName = document.getElementById('pFullName').value.trim();
-  var phone    = document.getElementById('pPhone').value.trim();
+      async function submitPurchase() {
+        var fullName = document.getElementById("pFullName").value.trim();
+        var phone = document.getElementById("pPhone").value.trim();
 
-  if (!fullName) { showToast('Please enter your full name.', 'error'); return; }
-  if (!phone)    { showToast('Please enter your phone number.', 'error'); return; }
+        if (!fullName) {
+          showToast("Please enter your full name.", "error");
+          return;
+        }
+        if (!phone) {
+          showToast("Please enter your phone number.", "error");
+          return;
+        }
 
-  // Get current property details
-  var prop = properties.find(function(x){ return x.property.zpid === purchaseId; });
-  if (!prop) return;
-  prop = prop.property;
+        // Get current property details
+        var prop = properties.find(function (x) {
+          return x.property.zpid === purchaseId;
+        });
+        if (!prop) return;
+        prop = prop.property;
 
-  var btn  = document.getElementById('submitPurchaseBtn');
-  var orig = btn.innerHTML;
-  setLoading(btn, true, orig);
+        var btn = document.getElementById("submitPurchaseBtn");
+        var orig = btn.innerHTML;
+        setLoading(btn, true, orig);
 
-  var result = await apiRequest('properties/purchase.php', 'POST', {
-    property_id:     prop.zpid,
-    property_name:   prop.street_address,
-    location:        prop.city + ', ' + prop.state + ' ' + prop.zipcode,
-    price:           prop.price,
-    full_name:       fullName,
-    phone:           phone,
-    purchase_type:   document.getElementById('pPurchaseType').value,
-    payment_method:  document.getElementById('pPayMethod').value,
-    deposit_amount:  parseFloat(document.getElementById('pDeposit').value) || null,
-    nin:             document.getElementById('pNin').value.trim()         || null,
-    address:         document.getElementById('pAddress').value.trim()     || null,
-    source_of_funds: document.getElementById('pSourceFunds').value        || null,
-    tx_ref:          document.getElementById('pTxRef').value.trim()       || null,
-    notes:           document.getElementById('pNotes').value.trim()       || null
-  });
+        var result = await apiRequest("properties/purchase.php", "POST", {
+          property_id: prop.zpid,
+          property_name: prop.street_address,
+          location: prop.city + ", " + prop.state + " " + prop.zipcode,
+          price: prop.price,
+          full_name: fullName,
+          phone: phone,
+          purchase_type: document.getElementById("pPurchaseType").value,
+          payment_method: document.getElementById("pPayMethod").value,
+          deposit_amount:
+            parseFloat(document.getElementById("pDeposit").value) || null,
+          nin: document.getElementById("pNin").value.trim() || null,
+          address: document.getElementById("pAddress").value.trim() || null,
+          source_of_funds:
+            document.getElementById("pSourceFunds").value || null,
+          tx_ref: document.getElementById("pTxRef").value.trim() || null,
+          notes: document.getElementById("pNotes").value.trim() || null,
+        });
 
-  setLoading(btn, false, orig);
+        setLoading(btn, false, orig);
 
-  if (result.ok && result.data && result.data.purchase) {
-    showToast('Purchase request submitted! Ref: ' + result.data.purchase.ref, 'success');
-    closePurchaseModal();
-    closeModal();
-  } else {
-    var msg = (result.data && result.data.message) || result.message || 'Submission failed. Please try again.';
-    showToast(msg, 'error');
-  }
-}
+        if (result.ok && result.data && result.data.purchase) {
+          showToast(
+            "Purchase request submitted! Ref: " + result.data.purchase.ref,
+            "success",
+          );
+          closePurchaseModal();
+          closeModal();
+        } else {
+          var msg =
+            (result.data && result.data.message) ||
+            result.message ||
+            "Submission failed. Please try again.";
+          showToast(msg, "error");
+        }
+      }
     </script>
   </body>
 </html>

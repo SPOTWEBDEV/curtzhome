@@ -39,7 +39,7 @@ async function loadUser() {
       <div style="display:flex;flex-direction:column;gap:0.6rem;text-align:left;">
         <p style="color:var(--text-muted);font-size:0.8rem;"><span style="color:var(--cream);">Email:</span> ${user.email}</p>
         <p style="color:var(--text-muted);font-size:0.8rem;"><span style="color:var(--cream);">Phone:</span> ${user.phone||'—'}</p>
-        <p style="color:var(--text-muted);font-size:0.8rem;"><span style="color:var(--cream);">NIN:</span> ${user.nin||'—'}</p>
+        <p style="color:var(--text-muted);font-size:0.8rem;"><span style="color:var(--cream);">SSN / ID:</span> ${user.nin||'—'}</p>
         <p style="color:var(--text-muted);font-size:0.8rem;"><span style="color:var(--cream);">Status:</span> ${badge(user.status)}</p>
         <p style="color:var(--text-muted);font-size:0.8rem;"><span style="color:var(--cream);">Joined:</span> ${formatDate(user.created_at)}</p>
         <p style="color:var(--text-muted);font-size:0.8rem;"><span style="color:var(--cream);">Address:</span> ${user.address||'—'}</p>
