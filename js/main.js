@@ -1,146 +1,145 @@
-// ============================================================
-// GLOBAL UTILITIES
-// ============================================================
+// ── Global config ──────────────────────────────────────────────────────────
+var API_BASE = 'api/';
 
-const API_BASE = 'api/'; // Adjust to your PHP API path
-
-// Toast notification
-function showToast(message, type = 'success') {
-  const toast = document.getElementById('toast');
+// ── Toast ──────────────────────────────────────────────────────────────────
+function showToast(message, type) {
+  type = type || 'success';
+  var toast = document.getElementById('toast');
   if (!toast) return;
   toast.textContent = message;
-  toast.className = `show ${type}`;
-  setTimeout(() => toast.className = '', 3500);
+  toast.className = 'show ' + type;
+  setTimeout(function(){ toast.className = ''; }, 3500);
 }
 
-// AJAX helper
-async function apiRequest(endpoint, method = 'GET', data = null) {
-  const options = {
-    method,
-    headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+// ── AJAX helper ────────────────────────────────────────────────────────────
+async function apiRequest(endpoint, method, data) {
+  method = method || 'GET';
+  var options = {
+    method: method,
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Requested-With': 'XMLHttpRequest'
+    }
   };
+  var token = Auth.getToken();
+  if (token) options.headers['Authorization'] = 'Bearer ' + token;
   if (data) options.body = JSON.stringify(data);
   try {
-    const res = await fetch(API_BASE + endpoint, options);
-    const json = await res.json();
-    return { ok: res.ok, data: json, status: res.status };
-  } catch (err) {
+    var res = await fetch(API_BASE + endpoint, options);
+    var json = await res.json();
+    return { ok: res.ok, data: json.data || json, status: res.status, message: json.message };
+  } catch(err) {
     return { ok: false, data: { message: 'Network error. Please try again.' }, status: 0 };
   }
 }
 
-// Set button loading state
+// ── Button loading ─────────────────────────────────────────────────────────
 function setLoading(btn, loading, originalText) {
   if (loading) {
     btn.disabled = true;
-    btn.innerHTML = `<span class="spinner"></span>`;
+    btn.innerHTML = '<span class="spinner"></span>';
   } else {
     btn.disabled = false;
     btn.innerHTML = originalText;
   }
 }
 
-// Format currency
-function formatCurrency(amount, currency = 'NGN') {
-  return new Intl.NumberFormat('en-NG', { style: 'currency', currency, maximumFractionDigits: 0 }).format(amount);
+// ── Format helpers ─────────────────────────────────────────────────────────
+function formatCurrency(amount, currency) {
+  currency = currency || 'NGN';
+  return new Intl.NumberFormat('en-NG', { style:'currency', currency:currency, maximumFractionDigits:0 }).format(amount);
 }
-
-// Format date
 function formatDate(dateStr) {
-  return new Date(dateStr).toLocaleDateString('en-NG', { year: 'numeric', month: 'short', day: 'numeric' });
+  return new Date(dateStr).toLocaleDateString('en-GB', { year:'numeric', month:'short', day:'numeric' });
 }
 
-// Auth helpers
-const Auth = {
-  getToken: () => localStorage.getItem('est_token'),
-  getUser: () => JSON.parse(localStorage.getItem('est_user') || 'null'),
-  setSession: (token, user) => {
+// ── Auth helpers ───────────────────────────────────────────────────────────
+var Auth = {
+  getToken: function(){ return localStorage.getItem('est_token'); },
+  getUser:  function(){ return JSON.parse(localStorage.getItem('est_user') || 'null'); },
+  setSession: function(token, user) {
     localStorage.setItem('est_token', token);
     localStorage.setItem('est_user', JSON.stringify(user));
   },
-  clear: () => {
+  clear: function(){
     localStorage.removeItem('est_token');
     localStorage.removeItem('est_user');
   },
-  isLoggedIn: () => !!localStorage.getItem('est_token'),
-  isAdmin: () => {
-    const user = JSON.parse(localStorage.getItem('est_user') || 'null');
-    return user && user.role === 'admin';
+  isLoggedIn: function(){ return !!localStorage.getItem('est_token'); },
+  isAdmin: function(){
+    var u = JSON.parse(localStorage.getItem('est_user') || 'null');
+    return u && u.role === 'admin';
   }
 };
 
-// Mobile menu toggle
-function initMobileMenu() {
-  const toggle = document.getElementById('menuToggle');
-  const menu = document.getElementById('mobileMenu');
-  if (toggle && menu) {
-    toggle.addEventListener('click', () => menu.classList.toggle('open'));
-  }
-}
+// ── Update nav based on auth state ─────────────────────────────────────────
+function updateNavAuth() {
+  // Works for both desktop and mobile elements
+  var loginEls    = document.querySelectorAll('.nav-login');
+  var dashEls     = document.querySelectorAll('.nav-dashboard');
+  var logoutEls   = document.querySelectorAll('.nav-logout');
 
-// Scroll-based navbar opacity
-function initNavScroll() {
-  const nav = document.querySelector('nav');
-  if (!nav) return;
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) nav.style.borderBottomColor = 'rgba(201,168,76,0.25)';
-    else nav.style.borderBottomColor = 'rgba(201,168,76,0.15)';
+  if (Auth.isLoggedIn()) {
+    loginEls.forEach(function(el){ el.style.display = 'none'; });
+    dashEls.forEach(function(el){ el.style.display = 'inline-block'; });
+    logoutEls.forEach(function(el){ el.style.display = 'inline-block'; });
+  } else {
+    loginEls.forEach(function(el){ el.style.display = 'inline-block'; });
+    dashEls.forEach(function(el){ el.style.display = 'none'; });
+    logoutEls.forEach(function(el){ el.style.display = 'none'; });
+  }
+
+  logoutEls.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      Auth.clear();
+      showToast('Logged out successfully');
+      setTimeout(function(){ window.location.href = 'index.html'; }, 1000);
+    });
   });
 }
 
-// Counter animation
-function animateCounter(el, target, duration = 2000) {
-  let start = 0;
-  const step = target / (duration / 16);
-  const timer = setInterval(() => {
+// ── Counter animation ──────────────────────────────────────────────────────
+function animateCounter(el, target, duration) {
+  duration = duration || 2000;
+  var start = 0;
+  var step  = target / (duration / 16);
+  var timer = setInterval(function(){
     start += step;
     if (start >= target) { start = target; clearInterval(timer); }
     el.textContent = Math.floor(start).toLocaleString();
   }, 16);
 }
 
-// Intersection observer for counters
 function initCounters() {
-  const counters = document.querySelectorAll('[data-count]');
+  var counters = document.querySelectorAll('[data-count]');
   if (!counters.length) return;
-  const obs = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
       if (e.isIntersecting) {
         animateCounter(e.target, parseInt(e.target.dataset.count));
         obs.unobserve(e.target);
       }
     });
   }, { threshold: 0.5 });
-  counters.forEach(c => obs.observe(c));
+  counters.forEach(function(c){ obs.observe(c); });
 }
 
-// Update nav based on auth state
-function updateNavAuth() {
-  const loginLinks = document.querySelectorAll('.nav-login');
-  const dashLinks = document.querySelectorAll('.nav-dashboard');
-  const logoutBtns = document.querySelectorAll('.nav-logout');
-
-  if (Auth.isLoggedIn()) {
-    loginLinks.forEach(el => el.style.display = 'none');
-    dashLinks.forEach(el => el.style.display = 'inline-flex');
-    logoutBtns.forEach(el => el.style.display = 'inline-flex');
-  } else {
-    loginLinks.forEach(el => el.style.display = 'inline-flex');
-    dashLinks.forEach(el => el.style.display = 'none');
-    logoutBtns.forEach(el => el.style.display = 'none');
-  }
-
-  logoutBtns.forEach(btn => btn.addEventListener('click', () => {
-    Auth.clear();
-    showToast('Logged out successfully');
-    setTimeout(() => window.location.href = 'index.html', 1000);
-  }));
+// ── Scroll effect on nav ───────────────────────────────────────────────────
+function initNavScroll() {
+  var nav = document.getElementById('site-nav');
+  if (!nav) return;
+  window.addEventListener('scroll', function(){
+    if (window.scrollY > 50) {
+      nav.style.borderBottomColor = 'rgba(201,168,76,0.28)';
+    } else {
+      nav.style.borderBottomColor = 'rgba(201,168,76,0.15)';
+    }
+  });
 }
 
-// Init all on DOM ready
-document.addEventListener('DOMContentLoaded', () => {
-  initMobileMenu();
-  initNavScroll();
-  initCounters();
+// ── Init ───────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function(){
   updateNavAuth();
+  initCounters();
+  initNavScroll();
 });

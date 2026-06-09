@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Purchases — Curtz Home Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/admin.css"/>
+</head>
+<body>
+<script src="admin-core.js"></script>
+<script>
+adminGuard();
+injectAdminLayout('purchases');
+document.getElementById('pageTitle').textContent    = 'Property Purchases';
+document.getElementById('pageSubtitle').textContent = 'Review and process all property purchase requests';
+
+const content = document.getElementById('adminContent');
+let currentFilter = '';
+
+content.innerHTML = `
+  <div style="display:flex;gap:0.8rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+    ${['','pending','processing','completed','cancelled'].map(s => `
+      <button onclick="loadPurchases('${s}')" id="pbtn-${s||'all'}" class="${s===''?'btn-gold':'btn-outline'}" style="padding:0.5rem 1rem;font-size:0.75rem;">${s||'All'}</button>`).join('')}
+  </div>
+  <div id="purchTable"></div>
+
+  <div id="purModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:200;align-items:center;justify-content:center;">
+    <div style="background:#12243D;border:1px solid rgba(201,168,76,0.25);padding:2rem;width:100%;max-width:440px;margin:1rem;">
+      <h3 style="font-size:1.2rem;font-weight:400;color:var(--cream);margin-bottom:1.5rem;">Update Purchase</h3>
+      <input type="hidden" id="purId"/>
+      <div style="margin-bottom:1rem;">
+        <label class="form-label">New Status</label>
+        <select id="purStatus" class="form-input">
+          <option value="pending">Pending</option>
+          <option value="processing">Processing</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div style="margin-bottom:1.5rem;">
+        <label class="form-label">Note to Buyer (optional)</label>
+        <textarea id="purNote" class="form-input" rows="3" style="resize:vertical;"></textarea>
+      </div>
+      <div style="display:flex;gap:1rem;">
+        <button id="purSaveBtn" onclick="savePurchase()" class="btn-gold" style="flex:1;padding:0.75rem;">Save & Notify</button>
+        <button onclick="closePurModal()" class="btn-outline" style="padding:0.75rem 1.2rem;">Cancel</button>
+      </div>
+    </div>
+  </div>`;
+
+function setFilter(s) {
+  currentFilter=s;
+  ['all','pending','processing','completed','cancelled'].forEach(f=>{
+    const btn=document.getElementById('pbtn-'+f);
+    if(!btn)return;
+    btn.className=f===(s||'all')?'btn-gold':'btn-outline';
+    btn.style.padding='0.5rem 1rem';btn.style.fontSize='0.75rem';
+  });
+}
+
+async function loadPurchases(status='') {
+  setFilter(status);
+  document.getElementById('purchTable').innerHTML = spinner();
+  const {ok,data} = await adminFetch(`purchases.php?status=${status}`);
+  if(!ok){document.getElementById('purchTable').innerHTML=emptyState('Failed to load.');return;}
+
+  document.getElementById('purchTable').innerHTML = `
+    <div style="background:#060F1E;border:1px solid rgba(201,168,76,0.1);">
+      <div style="padding:1rem 1.5rem;border-bottom:1px solid rgba(201,168,76,0.08);">
+        <span style="color:var(--text-muted);font-size:0.8rem;">${data.total} purchase request(s)</span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead><tr><th>Ref</th><th>Buyer</th><th>Property</th><th>Location</th><th>Type</th><th>Price</th><th>Deposit</th><th>Tx Ref</th><th>NIN</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+          <tbody>
+          ${data.purchases.length ? data.purchases.map(p=>`
+            <tr>
+              <td style="color:var(--gold);font-family:monospace;font-size:0.78rem;">PUR-${String(p.id).padStart(6,'0')}</td>
+              <td><a href="user-detail.html?id=${p.user_id}" style="color:var(--cream);text-decoration:none;">${p.first_name} ${p.last_name}</a><br/><span style="color:var(--text-muted);font-size:0.72rem;">${p.email}</span></td>
+              <td>${p.property_name}</td>
+              <td style="color:var(--text-muted);font-size:0.8rem;">${p.location||'—'}</td>
+              <td style="text-transform:capitalize;">${p.purchase_type}</td>
+              <td>${formatCurrency(p.price)}</td>
+              <td>${formatCurrency(p.deposit_amount)}</td>
+              <td style="color:var(--text-muted);font-size:0.75rem;">${p.tx_ref||'—'}</td>
+              <td style="color:var(--text-muted);font-size:0.78rem;">${p.nin||'—'}</td>
+              <td>${badge(p.status)}</td>
+              <td>${formatDate(p.created_at)}</td>
+              <td><button onclick="openPurModal(${p.id},'${p.status}')" class="btn-outline" style="padding:0.3rem 0.6rem;font-size:0.7rem;">Update</button></td>
+            </tr>`).join(''):
+          `<tr><td colspan="12" style="text-align:center;padding:3rem;color:var(--text-muted);">No purchases found.</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+function openPurModal(id,status){document.getElementById('purId').value=id;document.getElementById('purStatus').value=status;document.getElementById('purNote').value='';document.getElementById('purModal').style.display='flex';}
+function closePurModal(){document.getElementById('purModal').style.display='none';}
+
+async function savePurchase() {
+  const btn=document.getElementById('purSaveBtn');const orig=btn.innerHTML;setLoading(btn,true,orig);
+  const {ok}=await adminFetch('purchases.php','POST',{id:document.getElementById('purId').value,status:document.getElementById('purStatus').value,admin_note:document.getElementById('purNote').value});
+  setLoading(btn,false,orig);
+  if(ok){showToast('Updated and buyer notified.','success');closePurModal();loadPurchases(currentFilter);}
+  else showToast('Update failed.','error');
+}
+
+loadPurchases();
+</script>
+</body>
+</html>

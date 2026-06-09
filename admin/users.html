@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Users — Curtz Home Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/admin.css"/>
+</head>
+<body>
+<script src="admin-core.js"></script>
+<script>
+adminGuard();
+injectAdminLayout('users');
+document.getElementById('pageTitle').textContent    = 'Users';
+document.getElementById('pageSubtitle').textContent = 'Manage all registered accounts';
+
+const content = document.getElementById('adminContent');
+let currentPage = 1;
+
+content.innerHTML = `
+  <div style="display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+    <input type="text" id="searchInput" class="form-input" placeholder="Search by name, email or phone…" style="flex:1;min-width:220px;" oninput="debounceSearch()"/>
+    <button onclick="loadUsers()" class="btn-outline" style="padding:0.6rem 1.2rem;font-size:0.8rem;">Refresh</button>
+  </div>
+  <div id="usersTable">Loading…</div>`;
+
+let searchTimer;
+function debounceSearch() { clearTimeout(searchTimer); searchTimer = setTimeout(()=>loadUsers(1), 400); }
+
+async function loadUsers(page=1) {
+  currentPage = page;
+  const search = document.getElementById('searchInput')?.value || '';
+  document.getElementById('usersTable').innerHTML = spinner();
+  const { ok, data } = await adminFetch(`users.php?page=${page}&search=${encodeURIComponent(search)}`);
+  if (!ok) { document.getElementById('usersTable').innerHTML = emptyState('Failed to load users.'); return; }
+
+  const totalPages = Math.ceil(data.total / data.limit);
+  document.getElementById('usersTable').innerHTML = `
+    <div style="background:#060F1E;border:1px solid rgba(201,168,76,0.1);">
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Investments</th><th>Total Invested</th><th>Properties</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
+          <tbody>
+          ${data.users.length ? data.users.map(u => `
+            <tr>
+              <td style="color:var(--text-muted);">${u.id}</td>
+              <td><a href="user-detail.html?id=${u.id}" style="color:var(--cream);text-decoration:none;">${u.first_name} ${u.last_name}</a></td>
+              <td style="color:var(--text-muted);">${u.email}</td>
+              <td style="color:var(--text-muted);">${u.phone||'—'}</td>
+              <td style="text-align:center;">${u.inv_count}</td>
+              <td style="color:var(--gold);">${formatCurrency(u.inv_total)}</td>
+              <td style="text-align:center;">${u.prop_count}</td>
+              <td>${badge(u.status)}</td>
+              <td style="color:var(--text-muted);">${formatDate(u.created_at)}</td>
+              <td>
+                <a href="user-detail.html?id=${u.id}" style="color:var(--gold);font-size:0.75rem;text-decoration:none;margin-right:0.8rem;">View</a>
+                <button onclick="toggleStatus(${u.id},'${u.status}')" style="background:none;border:none;color:var(--danger);font-size:0.75rem;cursor:pointer;">${u.status==='active'?'Suspend':'Activate'}</button>
+              </td>
+            </tr>`).join('') : `<tr><td colspan="10" style="text-align:center;padding:3rem;color:var(--text-muted);">No users found.</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+      <div style="padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(201,168,76,0.1);">
+        <span style="color:var(--text-muted);font-size:0.8rem;">${data.total} total users</span>
+        <div style="display:flex;gap:0.5rem;">
+          ${page>1?`<button onclick="loadUsers(${page-1})" class="btn-outline" style="padding:0.4rem 0.8rem;font-size:0.75rem;">← Prev</button>`:''}
+          <span style="color:var(--text-muted);font-size:0.8rem;line-height:2.2;">Page ${page} / ${totalPages||1}</span>
+          ${page<totalPages?`<button onclick="loadUsers(${page+1})" class="btn-outline" style="padding:0.4rem 0.8rem;font-size:0.75rem;">Next →</button>`:''}
+        </div>
+      </div>
+    </div>`;
+}
+
+async function toggleStatus(id, current) {
+  const newStatus = current === 'active' ? 'suspended' : 'active';
+  if (!confirm(`${newStatus==='suspended'?'Suspend':'Activate'} this user?`)) return;
+  const { ok } = await adminFetch('users.php', 'POST', { user_id: id, status: newStatus });
+  if (ok) { showToast('User updated.','success'); loadUsers(currentPage); }
+  else showToast('Failed to update user.','error');
+}
+
+loadUsers();
+</script>
+</body>
+</html>

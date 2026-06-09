@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Investments — Curtz Home Admin</title>
+  <script src="../js/tailwind.js"></script>
+  <link rel="stylesheet" href="../css/admin.css"/>
+</head>
+<body>
+<script src="admin-core.js"></script>
+<script>
+adminGuard();
+injectAdminLayout('investments');
+document.getElementById('pageTitle').textContent    = 'Investments';
+document.getElementById('pageSubtitle').textContent = 'Review and manage all investment submissions';
+
+const content = document.getElementById('adminContent');
+let currentFilter = '';
+
+content.innerHTML = `
+  <div style="display:flex;gap:0.8rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+    ${['','pending','active','completed','cancelled'].map(s => `
+      <button onclick="loadInvestments('${s}')" id="btn-${s||'all'}" class="${s===''?'btn-gold':'btn-outline'}" style="padding:0.5rem 1rem;font-size:0.75rem;">${s||'All'}</button>`).join('')}
+  </div>
+  <div id="investTable"></div>
+
+  <!-- Update Modal -->
+  <div id="updateModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:200;display:none;align-items:center;justify-content:center;">
+    <div style="background:#12243D;border:1px solid rgba(201,168,76,0.25);padding:2rem;width:100%;max-width:440px;margin:1rem;">
+      <h3 style="font-size:1.2rem;font-weight:400;color:var(--cream);margin-bottom:1.5rem;">Update Investment</h3>
+      <input type="hidden" id="modalInvId"/>
+      <div style="margin-bottom:1rem;">
+        <label class="form-label">New Status</label>
+        <select id="modalStatus" class="form-input">
+          <option value="pending">Pending</option>
+          <option value="active">Active</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div style="margin-bottom:1.5rem;">
+        <label class="form-label">Admin Note (optional — sent to user)</label>
+        <textarea id="modalNote" class="form-input" rows="3" style="resize:vertical;"></textarea>
+      </div>
+      <div style="display:flex;gap:1rem;">
+        <button id="modalSaveBtn" onclick="saveUpdate()" class="btn-gold" style="flex:1;padding:0.75rem;">Save & Notify User</button>
+        <button onclick="closeModal()" class="btn-outline" style="padding:0.75rem 1.2rem;">Cancel</button>
+      </div>
+    </div>
+  </div>`;
+
+function setFilter(s) {
+  currentFilter = s;
+  ['all','pending','active','completed','cancelled'].forEach(f => {
+    const btn = document.getElementById('btn-'+f);
+    if (!btn) return;
+    btn.className = f===(s||'all') ? 'btn-gold' : 'btn-outline';
+    btn.style.padding='0.5rem 1rem'; btn.style.fontSize='0.75rem';
+  });
+}
+
+async function loadInvestments(status='') {
+  setFilter(status);
+  document.getElementById('investTable').innerHTML = spinner();
+  const { ok, data } = await adminFetch(`investments.php?status=${status}`);
+  if (!ok) { document.getElementById('investTable').innerHTML = emptyState('Failed to load.'); return; }
+
+  document.getElementById('investTable').innerHTML = `
+    <div style="background:#060F1E;border:1px solid rgba(201,168,76,0.1);">
+      <div style="padding:1rem 1.5rem;border-bottom:1px solid rgba(201,168,76,0.08);">
+        <span style="color:var(--text-muted);font-size:0.8rem;">${data.total} investment(s)</span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead><tr><th>Ref</th><th>Investor</th><th>Plan</th><th>Amount</th><th>Rate</th><th>Tenure</th><th>Expected Return</th><th>Maturity</th><th>Payment</th><th>Tx Ref</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+          <tbody>
+          ${data.investments.length ? data.investments.map(i=>`
+            <tr>
+              <td style="color:var(--gold);font-family:monospace;font-size:0.78rem;">INV-${String(i.id).padStart(6,'0')}</td>
+              <td><a href="user-detail.html?id=${i.user_id}" style="color:var(--cream);text-decoration:none;">${i.first_name} ${i.last_name}</a><br/><span style="color:var(--text-muted);font-size:0.72rem;">${i.email}</span></td>
+              <td style="text-transform:capitalize;">${i.plan}</td>
+              <td>${formatCurrency(i.amount)}</td>
+              <td>${i.rate}%</td>
+              <td>${i.tenure_months}mo</td>
+              <td style="color:var(--success);">${formatCurrency(i.expected_return)}</td>
+              <td>${formatDate(i.maturity_date)}</td>
+              <td style="text-transform:capitalize;font-size:0.78rem;">${i.payment_method||'—'}</td>
+              <td style="color:var(--text-muted);font-size:0.75rem;">${i.tx_ref||'—'}</td>
+              <td>${badge(i.status)}</td>
+              <td>${formatDate(i.created_at)}</td>
+              <td><button onclick="openModal(${i.id},'${i.status}')" class="btn-outline" style="padding:0.3rem 0.6rem;font-size:0.7rem;white-space:nowrap;">Update</button></td>
+            </tr>`).join('') : `<tr><td colspan="13" style="text-align:center;padding:3rem;color:var(--text-muted);">No investments found.</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+function openModal(id, status) {
+  document.getElementById('modalInvId').value = id;
+  document.getElementById('modalStatus').value = status;
+  document.getElementById('modalNote').value = '';
+  document.getElementById('updateModal').style.display = 'flex';
+}
+function closeModal() { document.getElementById('updateModal').style.display = 'none'; }
+
+async function saveUpdate() {
+  const btn = document.getElementById('modalSaveBtn');
+  const orig = btn.innerHTML;
+  setLoading(btn,true,orig);
+  const {ok} = await adminFetch('investments.php','POST',{
+    id:     document.getElementById('modalInvId').value,
+    status: document.getElementById('modalStatus').value,
+    admin_note: document.getElementById('modalNote').value
+  });
+  setLoading(btn,false,orig);
+  if (ok) { showToast('Updated and user notified.','success'); closeModal(); loadInvestments(currentFilter); }
+  else showToast('Update failed.','error');
+}
+
+loadInvestments();
+</script>
+</body>
+</html>

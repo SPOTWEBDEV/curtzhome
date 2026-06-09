@@ -3,108 +3,315 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Investment Plans — Elysian Estates</title>
+  <title>Investment Plans — Curtz Home</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --navy:       #07111F;
+      --navy2:      #0D1F3C;
+      --gold:       #C9A84C;
+      --gold-light: rgba(201,168,76,0.12);
+      --cream:      #F7F3ED;
+      --muted:      #8A9BB0;
+      --border:     rgba(201,168,76,0.2);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--navy); color: var(--cream); font-family: 'Inter', sans-serif; font-size: 15px; line-height: 1.6; }
+
+    /* ── Typography ── */
+    .serif { font-family: 'Cormorant Garamond', serif; }
+    .label-tag { font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); }
+    .section-title { font-family: 'Cormorant Garamond', serif; font-weight: 300; color: var(--cream); font-size: clamp(2rem,3.5vw,2.8rem); }
+
+    /* ── Form elements ── */
+    .form-label { display: block; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.45rem; }
+    .form-input {
+      width: 100%; background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+      color: var(--cream); padding: 0.65rem 0.9rem; font-size: 0.9rem; font-family: 'Inter', sans-serif;
+      outline: none; transition: border-color 0.2s;
+    }
+    .form-input:focus { border-color: var(--gold); }
+    .form-input option { background: #0D1F3C; }
+
+    /* ── Buttons ── */
+    .btn-gold {
+      display: inline-block; background: var(--gold); color: var(--navy);
+      font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase;
+      padding: 0.85rem 2rem; cursor: pointer; border: none; font-family: 'Inter', sans-serif;
+      font-weight: 500; transition: opacity 0.2s; text-decoration: none;
+    }
+    .btn-gold:hover { opacity: 0.88; }
+    .btn-outline {
+      display: inline-block; background: transparent; color: var(--gold);
+      border: 1px solid var(--gold); font-size: 0.78rem; letter-spacing: 0.14em;
+      text-transform: uppercase; padding: 0.85rem 2rem; cursor: pointer;
+      font-family: 'Inter', sans-serif; font-weight: 500; transition: all 0.2s; text-decoration: none;
+    }
+    .btn-outline:hover { background: var(--gold-light); }
+
+    /* ── Cards ── */
+    .card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); }
+    .plan-card { padding: 2.5rem; position: relative; cursor: pointer; transition: transform 0.25s, border-color 0.25s; }
+    .plan-card:hover { transform: translateY(-5px); border-color: rgba(201,168,76,0.45); }
+    .plan-card.featured {
+      background: linear-gradient(145deg, rgba(201,168,76,0.1), rgba(26,51,86,0.4));
+      border: 1px solid rgba(201,168,76,0.4);
+    }
+
+    /* ── Toast ── */
+    #toast {
+      position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 99999;
+      padding: 0.8rem 1.4rem; font-size: 0.85rem; display: none;
+      border-left: 3px solid var(--gold); background: #0D1F3C; color: var(--cream);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+    #toast.error { border-color: #e05c5c; }
+
+    /* ── Modal ── */
+    #investModal {
+      display: none; position: fixed; inset: 0;
+      background: rgba(4,11,20,0.88); backdrop-filter: blur(6px);
+      z-index: 9999; align-items: center; justify-content: center; padding: 1rem;
+    }
+    #investModal.open { display: flex; }
+    .modal-box {
+      background: var(--navy2); border: 1px solid var(--border);
+      width: 100%; max-width: 520px; max-height: 92vh; overflow-y: auto;
+      padding: 2.5rem; position: relative; animation: fadeUp 0.25s ease;
+    }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
+    .modal-close {
+      position: absolute; top: 1.2rem; right: 1.4rem;
+      background: none; border: none; color: var(--muted);
+      font-size: 1.4rem; cursor: pointer; line-height: 1;
+    }
+    .modal-close:hover { color: var(--gold); }
+
+    /* ── Summary grid (modal + calculator) ── */
+    .summary-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
+      background: rgba(201,168,76,0.04); border: 1px solid var(--border);
+      padding: 1.25rem; text-align: center;
+    }
+    .s-label { font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.35rem; }
+    .s-val { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 600; }
+
+    /* ── Freq pills ── */
+    .freq-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .freq-pill {
+      flex: 1; min-width: 75px; padding: 0.5rem 0.4rem;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--muted); font-size: 0.75rem; letter-spacing: 0.07em;
+      text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .freq-pill.active, .freq-pill:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-light); }
+
+    /* ── Plan badge in modal ── */
+    .plan-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.3rem 0.85rem; border: 1px solid var(--border);
+      font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 1.5rem;
+    }
+
+    /* ── Success state ── */
+    #successState { display: none; text-align: center; padding: 1rem 0; }
+    .checkmark {
+      width: 64px; height: 64px; border: 2px solid var(--gold); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.5rem; font-size: 1.6rem; color: var(--gold);
+    }
+
+    /* ── Page hero ── */
+    .page-hero { padding: 7rem 0 5rem; background: linear-gradient(160deg, #07111F 60%, #0B1A2E); }
+
+    /* ── Divider line ── */
+    .gold-rule { height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+
+    /* ── Responsive ── */
+    @media(max-width:900px)  { .plans-grid  { grid-template-columns: 1fr !important; } }
+    @media(max-width:640px)  { .calc-grid   { grid-template-columns: 1fr !important; } .summary-grid { grid-template-columns: 1fr !important; } }
+    @media(max-width:720px)  { .steps-grid  { grid-template-columns: 1fr 1fr !important; } }
+    @media(max-width:440px)  { .steps-grid  { grid-template-columns: 1fr !important; } }
+  </style>
 </head>
 <body>
-<script src="js/shared-nav.js"></script>
-<script>insertNavbar('investment');</script>
 
-<!-- PAGE HERO -->
-<section class="page-hero" style="position:relative;overflow:hidden;">
+<script src="js/shared-nav.js"></script>
+<script>insertNavbar && insertNavbar('investment');</script>
+
+<div id="toast"></div>
+
+<!-- ═══════════════════════════════════════════════
+     INVESTMENT MODAL
+═══════════════════════════════════════════════ -->
+<div id="investModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()" aria-label="Close">&times;</button>
+
+    <!-- Form -->
+    <div id="formState">
+      <div class="plan-badge">
+        <span style="width:8px;height:8px;border-radius:50%;background:var(--gold);display:inline-block;"></span>
+        <span id="modalPlanLabel">Growth Plan</span>
+      </div>
+
+      <h2 id="modalTitle" class="serif" style="font-size:1.9rem;font-weight:300;color:var(--cream);margin-bottom:0.4rem;">
+        Confirm Investment
+      </h2>
+      <p style="color:var(--muted);font-size:0.85rem;margin-bottom:1.8rem;">
+        Fill in the details below. Your investment will be activated within 24 hours of payment confirmation.
+      </p>
+
+      <!-- Amount -->
+      <div style="margin-bottom:1.2rem;">
+        <label class="form-label">Investment Amount (USD)</label>
+        <div style="position:relative;">
+          <span style="position:absolute;left:0.9rem;top:50%;transform:translateY(-50%);color:var(--muted);">$</span>
+          <input type="number" id="mAmount" class="form-input" style="padding-left:1.8rem;" placeholder="e.g. 2,000,000" min="0" oninput="updateModalSummary()"/>
+        </div>
+        <p id="mAmountHint" style="color:var(--muted);font-size:0.75rem;margin-top:0.35rem;"></p>
+      </div>
+
+      <!-- Tenure -->
+      <div style="margin-bottom:1.2rem;">
+        <label class="form-label">Tenure (Months)</label>
+        <input type="number" id="mTenure" class="form-input" value="12" min="1" max="36" oninput="updateModalSummary()"/>
+        <p id="mTenureHint" style="color:var(--muted);font-size:0.75rem;margin-top:0.35rem;"></p>
+      </div>
+
+      <!-- Payout frequency -->
+      <div style="margin-bottom:1.4rem;">
+        <label class="form-label" style="display:block;margin-bottom:0.6rem;">Payout Frequency</label>
+        <div class="freq-pills" id="freqPills">
+          <button class="freq-pill" data-freq="monthly"   onclick="selectFreq(this)">Monthly</button>
+          <button class="freq-pill" data-freq="quarterly" onclick="selectFreq(this)">Quarterly</button>
+          <button class="freq-pill" data-freq="weekly"    onclick="selectFreq(this)">Weekly</button>
+        </div>
+        <input type="hidden" id="mFreq" value="monthly"/>
+      </div>
+
+      <!-- Payment method -->
+      <div style="margin-bottom:1.2rem;">
+        <label class="form-label">Payment Method</label>
+        <select id="mPayMethod" class="form-input">
+          <option value="bank_transfer">Bank Transfer</option>
+          <option value="card">Card Payment</option>
+          <option value="crypto">Crypto</option>
+        </select>
+      </div>
+
+      <!-- Transaction reference -->
+      <div style="margin-bottom:1.5rem;">
+        <label class="form-label">Transaction Reference <span style="color:var(--muted);font-weight:400;">(optional)</span></label>
+        <input type="text" id="mTxRef" class="form-input" placeholder="Your bank / payment ref"/>
+      </div>
+
+      <!-- Live summary -->
+      <div class="summary-grid" style="margin-bottom:1.5rem;">
+        <div>
+          <p class="s-label">Total Return</p>
+          <p class="s-val" id="mTotalReturn" style="color:var(--gold);">—</p>
+        </div>
+        <div>
+          <p class="s-label">Total Value</p>
+          <p class="s-val" id="mTotalValue" style="color:var(--cream);">—</p>
+        </div>
+        <div>
+          <p class="s-label">Per Payout</p>
+          <p class="s-val" id="mPerPayout" style="color:var(--cream);">—</p>
+        </div>
+      </div>
+
+      <button id="investBtn" class="btn-gold" onclick="submitInvestment()" style="width:100%;text-align:center;padding:1rem;">
+        Confirm &amp; Submit
+      </button>
+      <p style="color:var(--muted);font-size:0.74rem;text-align:center;margin-top:1rem;line-height:1.6;">
+        By submitting you agree to Curtz Home's investment terms. Funds are secured by registered property titles.
+      </p>
+    </div>
+
+    <!-- Success -->
+    <div id="successState">
+      <div class="checkmark">✓</div>
+      <h3 class="serif" style="font-size:1.8rem;font-weight:300;color:var(--cream);margin-bottom:0.75rem;">Investment Submitted!</h3>
+      <p style="color:var(--muted);font-size:0.875rem;line-height:1.7;margin-bottom:0.5rem;">
+        Your investment request has been received. Check your email inbox or spam folder for a confirmation with your reference number.
+      </p>
+      <p id="successRef" class="serif" style="font-size:1.2rem;color:var(--gold);margin:1rem 0 1.5rem;"></p>
+      <p style="color:var(--muted);font-size:0.8rem;margin-bottom:1.5rem;">
+        Our team will activate your investment within 24 business hours after confirming your payment. You can track the status and performance of your investment in your dashboard.
+      </p>
+      <p style="color:var(--muted);font-size:0.8rem;margin-bottom:1.5rem;">
+        You can request our payment method details from our live support or visit the <a style="color:var(--gold);" href="./payment.html">payment page</a>
+      </p>
+      <button class="btn-gold" onclick="closeModal()" style="padding:0.85rem 2rem;">Go to Dashboard</button>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     HERO
+═══════════════════════════════════════════════ -->
+<section class="page-hero">
   <div style="max-width:1280px;margin:0 auto;padding:0 2rem;">
-    <p class="section-label" style="margin-bottom:1rem;">Build Wealth</p>
-    <h1 style="font-size:clamp(2.5rem,5vw,4rem);font-weight:300;color:var(--cream);max-width:600px;">Investment <em style="color:var(--gold);">Plans</em><br/>That Deliver</h1>
-    <p style="color:var(--text-muted);margin-top:1.5rem;max-width:500px;line-height:1.8;">Structured real estate investment vehicles offering competitive, transparent returns secured by tangible property assets.</p>
+    <p class="label-tag" style="margin-bottom:1.2rem;">Build Wealth</p>
+    <h1 class="serif" style="font-size:clamp(2.5rem,5vw,4.2rem);font-weight:300;max-width:620px;line-height:1.15;">
+      Investment <em style="color:var(--gold);font-style:italic;">Plans</em><br/>That Deliver
+    </h1>
+    <p style="color:var(--muted);margin-top:1.5rem;max-width:480px;line-height:1.85;font-size:0.92rem;">
+      Structured real estate investment vehicles offering competitive, transparent returns — secured by tangible property assets.
+    </p>
   </div>
 </section>
 
-<!-- PLAN CARDS -->
+
+<!-- ═══════════════════════════════════════════════
+     PLAN CARDS  (rendered from PLANS array)
+═══════════════════════════════════════════════ -->
 <section style="padding:6rem 0;background:var(--navy);">
   <div style="max-width:1280px;margin:0 auto;padding:0 2rem;">
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;" class="plans-grid">
-
-      <!-- Starter -->
-      <div class="card" style="padding:2.5rem;position:relative;">
-        <p class="section-label" style="margin-bottom:1.5rem;">Starter</p>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:3rem;color:var(--cream);font-weight:300;line-height:1;">₦500K<span style="font-size:1rem;color:var(--text-muted);"> min</span></div>
-        <div style="margin:1.5rem 0;padding:1rem;background:rgba(201,168,76,0.06);border-left:2px solid var(--gold);">
-          <span style="font-size:1.8rem;font-family:'Cormorant Garamond',serif;color:var(--gold);font-weight:600;">18%</span>
-          <span style="color:var(--text-muted);font-size:0.85rem;"> per annum</span>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:0.8rem;margin-bottom:2rem;">
-          <div style="display:flex;gap:0.6rem;align-items:flex-start;"><span style="color:var(--gold);margin-top:2px;">✓</span><span style="color:var(--text-muted);font-size:0.875rem;">6 – 12 month tenure</span></div>
-          <div style="display:flex;gap:0.6rem;align-items:flex-start;"><span style="color:var(--gold);margin-top:2px;">✓</span><span style="color:var(--text-muted);font-size:0.875rem;">Quarterly payouts</span></div>
-          <div style="display:flex;gap:0.6rem;align-items:flex-start;"><span style="color:var(--gold);margin-top:2px;">✓</span><span style="color:var(--text-muted);font-size:0.875rem;">Secured by property title</span></div>
-          <div style="display:flex;gap:0.6rem;align-items:flex-start;"><span style="color:var(--gold);margin-top:2px;">✓</span><span style="color:var(--text-muted);font-size:0.875rem;">Online portfolio dashboard</span></div>
-        </div>
-        <a href="billing.html?plan=starter" class="btn-outline" style="width:100%;text-align:center;display:block;">Get Started</a>
-      </div>
-
-      <!-- Growth (featured) -->
-      <div style="padding:2.5rem;position:relative;background:linear-gradient(135deg,rgba(201,168,76,0.12),rgba(26,51,86,0.5));border:1px solid rgba(201,168,76,0.4);backdrop-filter:blur(8px);transition:all 0.35s;" class="featured-plan">
-        <div style="position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--navy);font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.3rem 1rem;white-space:nowrap;">Most Popular</div>
-        <p class="section-label" style="margin-bottom:1.5rem;">Growth</p>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:3rem;color:var(--cream);font-weight:300;line-height:1;">₦2M<span style="font-size:1rem;color:var(--text-muted);"> min</span></div>
-        <div style="margin:1.5rem 0;padding:1rem;background:rgba(201,168,76,0.1);border-left:2px solid var(--gold);">
-          <span style="font-size:1.8rem;font-family:'Cormorant Garamond',serif;color:var(--gold);font-weight:600;">26%</span>
-          <span style="color:var(--text-muted);font-size:0.85rem;"> per annum</span>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:0.8rem;margin-bottom:2rem;">
-          <div style="display:flex;gap:0.6rem;align-items:flex-start;"><span style="color:var(--gold);margin-top:2px;">✓</span><span style="color:var(--text-muted);font-size:0.875rem;">12 – 24 month tenure</span></div>
-          <div style="display:flex;gap:0.6rem;align-items:flex-start;"><span style="color:var(--gold);margin-top:2px;">✓</span><span style="color:var(--text-muted);font-size:0.875rem;">Monthly payouts</span></div>
-          <div style="display:flex;gap:0.6rem;align-items:flex-start;"><span style="color:var(--gold);margin-top:2px;">✓</span><span style="color:var(--text-muted);font-size:0.875rem;">Secured by property title</span></div>
-          <div style="display:flex;gap:0.6rem;align-items:flex-start;"><span style="color:var(--gold);margin-top:2px;">✓</span><span style="color:var(--text-muted);font-size:0.875rem;">Dedicated relationship manager</span></div>
-          <div style="display:flex;gap:0.6rem;align-items:flex-start;"><span style="color:var(--gold);margin-top:2px;">✓</span><span style="color:var(--text-muted);font-size:0.875rem;">Priority property access</span></div>
-        </div>
-        <a href="billing.html?plan=growth" class="btn-gold" style="width:100%;text-align:center;display:block;">Invest Now</a>
-      </div>
-
-      <!-- Elite -->
-      <div class="card" style="padding:2.5rem;position:relative;">
-        <p class="section-label" style="margin-bottom:1.5rem;">Elite</p>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:3rem;color:var(--cream);font-weight:300;line-height:1;">₦10M<span style="font-size:1rem;color:var(--text-muted);"> min</span></div>
-        <div style="margin:1.5rem 0;padding:1rem;background:rgba(201,168,76,0.06);border-left:2px solid var(--gold);">
-          <span style="font-size:1.8rem;font-family:'Cormorant Garamond',serif;color:var(--gold);font-weight:600;">35%</span>
-          <span style="color:var(--text-muted);font-size:0.85rem;"> per annum</span>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:0.8rem;margin-bottom:2rem;">
-          <div style="display:flex;gap:0.6rem;align-items:flex-start;"><span style="color:var(--gold);margin-top:2px;">✓</span><span style="color:var(--text-muted);font-size:0.875rem;">24 – 36 month tenure</span></div>
-          <div style="display:flex;gap:0.6rem;align-items:flex-start;"><span style="color:var(--gold);margin-top:2px;">✓</span><span style="color:var(--text-muted);font-size:0.875rem;">Weekly payouts</span></div>
-          <div style="display:flex;gap:0.6rem;align-items:flex-start;"><span style="color:var(--gold);margin-top:2px;">✓</span><span style="color:var(--text-muted);font-size:0.875rem;">Co-ownership deeds</span></div>
-          <div style="display:flex;gap:0.6rem;align-items:flex-start;"><span style="color:var(--gold);margin-top:2px;">✓</span><span style="color:var(--text-muted);font-size:0.875rem;">Private wealth concierge</span></div>
-          <div style="display:flex;gap:0.6rem;align-items:flex-start;"><span style="color:var(--gold);margin-top:2px;">✓</span><span style="color:var(--text-muted);font-size:0.875rem;">Exclusive off-market deals</span></div>
-        </div>
-        <a href="billing.html?plan=elite" class="btn-outline" style="width:100%;text-align:center;display:block;">Apply Now</a>
-      </div>
-    </div>
-    <style>@media(max-width:900px){.plans-grid{grid-template-columns:1fr!important;}}</style>
+    <p class="label-tag" style="margin-bottom:0.75rem;">Our Offerings</p>
+    <h2 class="section-title" style="margin-bottom:3rem;">Choose Your <em style="color:var(--gold);">Plan</em></h2>
+    <div id="planCardsContainer" style="display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;" class="plans-grid"></div>
   </div>
 </section>
 
-<!-- ROI CALCULATOR -->
+<div class="gold-rule" style="max-width:1280px;margin:0 auto;opacity:0.4;"></div>
+
+
+<!-- ═══════════════════════════════════════════════
+     ROI CALCULATOR
+═══════════════════════════════════════════════ -->
 <section style="padding:6rem 0;background:#080F1C;">
   <div style="max-width:800px;margin:0 auto;padding:0 2rem;">
-    <p class="section-label" style="text-align:center;margin-bottom:1rem;">Calculate Returns</p>
-    <h2 style="font-size:clamp(1.8rem,3vw,2.5rem);font-weight:300;color:var(--cream);text-align:center;margin-bottom:3rem;">ROI <em style="color:var(--gold);">Calculator</em></h2>
-    <div class="card" style="padding:3rem;">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;" class="calc-grid">
+    <p class="label-tag" style="text-align:center;margin-bottom:0.75rem;">Estimate Returns</p>
+    <h2 class="section-title" style="text-align:center;margin-bottom:3rem;">
+      ROI <em style="color:var(--gold);">Calculator</em>
+    </h2>
+
+    <div class="card" style="padding:2.5rem;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;" class="calc-grid">
         <div>
-          <label class="form-label">Investment Amount (₦)</label>
-          <input type="number" id="calcAmount" class="form-input" placeholder="e.g. 5000000" value="5000000" oninput="calculateROI()"/>
+          <label class="form-label">Investment Amount (USD $)</label>
+          <div style="position:relative;">
+            <span style="position:absolute;left:0.9rem;top:50%;transform:translateY(-50%);color:var(--muted);">$</span>
+            <input type="number" id="calcAmount" class="form-input" style="padding-left:1.8rem;" placeholder="e.g. 5,000,000" value="5000000" oninput="calculateROI()"/>
+          </div>
         </div>
         <div>
           <label class="form-label">Plan</label>
-          <select id="calcPlan" class="form-input" onchange="calculateROI()">
-            <option value="18">Starter — 18%</option>
-            <option value="26" selected>Growth — 26%</option>
-            <option value="35">Elite — 35%</option>
-          </select>
+          <select id="calcPlan" class="form-input" onchange="calculateROI()"></select>
         </div>
         <div>
           <label class="form-label">Tenure (Months)</label>
-          <input type="number" id="calcTenure" class="form-input" placeholder="e.g. 12" value="12" min="1" oninput="calculateROI()"/>
+          <input type="number" id="calcTenure" class="form-input" value="12" min="1" oninput="calculateROI()"/>
         </div>
         <div>
           <label class="form-label">Payout Frequency</label>
@@ -115,83 +322,400 @@
           </select>
         </div>
       </div>
-      <!-- Results -->
-      <div style="background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.2);padding:2rem;display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;text-align:center;">
+
+      <div class="summary-grid">
         <div>
-          <p style="font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.5rem;">Total Return</p>
-          <p id="totalReturn" style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:var(--gold);font-weight:600;">₦1,300,000</p>
+          <p class="s-label">Total Return</p>
+          <p id="totalReturn" class="s-val" style="color:var(--gold);font-size:1.6rem;">—</p>
         </div>
         <div>
-          <p style="font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.5rem;">Total Value</p>
-          <p id="totalValue" style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:var(--cream);font-weight:600;">₦6,300,000</p>
+          <p class="s-label">Total Value</p>
+          <p id="totalValue" class="s-val" style="color:var(--cream);font-size:1.6rem;">—</p>
         </div>
         <div>
-          <p style="font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.5rem;">Per Payout</p>
-          <p id="perPayout" style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:var(--cream);font-weight:600;">₦108,333</p>
+          <p class="s-label">Per Payout</p>
+          <p id="perPayout" class="s-val" style="color:var(--cream);font-size:1.6rem;">—</p>
         </div>
       </div>
+
       <div style="margin-top:1.5rem;text-align:center;">
-        <a href="billing.html" class="btn-gold">Start Investing</a>
+        <button class="btn-gold" onclick="goInvest()" style="padding:0.85rem 2.5rem;">Start Investing</button>
       </div>
     </div>
-    <style>@media(max-width:600px){.calc-grid{grid-template-columns:1fr!important;}}</style>
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
+
+<!-- ═══════════════════════════════════════════════
+     HOW IT WORKS
+═══════════════════════════════════════════════ -->
 <section style="padding:6rem 0;background:var(--navy);">
   <div style="max-width:1280px;margin:0 auto;padding:0 2rem;">
-    <p class="section-label" style="margin-bottom:1rem;">Process</p>
-    <h2 style="font-size:clamp(1.8rem,3vw,2.5rem);font-weight:300;color:var(--cream);margin-bottom:3.5rem;">How <em style="color:var(--gold);">It Works</em></h2>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;position:relative;" class="steps-grid">
-      <div style="position:absolute;top:30px;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.3),transparent);"></div>
+    <p class="label-tag" style="margin-bottom:0.75rem;">Process</p>
+    <h2 class="section-title" style="margin-bottom:3.5rem;">How <em style="color:var(--gold);">It Works</em></h2>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;" class="steps-grid">
       <div style="text-align:center;">
-        <div style="width:60px;height:60px;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--gold);">01</div>
-        <h4 style="color:var(--cream);margin-bottom:0.6rem;font-size:1rem;">Create Account</h4>
-        <p style="color:var(--text-muted);font-size:0.85rem;line-height:1.6;">Register and complete identity verification in minutes.</p>
+        <div style="width:56px;height:56px;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto 1.4rem;font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--gold);">01</div>
+        <h4 style="color:var(--cream);margin-bottom:0.5rem;font-size:0.95rem;font-weight:500;">Create Account</h4>
+        <p style="color:var(--muted);font-size:0.84rem;line-height:1.65;">Register and complete identity verification in minutes.</p>
       </div>
       <div style="text-align:center;">
-        <div style="width:60px;height:60px;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--gold);">02</div>
-        <h4 style="color:var(--cream);margin-bottom:0.6rem;font-size:1rem;">Choose Plan</h4>
-        <p style="color:var(--text-muted);font-size:0.85rem;line-height:1.6;">Select a plan that matches your goals and risk appetite.</p>
+        <div style="width:56px;height:56px;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto 1.4rem;font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--gold);">02</div>
+        <h4 style="color:var(--cream);margin-bottom:0.5rem;font-size:0.95rem;font-weight:500;">Choose a Plan</h4>
+        <p style="color:var(--muted);font-size:0.84rem;line-height:1.65;">Select a plan that matches your goals and risk appetite.</p>
       </div>
       <div style="text-align:center;">
-        <div style="width:60px;height:60px;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--gold);">03</div>
-        <h4 style="color:var(--cream);margin-bottom:0.6rem;font-size:1rem;">Fund Account</h4>
-        <p style="color:var(--text-muted);font-size:0.85rem;line-height:1.6;">Transfer funds via bank transfer or card payment.</p>
+        <div style="width:56px;height:56px;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto 1.4rem;font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--gold);">03</div>
+        <h4 style="color:var(--cream);margin-bottom:0.5rem;font-size:0.95rem;font-weight:500;">Fund Account</h4>
+        <p style="color:var(--muted);font-size:0.84rem;line-height:1.65;">Transfer funds via bank transfer, card, or crypto.</p>
       </div>
       <div style="text-align:center;">
-        <div style="width:60px;height:60px;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--gold);">04</div>
-        <h4 style="color:var(--cream);margin-bottom:0.6rem;font-size:1rem;">Earn Returns</h4>
-        <p style="color:var(--text-muted);font-size:0.85rem;line-height:1.6;">Receive payouts directly to your bank account on schedule.</p>
+        <div style="width:56px;height:56px;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto 1.4rem;font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--gold);">04</div>
+        <h4 style="color:var(--cream);margin-bottom:0.5rem;font-size:0.95rem;font-weight:500;">Earn Returns</h4>
+        <p style="color:var(--muted);font-size:0.84rem;line-height:1.65;">Receive payouts directly to your account on schedule.</p>
       </div>
     </div>
-    <style>@media(max-width:768px){.steps-grid{grid-template-columns:1fr 1fr!important;}}@media(max-width:480px){.steps-grid{grid-template-columns:1fr!important;}}</style>
   </div>
 </section>
 
-<footer style="padding:3rem 0 2rem;">
+
+<!-- ═══════════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════════ -->
+<footer style="padding:2.5rem 0;">
   <div style="max-width:1280px;margin:0 auto;padding:0 2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;border-top:1px solid rgba(201,168,76,0.1);padding-top:2rem;">
-    <div class="logo-text" style="color:var(--gold);font-size:1.2rem;">Curtz<span style="color:var(--cream);font-weight:300;">Home</span></div>
-    <p style="color:var(--text-muted);font-size:0.8rem;">© 2026 Curtz Home. All rights reserved.</p>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--gold);">Curtz<span style="color:var(--cream);font-weight:300;">Home</span></div>
+    <p style="color:var(--muted);font-size:0.8rem;">© 2026 Curtz Home. All rights reserved.</p>
   </div>
 </footer>
 
+
+<!-- ═══════════════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════════════ -->
 <script src="js/main.js"></script>
 <script>
-function calculateROI() {
-  const amount = parseFloat(document.getElementById('calcAmount').value) || 0;
-  const rate = parseFloat(document.getElementById('calcPlan').value) / 100;
-  const months = parseFloat(document.getElementById('calcTenure').value) || 1;
-  const freq = parseFloat(document.getElementById('calcFreq').value);
-  const totalReturn = amount * rate * (months / 12);
-  const totalValue = amount + totalReturn;
-  const numPayouts = (months / 12) * freq;
-  const perPayout = numPayouts > 0 ? totalReturn / numPayouts : 0;
-  document.getElementById('totalReturn').textContent = '₦' + Math.round(totalReturn).toLocaleString();
-  document.getElementById('totalValue').textContent = '₦' + Math.round(totalValue).toLocaleString();
-  document.getElementById('perPayout').textContent = '₦' + Math.round(perPayout).toLocaleString();
+/* ═══════════════════════════════════════════════════════════════
+   ▶  PLANS ARRAY — edit or add plans here
+   ═══════════════════════════════════════════════════════════════
+   Fields:
+     id          – unique key used internally
+     label       – display name
+     minUSD      – minimum investment in US dollars
+     rate        – annual return percentage (number, e.g. 18 = 18%)
+     tenureMin   – minimum tenure in months
+     tenureMax   – maximum tenure in months
+     freqDefault – default payout frequency: 'monthly' | 'quarterly' | 'weekly'
+     featured    – true = highlighted "Most Popular" card
+     btnLabel    – CTA text on the plan card
+     perks       – array of bullet-point feature strings
+═══════════════════════════════════════════════════════════════ */
+var PLANS = [
+  {
+    id:          'starter',
+    label:       'Starter',
+    minUSD:      500000,
+    rate:        18,
+    tenureMin:   6,
+    tenureMax:   12,
+    freqDefault: 'quarterly',
+    featured:    false,
+    btnLabel:    'Get Started',
+    perks: [
+      '6 – 12 month tenure',
+      'Quarterly payouts',
+      'Secured by property title',
+      'Online portfolio dashboard'
+    ]
+  },
+  {
+    id:          'growth',
+    label:       'Growth',
+    minUSD:      2000000,
+    rate:        26,
+    tenureMin:   12,
+    tenureMax:   24,
+    freqDefault: 'monthly',
+    featured:    true,
+    btnLabel:    'Invest Now',
+    perks: [
+      '12 – 24 month tenure',
+      'Monthly payouts',
+      'Secured by property title',
+      'Dedicated relationship manager',
+      'Priority property access'
+    ]
+  },
+  {
+    id:          'elite',
+    label:       'Elite',
+    minUSD:      10000000,
+    rate:        35,
+    tenureMin:   24,
+    tenureMax:   36,
+    freqDefault: 'weekly',
+    featured:    false,
+    btnLabel:    'Apply Now',
+    perks: [
+      '24 – 36 month tenure',
+      'Weekly payouts',
+      'Co-ownership deeds',
+      'Private wealth concierge',
+      'Exclusive off-market deals'
+    ]
+  }
+  /* ── Add more plans below this line:
+  ,{
+    id:          'platinum',
+    label:       'Platinum',
+    minUSD:      500000,
+    rate:        22,
+    tenureMin:   6,
+    tenureMax:   18,
+    freqDefault: 'monthly',
+    featured:    false,
+    btnLabel:    'Join Now',
+    perks: ['Custom tenure', 'Monthly payouts', 'Secured by deeds']
+  }
+  ── */
+];
+
+/* ─── helpers ─── */
+var FREQ_PER_YEAR = { monthly: 12, quarterly: 4, weekly: 52 };
+
+function fmt(n) { return '$' + Math.round(n).toLocaleString('en-US'); }
+
+/* ─── Build plan index keyed by id ─── */
+var PLAN_MAP = {};
+PLANS.forEach(function(p){ PLAN_MAP[p.id] = p; });
+
+var currentPlanId = (PLANS.find(function(p){ return p.featured; }) || PLANS[0]).id;
+
+/* ═══════════════════════════════════════════════
+   RENDER PLAN CARDS
+═══════════════════════════════════════════════ */
+function renderPlanCards() {
+  var container = document.getElementById('planCardsContainer');
+  container.innerHTML = '';
+
+  PLANS.forEach(function(plan) {
+    var card = document.createElement('div');
+    card.className = 'card plan-card' + (plan.featured ? ' featured' : '');
+    card.onclick = function(){ goInvest(plan.id); };
+
+    var perksHTML = plan.perks.map(function(p){
+      return '<div style="display:flex;gap:0.6rem;align-items:flex-start;margin-bottom:0.7rem;">' +
+             '<span style="color:var(--gold);margin-top:2px;flex-shrink:0;">✓</span>' +
+             '<span style="color:var(--muted);font-size:0.875rem;">' + p + '</span></div>';
+    }).join('');
+
+    card.innerHTML =
+      (plan.featured
+        ? '<div style="position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--navy);font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.28rem 1rem;white-space:nowrap;">Most Popular</div>'
+        : '') +
+      '<p class="label-tag" style="margin-bottom:1.4rem;">' + plan.label + '</p>' +
+      '<div class="serif" style="font-size:2.8rem;color:var(--cream);font-weight:300;line-height:1;">' +
+        fmt(plan.minUSD) + '<span style="font-size:0.95rem;color:var(--muted);"> min</span>' +
+      '</div>' +
+      '<div style="margin:1.4rem 0;padding:0.9rem 1rem;background:rgba(201,168,76,' + (plan.featured?'0.1':'0.06') + ');border-left:2px solid var(--gold);">' +
+        '<span class="serif" style="font-size:1.75rem;color:var(--gold);font-weight:600;">' + plan.rate + '%</span>' +
+        '<span style="color:var(--muted);font-size:0.85rem;"> per annum</span>' +
+      '</div>' +
+      '<div style="margin-bottom:2rem;">' + perksHTML + '</div>' +
+      '<span class="' + (plan.featured ? 'btn-gold' : 'btn-outline') + '" style="width:100%;text-align:center;display:block;pointer-events:none;">' + plan.btnLabel + '</span>';
+
+    container.appendChild(card);
+  });
 }
+
+/* ═══════════════════════════════════════════════
+   POPULATE CALCULATOR SELECT
+═══════════════════════════════════════════════ */
+function populateCalcSelect() {
+  var sel = document.getElementById('calcPlan');
+  sel.innerHTML = '';
+  PLANS.forEach(function(plan) {
+    var opt = document.createElement('option');
+    opt.value = plan.rate;
+    opt.textContent = plan.label + ' — ' + plan.rate + '%';
+    if (plan.featured) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+/* ═══════════════════════════════════════════════
+   ROI CALCULATOR
+═══════════════════════════════════════════════ */
+function calculateROI() {
+  var amount  = parseFloat(document.getElementById('calcAmount').value) || 0;
+  var rate    = parseFloat(document.getElementById('calcPlan').value) / 100;
+  var months  = parseFloat(document.getElementById('calcTenure').value) || 1;
+  var freq    = parseFloat(document.getElementById('calcFreq').value);
+  var ret     = amount * rate * (months / 12);
+  var payouts = (months / 12) * freq;
+  document.getElementById('totalReturn').textContent = fmt(ret);
+  document.getElementById('totalValue').textContent  = fmt(amount + ret);
+  document.getElementById('perPayout').textContent   = payouts > 0 ? fmt(ret / payouts) : '—';
+}
+
+/* ═══════════════════════════════════════════════
+   MODAL — OPEN / CLOSE
+═══════════════════════════════════════════════ */
+function goInvest(planId) {
+  planId = planId || currentPlanId;
+
+  if (typeof Auth !== 'undefined' && !Auth.isLoggedIn()) {
+    window.location.href = 'login.html?redirect=' + encodeURIComponent('investment.html?plan=' + planId);
+    return;
+  }
+
+  currentPlanId = planId;
+  var cfg = PLAN_MAP[planId];
+
+  document.getElementById('modalPlanLabel').textContent = cfg.label + ' Plan';
+  document.getElementById('mTenure').value              = cfg.tenureMin;
+  document.getElementById('mTenureHint').textContent    = cfg.tenureMin + ' – ' + cfg.tenureMax + ' months for this plan';
+  document.getElementById('mAmount').value              = '';
+  document.getElementById('mAmountHint').textContent    = 'Minimum: ' + fmt(cfg.minUSD);
+  document.getElementById('mTxRef').value               = '';
+
+  selectFreqByValue(cfg.freqDefault);
+  updateModalSummary();
+
+  document.getElementById('formState').style.display    = 'block';
+  document.getElementById('successState').style.display = 'none';
+  document.getElementById('investModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('investModal').classList.remove('open');
+  document.body.style.overflow = '';
+  if (document.getElementById('successState').style.display === 'block') {
+    window.location.href = 'dashboard.html';
+  }
+}
+
+document.getElementById('investModal').addEventListener('click', function(e){
+  if (e.target === this) closeModal();
+});
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Escape') closeModal();
+});
+
+/* ─── Auto-open from URL param ─── */
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var plan   = params.get('plan');
+  if (plan && PLAN_MAP[plan] && typeof Auth !== 'undefined' && Auth.isLoggedIn()) {
+    goInvest(plan);
+  }
+})();
+
+/* ═══════════════════════════════════════════════
+   FREQ PILLS
+═══════════════════════════════════════════════ */
+function selectFreq(btn) {
+  document.querySelectorAll('.freq-pill').forEach(function(p){ p.classList.remove('active'); });
+  btn.classList.add('active');
+  document.getElementById('mFreq').value = btn.dataset.freq;
+  updateModalSummary();
+}
+
+function selectFreqByValue(val) {
+  document.querySelectorAll('.freq-pill').forEach(function(p){
+    p.classList.toggle('active', p.dataset.freq === val);
+  });
+  document.getElementById('mFreq').value = val;
+}
+
+/* ═══════════════════════════════════════════════
+   MODAL LIVE SUMMARY
+═══════════════════════════════════════════════ */
+function updateModalSummary() {
+  var cfg    = PLAN_MAP[currentPlanId];
+  var amount = parseFloat(document.getElementById('mAmount').value) || 0;
+  var months = parseFloat(document.getElementById('mTenure').value) || 1;
+  var freq   = document.getElementById('mFreq').value || cfg.freqDefault;
+
+  if (amount <= 0) {
+    ['mTotalReturn','mTotalValue','mPerPayout'].forEach(function(id){
+      document.getElementById(id).textContent = '—';
+    });
+    return;
+  }
+
+  var rate    = cfg.rate / 100;
+  var ret     = amount * rate * (months / 12);
+  var payouts = (months / 12) * (FREQ_PER_YEAR[freq] || 12);
+
+  document.getElementById('mTotalReturn').textContent = fmt(ret);
+  document.getElementById('mTotalValue').textContent  = fmt(amount + ret);
+  document.getElementById('mPerPayout').textContent   = payouts > 0 ? fmt(ret / payouts) : '—';
+}
+
+/* ═══════════════════════════════════════════════
+   SUBMIT INVESTMENT
+═══════════════════════════════════════════════ */
+async function submitInvestment() {
+  var cfg    = PLAN_MAP[currentPlanId];
+  var amount = parseFloat(document.getElementById('mAmount').value);
+  var tenure = parseInt(document.getElementById('mTenure').value);
+  var freq   = document.getElementById('mFreq').value;
+  var payMeth= document.getElementById('mPayMethod').value;
+  var txRef  = document.getElementById('mTxRef').value.trim() || null;
+
+  if (!amount || amount <= 0) {
+    showToast('Please enter an investment amount.', 'error'); return;
+  }
+  if (amount < cfg.minUSD) {
+    showToast('Minimum for this plan is ' + fmt(cfg.minUSD), 'error'); return;
+  }
+  if (!tenure || tenure < cfg.tenureMin || tenure > cfg.tenureMax) {
+    showToast('Tenure must be between ' + cfg.tenureMin + ' and ' + cfg.tenureMax + ' months.', 'error'); return;
+  }
+
+  var btn  = document.getElementById('investBtn');
+  var orig = btn.innerHTML;
+  if (typeof setLoading === 'function') setLoading(btn, true, orig);
+
+  var result = await apiRequest('investments/create.php', 'POST', {
+    plan:           currentPlanId,
+    amount:         amount,
+    currency:       'USD',
+    tenure_months:  tenure,
+    payout_freq:    freq,
+    payment_method: payMeth,
+    tx_ref:         txRef
+  });
+
+  if (typeof setLoading === 'function') setLoading(btn, false, orig);
+
+  if (result.ok && result.data && result.data.investment) {
+    document.getElementById('successRef').textContent = 'Reference: ' + result.data.investment.ref;
+    document.getElementById('formState').style.display    = 'none';
+    document.getElementById('successState').style.display = 'block';
+  } else {
+    var msg = (result.data && result.data.message) || result.message || 'Submission failed. Please try again.';
+    if (typeof showToast === 'function') showToast(msg, 'error');
+    else alert(msg);
+  }
+}
+
+/* ─── Toast fallback if main.js not loaded ─── */
+if (typeof showToast === 'undefined') {
+  window.showToast = function(msg, type) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = type === 'error' ? 'error' : '';
+    t.style.display = 'block';
+    setTimeout(function(){ t.style.display = 'none'; }, 3500);
+  };
+}
+
+/* ─── Init ─── */
+renderPlanCards();
+populateCalcSelect();
 calculateROI();
 </script>
 </body>

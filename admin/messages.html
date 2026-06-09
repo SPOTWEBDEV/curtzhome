@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Messages — Curtz Home Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/admin.css"/>
+</head>
+<body>
+<script src="admin-core.js"></script>
+<script>
+adminGuard();
+injectAdminLayout('messages');
+document.getElementById('pageTitle').textContent    = 'Contact Messages';
+document.getElementById('pageSubtitle').textContent = 'All enquiries from the contact form';
+
+const content = document.getElementById('adminContent');
+content.innerHTML = `
+  <div id="msgList"></div>
+  <div id="msgModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:200;align-items:flex-start;justify-content:center;overflow-y:auto;padding:2rem;">
+    <div style="background:#12243D;border:1px solid rgba(201,168,76,0.25);width:100%;max-width:560px;">
+      <div style="padding:1.5rem;border-bottom:1px solid rgba(201,168,76,0.1);display:flex;justify-content:space-between;">
+        <h3 id="msgModalName" style="font-size:1.1rem;font-weight:400;color:var(--cream);"></h3>
+        <button onclick="closeMsg()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.2rem;">×</button>
+      </div>
+      <div style="padding:1.5rem;">
+        <div id="msgModalBody"></div>
+        <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid rgba(201,168,76,0.1);">
+          <label class="form-label">Reply (optional — sends email to user)</label>
+          <textarea id="replyText" class="form-input" rows="4" style="resize:vertical;margin-bottom:1rem;" placeholder="Type your reply here…"></textarea>
+          <div style="display:flex;gap:0.8rem;">
+            <button id="replyBtn" onclick="sendReply()" class="btn-gold" style="flex:1;padding:0.75rem;">Send Reply & Mark Replied</button>
+            <button id="markReadBtn" onclick="markRead()" class="btn-outline" style="padding:0.75rem 1rem;font-size:0.78rem;">Mark Read</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+
+let currentMsgId = null;
+
+async function loadMessages() {
+  document.getElementById('msgList').innerHTML = spinner();
+  const {ok,data} = await adminFetch('../admin/messages.php');
+  if (!ok) { document.getElementById('msgList').innerHTML = emptyState('Failed to load messages.'); return; }
+
+  document.getElementById('msgList').innerHTML = `
+    <div style="background:#060F1E;border:1px solid rgba(201,168,76,0.1);">
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Interest</th><th>Message</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+          <tbody>
+          ${data.messages.length ? data.messages.map(m=>`
+            <tr style="${m.status==='new'?'background:rgba(201,168,76,0.04);':''}">
+              <td style="color:var(--cream);font-weight:${m.status==='new'?'600':'400'};">${m.first_name||''} ${m.last_name||''}</td>
+              <td style="color:var(--text-muted);">${m.email}</td>
+              <td style="color:var(--text-muted);">${m.phone||'—'}</td>
+              <td style="text-transform:capitalize;font-size:0.8rem;">${m.interest||'general'}</td>
+              <td style="color:var(--text-muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${m.message||''}</td>
+              <td>${badge(m.status)}</td>
+              <td>${formatDate(m.created_at)}</td>
+              <td><button onclick="openMsg(${JSON.stringify(m).replace(/"/g,'&quot;')})" class="btn-outline" style="padding:0.3rem 0.6rem;font-size:0.7rem;">Open</button></td>
+            </tr>`).join(''):
+          `<tr><td colspan="8" style="text-align:center;padding:3rem;color:var(--text-muted);">No messages yet.</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+function openMsg(m) {
+  currentMsgId = m.id;
+  document.getElementById('msgModalName').textContent = `${m.first_name||''} ${m.last_name||''}`.trim() || m.email;
+  document.getElementById('msgModalBody').innerHTML = `
+    <p style="color:var(--text-muted);font-size:0.78rem;margin-bottom:0.3rem;">From: <span style="color:var(--cream);">${m.email}</span> &nbsp;|&nbsp; Phone: <span style="color:var(--cream);">${m.phone||'—'}</span></p>
+    <p style="color:var(--text-muted);font-size:0.78rem;margin-bottom:1rem;">Interest: <span style="color:var(--gold);text-transform:capitalize;">${m.interest||'general'}</span> &nbsp;|&nbsp; Date: ${formatDate(m.created_at)}</p>
+    <div style="background:rgba(26,51,86,0.4);border:1px solid rgba(201,168,76,0.1);padding:1rem;color:var(--cream);font-size:0.9rem;line-height:1.7;">${(m.message||'').replace(/\n/g,'<br/>')}</div>`;
+  document.getElementById('replyText').value = '';
+  document.getElementById('msgModal').style.display = 'flex';
+}
+function closeMsg() { document.getElementById('msgModal').style.display='none'; }
+
+async function sendReply() {
+  const reply = document.getElementById('replyText').value.trim();
+  const btn = document.getElementById('replyBtn'); const orig=btn.innerHTML;
+  setLoading(btn,true,orig);
+  const {ok} = await adminFetch('../admin/messages.php','POST',{id:currentMsgId, status:'replied', reply});
+  setLoading(btn,false,orig);
+  if(ok){showToast('Reply sent.','success');closeMsg();loadMessages();}
+  else showToast('Failed.','error');
+}
+async function markRead() {
+  const {ok} = await adminFetch('../admin/messages.php','POST',{id:currentMsgId,status:'read'});
+  if(ok){showToast('Marked as read.','success');closeMsg();loadMessages();}
+}
+
+loadMessages();
+</script>
+</body>
+</html>

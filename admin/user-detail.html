@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>User Detail — Curtz Home Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/admin.css"/>
+</head>
+<body>
+<script src="admin-core.js"></script>
+<script>
+adminGuard();
+injectAdminLayout('users');
+document.getElementById('pageTitle').textContent    = 'User Detail';
+document.getElementById('pageSubtitle').textContent = 'Full profile, investments & property purchases';
+
+const uid     = new URLSearchParams(location.search).get('id');
+const content = document.getElementById('adminContent');
+
+if (!uid) { content.innerHTML = emptyState('No user ID provided. <a href="users.html" style="color:var(--gold);">Go back</a>'); }
+else { loadUser(); }
+
+async function loadUser() {
+  content.innerHTML = spinner();
+  const { ok, data } = await adminFetch(`user_detail.php?id=${uid}`);
+  if (!ok) { content.innerHTML = emptyState('User not found. <a href="users.html" style="color:var(--gold);">Go back</a>'); return; }
+  const { user, investments, purchases, stats } = data;
+
+  content.innerHTML = `
+  <div style="margin-bottom:1rem;"><a href="users.html" style="color:var(--text-muted);font-size:0.8rem;text-decoration:none;">← Back to Users</a></div>
+
+  <!-- Profile Card -->
+  <div style="display:grid;grid-template-columns:1fr 2fr;gap:1.5rem;margin-bottom:2rem;" class="user-detail-grid">
+    <div style="background:#060F1E;border:1px solid rgba(201,168,76,0.15);padding:2rem;text-align:center;">
+      <div style="width:70px;height:70px;background:rgba(201,168,76,0.1);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--gold);margin:0 auto 1rem;">${user.first_name[0]}${user.last_name[0]}</div>
+      <h3 style="font-size:1.3rem;font-weight:400;color:var(--cream);margin-bottom:0.3rem;">${user.first_name} ${user.last_name}</h3>
+      <p style="color:var(--gold);font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:1.5rem;">${user.role}</p>
+      <div style="display:flex;flex-direction:column;gap:0.6rem;text-align:left;">
+        <p style="color:var(--text-muted);font-size:0.8rem;"><span style="color:var(--cream);">Email:</span> ${user.email}</p>
+        <p style="color:var(--text-muted);font-size:0.8rem;"><span style="color:var(--cream);">Phone:</span> ${user.phone||'—'}</p>
+        <p style="color:var(--text-muted);font-size:0.8rem;"><span style="color:var(--cream);">NIN:</span> ${user.nin||'—'}</p>
+        <p style="color:var(--text-muted);font-size:0.8rem;"><span style="color:var(--cream);">Status:</span> ${badge(user.status)}</p>
+        <p style="color:var(--text-muted);font-size:0.8rem;"><span style="color:var(--cream);">Joined:</span> ${formatDate(user.created_at)}</p>
+        <p style="color:var(--text-muted);font-size:0.8rem;"><span style="color:var(--cream);">Address:</span> ${user.address||'—'}</p>
+      </div>
+      <div style="margin-top:1.5rem;display:flex;gap:0.6rem;">
+        <button onclick="toggleUserStatus('${user.status}')" style="flex:1;padding:0.5rem;font-size:0.72rem;cursor:pointer;border:1px solid var(--danger);background:none;color:var(--danger);">${user.status==='active'?'Suspend':'Activate'}</button>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;align-content:start;">
+      <div style="padding:1.5rem;background:#060F1E;border:1px solid rgba(201,168,76,0.15);text-align:center;">
+        <p style="font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.5rem;">Investments</p>
+        <p style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--cream);">${stats.cnt}</p>
+      </div>
+      <div style="padding:1.5rem;background:#060F1E;border:1px solid rgba(201,168,76,0.15);text-align:center;">
+        <p style="font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.5rem;">Total Invested</p>
+        <p style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--gold);">${formatCurrency(stats.total)}</p>
+      </div>
+      <div style="padding:1.5rem;background:#060F1E;border:1px solid rgba(201,168,76,0.15);text-align:center;">
+        <p style="font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.5rem;">Properties</p>
+        <p style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--cream);">${purchases.length}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Investments Table -->
+  <div style="background:#060F1E;border:1px solid rgba(201,168,76,0.1);margin-bottom:2rem;">
+    <div style="padding:1.2rem 1.5rem;border-bottom:1px solid rgba(201,168,76,0.1);display:flex;justify-content:space-between;align-items:center;">
+      <h3 style="font-size:1rem;font-weight:500;color:var(--cream);">Investments (${investments.length})</h3>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="data-table">
+        <thead><tr><th>Ref</th><th>Plan</th><th>Amount</th><th>Rate</th><th>Tenure</th><th>Expected Return</th><th>Maturity</th><th>Payment Ref</th><th>Status</th><th>Update</th></tr></thead>
+        <tbody>
+        ${investments.length ? investments.map(i=>`
+          <tr>
+            <td style="color:var(--gold);font-family:monospace;font-size:0.8rem;">INV-${String(i.id).padStart(6,'0')}</td>
+            <td style="text-transform:capitalize;">${i.plan}</td>
+            <td>${formatCurrency(i.amount)}</td>
+            <td>${i.rate}%</td>
+            <td>${i.tenure_months}mo</td>
+            <td style="color:var(--success);">${formatCurrency(i.expected_return)}</td>
+            <td>${formatDate(i.maturity_date)}</td>
+            <td style="color:var(--text-muted);font-size:0.78rem;">${i.tx_ref||'—'}</td>
+            <td>${badge(i.status)}</td>
+            <td>
+              <select onchange="updateInvestment(${i.id},this.value)" class="form-input" style="padding:0.3rem;font-size:0.72rem;width:auto;">
+                <option value="">Change…</option>
+                <option value="active">Active</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+                <option value="pending">Pending</option>
+              </select>
+            </td>
+          </tr>`).join('') : `<tr><td colspan="10" style="text-align:center;padding:2rem;color:var(--text-muted);">No investments.</td></tr>`}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Purchases Table -->
+  <div style="background:#060F1E;border:1px solid rgba(201,168,76,0.1);">
+    <div style="padding:1.2rem 1.5rem;border-bottom:1px solid rgba(201,168,76,0.1);">
+      <h3 style="font-size:1rem;font-weight:500;color:var(--cream);">Property Purchases (${purchases.length})</h3>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="data-table">
+        <thead><tr><th>Ref</th><th>Property</th><th>Location</th><th>Type</th><th>Price</th><th>Deposit</th><th>Tx Ref</th><th>Status</th><th>Date</th><th>Update</th></tr></thead>
+        <tbody>
+        ${purchases.length ? purchases.map(p=>`
+          <tr>
+            <td style="color:var(--gold);font-family:monospace;font-size:0.8rem;">PUR-${String(p.id).padStart(6,'0')}</td>
+            <td>${p.property_name}</td>
+            <td style="color:var(--text-muted);">${p.location||'—'}</td>
+            <td style="text-transform:capitalize;">${p.purchase_type}</td>
+            <td>${formatCurrency(p.price)}</td>
+            <td>${formatCurrency(p.deposit_amount)}</td>
+            <td style="color:var(--text-muted);font-size:0.78rem;">${p.tx_ref||'—'}</td>
+            <td>${badge(p.status)}</td>
+            <td>${formatDate(p.created_at)}</td>
+            <td>
+              <select onchange="updatePurchase(${p.id},this.value)" class="form-input" style="padding:0.3rem;font-size:0.72rem;width:auto;">
+                <option value="">Change…</option>
+                <option value="processing">Processing</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+                <option value="pending">Pending</option>
+              </select>
+            </td>
+          </tr>`).join('') : `<tr><td colspan="10" style="text-align:center;padding:2rem;color:var(--text-muted);">No property purchases.</td></tr>`}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <style>@media(max-width:900px){.user-detail-grid{grid-template-columns:1fr!important;}}</style>`;
+}
+
+async function toggleUserStatus(current) {
+  const ns = current==='active'?'suspended':'active';
+  if (!confirm(`${ns==='suspended'?'Suspend':'Activate'} this user?`)) return;
+  const {ok} = await adminFetch('users.php','POST',{user_id:uid,status:ns});
+  if (ok){showToast('Updated.','success');loadUser();}else showToast('Failed.','error');
+}
+async function updateInvestment(id, status) {
+  if (!status) return;
+  const {ok} = await adminFetch('../admin/investments.php','POST',{id,status});
+  if(ok){showToast('Investment updated. User notified.','success');loadUser();}else showToast('Failed.','error');
+}
+async function updatePurchase(id, status) {
+  if (!status) return;
+  const {ok} = await adminFetch('../admin/purchases.php','POST',{id,status});
+  if(ok){showToast('Purchase updated. User notified.','success');loadUser();}else showToast('Failed.','error');
+}
+</script>
+</body>
+</html>

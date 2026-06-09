@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Dashboard — Curtz Home Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/admin.css"/>
+</head>
+<body>
+<script src="admin-core.js"></script>
+<script>
+adminGuard();
+injectAdminLayout('dashboard');
+document.getElementById('pageTitle').textContent    = 'Dashboard';
+document.getElementById('pageSubtitle').textContent = 'Platform overview and recent activity';
+
+const content = document.getElementById('adminContent');
+content.innerHTML = spinner('Loading dashboard…');
+
+async function loadDashboard() {
+  const { ok, data } = await adminFetch('dashboard.php');
+  if (!ok) { content.innerHTML = emptyState('Failed to load dashboard.'); return; }
+
+  content.innerHTML = `
+  <!-- STAT CARDS -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-bottom:2rem;" class="stat-cards">
+    <div style="padding:1.5rem;background:#060F1E;border:1px solid rgba(201,168,76,0.15);">
+      <p style="font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.6rem;">Total Users</p>
+      <p style="font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--cream);font-weight:600;">${data.users}</p>
+    </div>
+    <div style="padding:1.5rem;background:#060F1E;border:1px solid rgba(201,168,76,0.15);">
+      <p style="font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.6rem;">Total Invested</p>
+      <p style="font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--gold);font-weight:600;">${formatCurrency(data.total_invested)}</p>
+    </div>
+    <div style="padding:1.5rem;background:#060F1E;border:1px solid rgba(201,168,76,0.15);">
+      <p style="font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.6rem;">Investments</p>
+      <p style="font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--cream);font-weight:600;">${data.investments} <span style="font-size:1rem;color:var(--gold);">(${data.pending_inv} pending)</span></p>
+    </div>
+    <div style="padding:1.5rem;background:#060F1E;border:1px solid rgba(201,168,76,0.15);">
+      <p style="font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.6rem;">New Messages</p>
+      <p style="font-family:'Cormorant Garamond',serif;font-size:2rem;color:${data.new_messages>0?'var(--danger)':'var(--cream)'};font-weight:600;">${data.new_messages}</p>
+    </div>
+  </div>
+
+  <!-- RECENT INVESTMENTS -->
+  <div style="background:#060F1E;border:1px solid rgba(201,168,76,0.1);margin-bottom:2rem;">
+    <div style="padding:1.2rem 1.5rem;border-bottom:1px solid rgba(201,168,76,0.1);display:flex;justify-content:space-between;align-items:center;">
+      <h3 style="font-size:1rem;font-weight:500;color:var(--cream);">Recent Investments</h3>
+      <a href="investments.html" style="color:var(--gold);font-size:0.75rem;text-decoration:none;">View All →</a>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="data-table">
+        <thead><tr><th>Ref</th><th>Investor</th><th>Plan</th><th>Amount</th><th>Return</th><th>Status</th><th>Date</th></tr></thead>
+        <tbody>
+        ${data.recent_investments.length ? data.recent_investments.map(i => `
+          <tr style="cursor:pointer;" onclick="window.location='user-detail.html?id=${i.user_id}'">
+            <td style="color:var(--gold);font-family:monospace;">INV-${String(i.id).padStart(6,'0')}</td>
+            <td>${i.first_name} ${i.last_name}<br/><span style="color:var(--text-muted);font-size:0.75rem;">${i.email}</span></td>
+            <td style="text-transform:capitalize;">${i.plan}</td>
+            <td>${formatCurrency(i.amount)}</td>
+            <td style="color:var(--success);">${formatCurrency(i.expected_return)}</td>
+            <td>${badge(i.status)}</td>
+            <td>${formatDate(i.created_at)}</td>
+          </tr>`).join('') : `<tr><td colspan="7">${emptyState('No investments yet.')}</td></tr>`}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- RECENT PURCHASES -->
+  <div style="background:#060F1E;border:1px solid rgba(201,168,76,0.1);">
+    <div style="padding:1.2rem 1.5rem;border-bottom:1px solid rgba(201,168,76,0.1);display:flex;justify-content:space-between;align-items:center;">
+      <h3 style="font-size:1rem;font-weight:500;color:var(--cream);">Recent Property Purchases</h3>
+      <a href="purchases.html" style="color:var(--gold);font-size:0.75rem;text-decoration:none;">View All →</a>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="data-table">
+        <thead><tr><th>Ref</th><th>Buyer</th><th>Property</th><th>Type</th><th>Deposit</th><th>Status</th><th>Date</th></tr></thead>
+        <tbody>
+        ${data.recent_purchases.length ? data.recent_purchases.map(p => `
+          <tr style="cursor:pointer;" onclick="window.location='user-detail.html?id=${p.user_id}'">
+            <td style="color:var(--gold);font-family:monospace;">PUR-${String(p.id).padStart(6,'0')}</td>
+            <td>${p.first_name} ${p.last_name}<br/><span style="color:var(--text-muted);font-size:0.75rem;">${p.email}</span></td>
+            <td>${p.property_name}</td>
+            <td style="text-transform:capitalize;">${p.purchase_type}</td>
+            <td>${formatCurrency(p.deposit_amount)}</td>
+            <td>${badge(p.status)}</td>
+            <td>${formatDate(p.created_at)}</td>
+          </tr>`).join('') : `<tr><td colspan="7">${emptyState('No purchases yet.')}</td></tr>`}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <style>@media(max-width:900px){.stat-cards{grid-template-columns:repeat(2,1fr)!important;}}@media(max-width:480px){.stat-cards{grid-template-columns:1fr!important;}}</style>`;
+}
+loadDashboard();
+</script>
+</body>
+</html>

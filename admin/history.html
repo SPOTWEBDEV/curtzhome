@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Activity Log — Curtz Home Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/admin.css"/>
+</head>
+<body>
+<script src="admin-core.js"></script>
+<script>
+adminGuard();
+injectAdminLayout('history');
+document.getElementById('pageTitle').textContent    = 'Activity Log';
+document.getElementById('pageSubtitle').textContent = 'Complete audit trail of platform activity';
+
+const content = document.getElementById('adminContent');
+
+// Since admin_logs joins admin users, use a combined history view
+async function loadHistory() {
+  content.innerHTML = spinner();
+
+  // Pull all investments + purchases as combined history
+  const [invRes, purRes] = await Promise.all([
+    adminFetch('investments.php?status='),
+    adminFetch('purchases.php?status=')
+  ]);
+
+  const investments = (invRes.ok ? invRes.data.investments : []).map(i => ({
+    ...i, _type: 'investment',
+    _ref: 'INV-' + String(i.id).padStart(6,'0'),
+    _title: `${i.first_name} ${i.last_name} — ${i.plan.charAt(0).toUpperCase()+i.plan.slice(1)} Plan`,
+    _amount: i.amount,
+    _date: i.created_at
+  }));
+
+  const purchases = (purRes.ok ? purRes.data.purchases : []).map(p => ({
+    ...p, _type: 'purchase',
+    _ref: 'PUR-' + String(p.id).padStart(6,'0'),
+    _title: `${p.first_name} ${p.last_name} — ${p.property_name}`,
+    _amount: p.deposit_amount || p.price,
+    _date: p.created_at
+  }));
+
+  const combined = [...investments, ...purchases].sort((a,b) => new Date(b._date)-new Date(a._date));
+
+  content.innerHTML = `
+    <div style="margin-bottom:1.5rem;display:flex;gap:1rem;flex-wrap:wrap;">
+      <div style="padding:1rem 2rem;background:#060F1E;border:1px solid rgba(201,168,76,0.15);text-align:center;min-width:140px;">
+        <p style="font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.3rem;">Investments</p>
+        <p style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:var(--gold);">${investments.length}</p>
+      </div>
+      <div style="padding:1rem 2rem;background:#060F1E;border:1px solid rgba(201,168,76,0.15);text-align:center;min-width:140px;">
+        <p style="font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.3rem;">Purchases</p>
+        <p style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:var(--cream);">${purchases.length}</p>
+      </div>
+      <div style="padding:1rem 2rem;background:#060F1E;border:1px solid rgba(201,168,76,0.15);text-align:center;min-width:140px;">
+        <p style="font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.3rem;">Total Events</p>
+        <p style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:var(--cream);">${combined.length}</p>
+      </div>
+    </div>
+
+    <div style="background:#060F1E;border:1px solid rgba(201,168,76,0.1);">
+      <div style="padding:1rem 1.5rem;border-bottom:1px solid rgba(201,168,76,0.08);">
+        <span style="color:var(--text-muted);font-size:0.8rem;">All platform transactions — newest first</span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead><tr><th>Ref</th><th>Type</th><th>User</th><th>Description</th><th>Amount</th><th>Status</th><th>Date</th><th>View</th></tr></thead>
+          <tbody>
+          ${combined.length ? combined.map(e=>`
+            <tr>
+              <td style="color:var(--gold);font-family:monospace;font-size:0.78rem;">${e._ref}</td>
+              <td>
+                <span class="badge" style="background:rgba(${e._type==='investment'?'201,168,76':'26,51,86'},0.15);color:${e._type==='investment'?'var(--gold)':'var(--cream)'};">
+                  ${e._type==='investment'?'Investment':'Purchase'}
+                </span>
+              </td>
+              <td>
+                <a href="user-detail.html?id=${e.user_id}" style="color:var(--cream);text-decoration:none;">${e.first_name} ${e.last_name}</a>
+                <br/><span style="color:var(--text-muted);font-size:0.72rem;">${e.email}</span>
+              </td>
+              <td style="font-size:0.85rem;">${e._title}</td>
+              <td>${formatCurrency(e._amount)}</td>
+              <td>${badge(e.status)}</td>
+              <td>${formatDate(e._date)}</td>
+              <td>
+                <a href="${e._type==='investment'?'investments':'purchases'}.html" style="color:var(--gold);font-size:0.75rem;text-decoration:none;">View →</a>
+              </td>
+            </tr>`).join(''):`<tr><td colspan="8" style="text-align:center;padding:3rem;color:var(--text-muted);">No activity recorded yet.</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+loadHistory();
+</script>
+</body>
+</html>

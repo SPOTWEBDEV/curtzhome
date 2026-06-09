@@ -125,7 +125,7 @@ async function submitContact(e) {
   const data = Object.fromEntries(new FormData(form));
 
   // AJAX to PHP backend
-  const result = await apiRequest('contact.php', 'POST', data);
+  const result = await apiRequest('contact/send.php', 'POST', data);
   setLoading(btn, false, originalText);
   if (result.ok) {
     showToast('Message sent! We\'ll be in touch soon.', 'success');

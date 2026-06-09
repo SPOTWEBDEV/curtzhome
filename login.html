@@ -2,54 +2,60 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login — Elysian Estates</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Login — Curtz Home</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/style.css"/>
 </head>
-<body style="min-height:100vh;display:flex;flex-direction:column;">
-
+<body class="no-pad" style="min-height:100vh;display:flex;flex-direction:column;">
 <div id="toast"></div>
 
-<!-- SPLIT LAYOUT -->
 <div style="display:grid;grid-template-columns:1fr 1fr;min-height:100vh;" class="auth-grid">
 
-  <!-- Left: Branding -->
-  <div style="background:linear-gradient(160deg,#060F1E 0%,#0B1629 50%,#0D1F3C 100%);display:flex;flex-direction:column;justify-content:center;padding:4rem;position:relative;overflow:hidden;">
-    <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 30% 60%,rgba(201,168,76,0.07),transparent);"></div>
-    <div class="grid-overlay" style="opacity:0.5;"></div>
+  <!-- Left branding panel -->
+  <div style="background:linear-gradient(160deg,#040B14 0%,#0B1629 50%,#0D1F3C 100%);display:flex;flex-direction:column;justify-content:center;padding:4rem;position:relative;overflow:hidden;">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 30% 60%,rgba(201,168,76,0.07),transparent);pointer-events:none;"></div>
+    <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(201,168,76,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.04) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;"></div>
     <div style="position:relative;z-index:1;">
-      <a href="index.html" class="logo-text" style="color:var(--gold);font-size:1.6rem;text-decoration:none;display:block;margin-bottom:3rem;">Elysian<span style="color:var(--cream);font-weight:300;">Estates</span></a>
-      <h1 style="font-size:clamp(2rem,4vw,3rem);font-weight:300;color:var(--cream);line-height:1.2;margin-bottom:1.5rem;">Your Wealth Journey<br/>Starts <em style="color:var(--gold);">Here</em></h1>
-      <p style="color:var(--text-muted);line-height:1.8;max-width:380px;margin-bottom:3rem;">Access your portfolio, track investments, manage property purchases, and connect with your advisor — all in one place.</p>
+      <a href="index.html" style="font-family:'Cormorant Garamond',serif;font-weight:700;font-size:1.7rem;color:#C9A84C;text-decoration:none;letter-spacing:0.04em;display:block;margin-bottom:3rem;">
+        Curtz <span style="color:#F7F3ED;font-weight:300;">Home</span>
+      </a>
+      <h1 style="font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3rem);font-weight:300;color:#F7F3ED;line-height:1.2;margin-bottom:1.5rem;">
+        Your Wealth Journey<br/>Starts <em style="color:#C9A84C;">Here</em>
+      </h1>
+      <p style="color:#8A9BB0;line-height:1.8;max-width:380px;margin-bottom:3rem;font-family:'DM Sans',sans-serif;">
+        Access your portfolio, track investments, manage property purchases, and connect with your advisor — all in one place.
+      </p>
       <div style="display:flex;flex-direction:column;gap:1rem;">
-        <div style="display:flex;gap:0.75rem;align-items:center;"><div style="width:6px;height:6px;background:var(--gold);border-radius:50%;"></div><span style="color:var(--text-muted);font-size:0.875rem;">Real-time portfolio tracking</span></div>
-        <div style="display:flex;gap:0.75rem;align-items:center;"><div style="width:6px;height:6px;background:var(--gold);border-radius:50%;"></div><span style="color:var(--text-muted);font-size:0.875rem;">Exclusive property listings</span></div>
-        <div style="display:flex;gap:0.75rem;align-items:center;"><div style="width:6px;height:6px;background:var(--gold);border-radius:50%;"></div><span style="color:var(--text-muted);font-size:0.875rem;">Secure document management</span></div>
-        <div style="display:flex;gap:0.75rem;align-items:center;"><div style="width:6px;height;6px;background:var(--gold);border-radius:50%;"></div><span style="color:var(--text-muted);font-size:0.875rem;">Direct advisor communication</span></div>
+        <div style="display:flex;gap:0.75rem;align-items:center;"><div style="width:6px;height:6px;background:#C9A84C;border-radius:50%;flex-shrink:0;"></div><span style="color:#8A9BB0;font-size:0.875rem;font-family:'DM Sans',sans-serif;">Real-time portfolio tracking</span></div>
+        <div style="display:flex;gap:0.75rem;align-items:center;"><div style="width:6px;height:6px;background:#C9A84C;border-radius:50%;flex-shrink:0;"></div><span style="color:#8A9BB0;font-size:0.875rem;font-family:'DM Sans',sans-serif;">Exclusive property listings</span></div>
+        <div style="display:flex;gap:0.75rem;align-items:center;"><div style="width:6px;height:6px;background:#C9A84C;border-radius:50%;flex-shrink:0;"></div><span style="color:#8A9BB0;font-size:0.875rem;font-family:'DM Sans',sans-serif;">Secure document management</span></div>
+        <div style="display:flex;gap:0.75rem;align-items:center;"><div style="width:6px;height:6px;background:#C9A84C;border-radius:50%;flex-shrink:0;"></div><span style="color:#8A9BB0;font-size:0.875rem;font-family:'DM Sans',sans-serif;">Direct advisor communication</span></div>
       </div>
     </div>
     <div style="position:absolute;bottom:3rem;left:4rem;right:4rem;padding:1.5rem;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.12);">
-      <p style="color:var(--text-muted);font-size:0.8rem;font-style:italic;line-height:1.6;">"Elysian Estates grew my wealth by 32% in 18 months through their Growth investment plan. Outstanding service."</p>
-      <p style="color:var(--gold);font-size:0.75rem;margin-top:0.75rem;">— Chukwuemeka A., Lagos</p>
+      <p style="color:#8A9BB0;font-size:0.8rem;font-style:italic;line-height:1.6;font-family:'DM Sans',sans-serif;">"Curtz Home grew my wealth by 32% in 18 months through their Growth investment plan. Outstanding service."</p>
+      <p style="color:#C9A84C;font-size:0.75rem;margin-top:0.75rem;font-family:'DM Sans',sans-serif;">— Michael A., London</p>
     </div>
   </div>
 
-  <!-- Right: Auth forms -->
-  <div style="background:var(--navy-mid);display:flex;align-items:center;justify-content:center;padding:3rem 2rem;">
+  <!-- Right: auth forms -->
+  <div style="background:#12243D;display:flex;align-items:center;justify-content:center;padding:3rem 2rem;">
     <div style="width:100%;max-width:420px;">
 
       <!-- Tab switcher -->
       <div style="display:flex;border-bottom:1px solid rgba(201,168,76,0.2);margin-bottom:2.5rem;">
-        <button id="tabLogin" onclick="switchTab('login')" style="flex:1;padding:0.85rem;background:none;border:none;border-bottom:2px solid var(--gold);color:var(--gold);font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;font-family:'DM Sans',sans-serif;">Sign In</button>
-        <button id="tabRegister" onclick="switchTab('register')" style="flex:1;padding:0.85rem;background:none;border:none;border-bottom:2px solid transparent;color:var(--text-muted);font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;font-family:'DM Sans',sans-serif;">Create Account</button>
+        <button id="tabLogin" onclick="switchTab('login')"
+          style="flex:1;padding:0.85rem;background:none;border:none;border-bottom:2px solid #C9A84C;color:#C9A84C;font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;">Sign In</button>
+        <button id="tabRegister" onclick="switchTab('register')"
+          style="flex:1;padding:0.85rem;background:none;border:none;border-bottom:2px solid transparent;color:#8A9BB0;font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;">Create Account</button>
       </div>
 
-      <!-- LOGIN FORM -->
-      <div id="loginForm">
-        <h2 style="font-size:1.8rem;font-weight:300;color:var(--cream);margin-bottom:0.5rem;">Welcome Back</h2>
-        <p style="color:var(--text-muted);font-size:0.875rem;margin-bottom:2rem;">Sign in to your Elysian account</p>
-        <form onsubmit="handleLogin(event)">
+      <!-- ── LOGIN FORM ─────────────────────────────────── -->
+      <div id="loginPanel">
+        <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;color:#F7F3ED;margin-bottom:0.5rem;">Welcome Back</h2>
+        <p style="color:#8A9BB0;font-size:0.875rem;margin-bottom:2rem;font-family:'DM Sans',sans-serif;">Sign in to your Curtz Home account</p>
+        <form id="loginForm" onsubmit="handleLogin(event)">
           <div style="margin-bottom:1.2rem;">
             <label class="form-label">Email Address</label>
             <input type="email" id="loginEmail" class="form-input" placeholder="you@email.com" required/>
@@ -57,24 +63,26 @@
           <div style="margin-bottom:0.5rem;">
             <label class="form-label">Password</label>
             <div style="position:relative;">
-              <input type="password" id="loginPassword" class="form-input" placeholder="••••••••" required/>
-              <button type="button" onclick="togglePw('loginPassword')" style="position:absolute;right:1rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.8rem;">Show</button>
+              <input type="password" id="loginPassword" class="form-input" placeholder="••••••••" required style="padding-right:3.5rem;"/>
+              <button type="button" onclick="togglePw('loginPassword',this)" style="position:absolute;right:1rem;top:50%;transform:translateY(-50%);background:none;border:none;color:#8A9BB0;cursor:pointer;font-size:0.78rem;font-family:'DM Sans',sans-serif;">Show</button>
             </div>
           </div>
           <div style="text-align:right;margin-bottom:2rem;">
-            <a href="#" style="color:var(--gold);font-size:0.8rem;text-decoration:none;">Forgot password?</a>
+            <a href="#" style="color:#C9A84C;font-size:0.8rem;text-decoration:none;font-family:'DM Sans',sans-serif;">Forgot password?</a>
           </div>
           <button type="submit" id="loginBtn" class="btn-gold" style="width:100%;text-align:center;padding:1rem;">Sign In</button>
         </form>
-        <p style="text-align:center;margin-top:1.5rem;color:var(--text-muted);font-size:0.875rem;">Don't have an account? <a href="#" onclick="switchTab('register')" style="color:var(--gold);text-decoration:none;">Create one</a></p>
+        <p style="text-align:center;margin-top:1.5rem;color:#8A9BB0;font-size:0.875rem;font-family:'DM Sans',sans-serif;">
+          Don't have an account? <a href="#" onclick="switchTab('register')" style="color:#C9A84C;text-decoration:none;">Create one</a>
+        </p>
       </div>
 
-      <!-- REGISTER FORM -->
-      <div id="registerForm" style="display:none;">
-        <h2 style="font-size:1.8rem;font-weight:300;color:var(--cream);margin-bottom:0.5rem;">Create Account</h2>
-        <p style="color:var(--text-muted);font-size:0.875rem;margin-bottom:2rem;">Join thousands of investors and homeowners</p>
-        <form onsubmit="handleRegister(event)">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.2rem;">
+      <!-- ── REGISTER FORM ──────────────────────────────── -->
+      <div id="registerPanel" style="display:none;">
+        <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;color:#F7F3ED;margin-bottom:0.5rem;">Create Account</h2>
+        <p style="color:#8A9BB0;font-size:0.875rem;margin-bottom:2rem;font-family:'DM Sans',sans-serif;">Join thousands of investors and homeowners</p>
+        <form id="registerForm" onsubmit="handleRegister(event)">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.2rem;" class="reg-names">
             <div>
               <label class="form-label">First Name</label>
               <input type="text" id="regFirst" class="form-input" placeholder="John" required/>
@@ -90,86 +98,113 @@
           </div>
           <div style="margin-bottom:1.2rem;">
             <label class="form-label">Phone Number</label>
-            <input type="tel" id="regPhone" class="form-input" placeholder="+234 xxx xxx xxxx" required/>
+            <input type="tel" id="regPhone" class="form-input" placeholder="+1 xxx xxx xxxx" required/>
           </div>
           <div style="margin-bottom:1.2rem;">
             <label class="form-label">Password</label>
             <input type="password" id="regPassword" class="form-input" placeholder="Min. 8 characters" required minlength="8"/>
           </div>
-          <div style="margin-bottom:2rem;">
+          <div style="margin-bottom:1.5rem;">
             <label class="form-label">Confirm Password</label>
             <input type="password" id="regConfirm" class="form-input" placeholder="Repeat password" required/>
           </div>
           <div style="margin-bottom:1.5rem;display:flex;gap:0.6rem;align-items:flex-start;">
-            <input type="checkbox" id="agreeTerms" required style="margin-top:3px;accent-color:var(--gold);"/>
-            <label for="agreeTerms" style="color:var(--text-muted);font-size:0.8rem;line-height:1.5;">I agree to the <a href="#" style="color:var(--gold);">Terms of Service</a> and <a href="#" style="color:var(--gold);">Privacy Policy</a></label>
+            <input type="checkbox" id="agreeTerms" required style="margin-top:3px;accent-color:#C9A84C;flex-shrink:0;"/>
+            <label for="agreeTerms" style="color:#8A9BB0;font-size:0.8rem;line-height:1.5;font-family:'DM Sans',sans-serif;">
+              I agree to the <a href="#" style="color:#C9A84C;">Terms of Service</a> and <a href="#" style="color:#C9A84C;">Privacy Policy</a>
+            </label>
           </div>
           <button type="submit" id="registerBtn" class="btn-gold" style="width:100%;text-align:center;padding:1rem;">Create Account</button>
         </form>
-        <p style="text-align:center;margin-top:1.5rem;color:var(--text-muted);font-size:0.875rem;">Already have an account? <a href="#" onclick="switchTab('login')" style="color:var(--gold);text-decoration:none;">Sign in</a></p>
+        <p style="text-align:center;margin-top:1.5rem;color:#8A9BB0;font-size:0.875rem;font-family:'DM Sans',sans-serif;">
+          Already have an account? <a href="#" onclick="switchTab('login')" style="color:#C9A84C;text-decoration:none;">Sign in</a>
+        </p>
       </div>
 
     </div>
   </div>
 </div>
 
-<style>@media(max-width:768px){.auth-grid{grid-template-columns:1fr!important;} .auth-grid>div:first-child{display:none!important;}}</style>
+<style>
+  @media(max-width:768px){
+    .auth-grid { grid-template-columns:1fr !important; }
+    .auth-grid > div:first-child { display:none !important; }
+    .reg-names { grid-template-columns:1fr !important; }
+  }
+</style>
 
 <script src="js/main.js"></script>
 <script>
-function switchTab(tab) {
-  document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
-  document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
-  document.getElementById('tabLogin').style.borderBottomColor = tab === 'login' ? 'var(--gold)' : 'transparent';
-  document.getElementById('tabLogin').style.color = tab === 'login' ? 'var(--gold)' : 'var(--text-muted)';
-  document.getElementById('tabRegister').style.borderBottomColor = tab === 'register' ? 'var(--gold)' : 'transparent';
-  document.getElementById('tabRegister').style.color = tab === 'register' ? 'var(--gold)' : 'var(--text-muted)';
+// ── Read redirect param ────────────────────────────────────────────────────
+var params   = new URLSearchParams(window.location.search);
+var redirect = params.get('redirect') || 'billing.html';
+var from     = params.get('from')     || '';  // 'investment' or 'housing'
+
+// Pre-select tab from URL
+if (params.get('tab') === 'register') switchTab('register');
+
+// If already logged in, bounce straight to destination
+if (Auth.isLoggedIn()) {
+  window.location.href = redirect;
 }
 
-function togglePw(id) {
-  const inp = document.getElementById(id);
+function switchTab(tab) {
+  document.getElementById('loginPanel').style.display    = tab === 'login'    ? 'block' : 'none';
+  document.getElementById('registerPanel').style.display = tab === 'register' ? 'block' : 'none';
+  document.getElementById('tabLogin').style.borderBottomColor    = tab === 'login'    ? '#C9A84C' : 'transparent';
+  document.getElementById('tabLogin').style.color                = tab === 'login'    ? '#C9A84C' : '#8A9BB0';
+  document.getElementById('tabRegister').style.borderBottomColor = tab === 'register' ? '#C9A84C' : 'transparent';
+  document.getElementById('tabRegister').style.color             = tab === 'register' ? '#C9A84C' : '#8A9BB0';
+}
+
+function togglePw(id, btn) {
+  var inp = document.getElementById(id);
   inp.type = inp.type === 'password' ? 'text' : 'password';
+  btn.textContent = inp.type === 'password' ? 'Show' : 'Hide';
 }
 
 async function handleLogin(e) {
   e.preventDefault();
-  const btn = document.getElementById('loginBtn');
-  const orig = btn.innerHTML;
+  var btn = document.getElementById('loginBtn');
+  var orig = btn.innerHTML;
   setLoading(btn, true, orig);
-  const data = { email: document.getElementById('loginEmail').value, password: document.getElementById('loginPassword').value };
-  const result = await apiRequest('auth/login.php', 'POST', data);
+  var result = await apiRequest('auth/login.php', 'POST', {
+    email:    document.getElementById('loginEmail').value,
+    password: document.getElementById('loginPassword').value
+  });
   setLoading(btn, false, orig);
-  if (result.ok && result.data.token) {
+  if (result.ok && result.data && result.data.token) {
     Auth.setSession(result.data.token, result.data.user);
-    showToast('Login successful! Redirecting...', 'success');
-    setTimeout(() => window.location.href = 'billing.html', 1200);
+    showToast('Login successful! Redirecting…', 'success');
+    setTimeout(function(){ window.location.href = redirect; }, 900);
   } else {
-    showToast(result.data.message || 'Invalid credentials. Please try again.', 'error');
+    showToast(result.message || result.data.message || 'Invalid credentials.', 'error');
   }
 }
 
 async function handleRegister(e) {
   e.preventDefault();
-  const pw = document.getElementById('regPassword').value;
-  const confirm = document.getElementById('regConfirm').value;
+  var pw      = document.getElementById('regPassword').value;
+  var confirm = document.getElementById('regConfirm').value;
   if (pw !== confirm) { showToast('Passwords do not match.', 'error'); return; }
-  const btn = document.getElementById('registerBtn');
-  const orig = btn.innerHTML;
+  var btn  = document.getElementById('registerBtn');
+  var orig = btn.innerHTML;
   setLoading(btn, true, orig);
-  const data = {
+  var result = await apiRequest('auth/register.php', 'POST', {
     first_name: document.getElementById('regFirst').value,
-    last_name: document.getElementById('regLast').value,
-    email: document.getElementById('regEmail').value,
-    phone: document.getElementById('regPhone').value,
-    password: pw
-  };
-  const result = await apiRequest('auth/register.php', 'POST', data);
+    last_name:  document.getElementById('regLast').value,
+    email:      document.getElementById('regEmail').value,
+    phone:      document.getElementById('regPhone').value,
+    password:   pw
+  });
   setLoading(btn, false, orig);
   if (result.ok) {
     showToast('Account created! Please sign in.', 'success');
-    setTimeout(() => switchTab('login'), 1500);
+    // Pre-fill email and switch to login tab
+    document.getElementById('loginEmail').value = document.getElementById('regEmail').value;
+    setTimeout(function(){ switchTab('login'); }, 1200);
   } else {
-    showToast(result.data.message || 'Registration failed. Please try again.', 'error');
+    showToast(result.message || 'Registration failed. Please try again.', 'error');
   }
 }
 </script>

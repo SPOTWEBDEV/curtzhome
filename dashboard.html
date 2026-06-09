@@ -3,9 +3,66 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>My Account — Elysian Estates</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="css/style.css"/>
+  <title>My Account — Curtz Home</title>
+  <script src="./js/tailwind.js"></script>
+  <link rel="stylesheet" href="./css/style.css"/>
+  <link rel="stylesheet" href="./css/admin.css"/>
+  <style>
+    .menu-btn{
+  display:none;
+  position:fixed;
+  top:15px;
+  left:15px;
+  z-index:1002;
+  background:#060F1E;
+  color:#C9A84C;
+  border:1px solid rgba(201,168,76,0.2);
+  width:45px;
+  height:45px;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:20px;
+}
+
+.sidebar-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.6);
+  opacity:0;
+  visibility:hidden;
+  transition:.3s;
+  z-index:999;
+}
+
+.sidebar-overlay.show{
+  opacity:1;
+  visibility:visible;
+}
+
+@media (max-width:768px){
+
+  .menu-btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .sidebar{
+    position:fixed;
+    top:0;
+    left:-300px;
+    width:280px;
+    height:100vh;
+    overflow-y:auto;
+    transition:left .3s ease;
+    z-index:1000;
+  }
+
+  .sidebar.show{
+    left:0;
+  }
+}
+  </style>
 </head>
 <body>
 <div id="toast"></div>
@@ -13,43 +70,90 @@
 <div style="display:grid;grid-template-columns:260px 1fr;min-height:100vh;" class="billing-layout">
 
   <!-- Sidebar -->
-  <div style="background:#060F1E;border-right:1px solid rgba(201,168,76,0.1);display:flex;flex-direction:column;padding:2rem 0;">
-    <a href="index.html" class="logo-text" style="color:var(--gold);font-size:1.3rem;text-decoration:none;padding:0 1.5rem;margin-bottom:2.5rem;display:block;">Elysian<span style="color:var(--cream);font-weight:300;">Estates</span></a>
+  <!-- Mobile Menu Button -->
+<button id="menuBtn" class="menu-btn">
+  ☰
+</button>
 
-    <!-- User card -->
-    <div style="margin:0 1rem 2rem;padding:1rem;background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.12);">
-      <div style="width:44px;height:44px;background:rgba(201,168,76,0.15);border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--gold);margin-bottom:0.8rem;" id="userAvatar">JD</div>
-      <p id="userName" style="color:var(--cream);font-size:0.9rem;font-weight:500;">John Doe</p>
-      <p id="userEmail" style="color:var(--text-muted);font-size:0.75rem;">john@email.com</p>
+<!-- Overlay -->
+<div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+<!-- Sidebar -->
+<div id="sidebar" class="sidebar"
+     style="background:#060F1E;border-right:1px solid rgba(201,168,76,0.1);display:flex;flex-direction:column;padding:2rem 0;">
+
+  <a href="index.html" class="logo-text"
+     style="color:var(--gold);font-size:1.3rem;text-decoration:none;padding:0 1.5rem;margin-bottom:2.5rem;display:block;">
+    Curtz <span style="color:var(--cream);font-weight:300;">Home</span>
+  </a>
+
+  <!-- User card -->
+  <div style="margin:0 1rem 2rem;padding:1rem;background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.12);">
+    <div style="width:44px;height:44px;background:rgba(201,168,76,0.15);border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--gold);margin-bottom:0.8rem;"
+         id="userAvatar">
+      JD
     </div>
 
-    <nav style="flex:1;">
-      <a href="#" onclick="showSection('overview')" class="sidebar-link active" id="sOverview">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        Overview
-      </a>
-      <a href="#" onclick="showSection('invest')" class="sidebar-link" id="sInvest">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        New Investment
-      </a>
-      <a href="#" onclick="showSection('property')" class="sidebar-link" id="sProperty">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg>
-        Buy Property
-      </a>
-      <a href="#" onclick="showSection('portfolio')" class="sidebar-link" id="sPortfolio">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-        My Portfolio
-      </a>
-      <a href="#" onclick="showSection('profile')" class="sidebar-link" id="sProfile">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        Profile
-      </a>
-    </nav>
+    <p id="userName" style="color:var(--cream);font-size:0.9rem;font-weight:500;">
+      John Doe
+    </p>
 
-    <div style="padding:1.5rem;">
-      <button onclick="logoutUser()" class="btn-outline" style="width:100%;text-align:center;padding:0.6rem;font-size:0.75rem;">Sign Out</button>
-    </div>
+    <p id="userEmail" style="color:var(--text-muted);font-size:0.75rem;">
+      john@email.com
+    </p>
   </div>
+
+  <nav class="sidebar-nav px-4" style="flex:1;">
+    <a href="#" onclick="showSection('overview')" class="sidebar-link active flex gap-2 nav-item" id="sOverview">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="3" y="3" width="7" height="7"/>
+        <rect x="14" y="3" width="7" height="7"/>
+        <rect x="14" y="14" width="7" height="7"/>
+        <rect x="3" y="14" width="7" height="7"/>
+      </svg>
+      Overview
+    </a>
+
+    <a href="#" onclick="showSection('invest')" class="sidebar-link flex gap-2 nav-item" id="sInvest">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
+      New Investment
+    </a>
+
+    <a href="#" onclick="showSection('property')" class="sidebar-link flex gap-2 nav-item" id="sProperty">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+      </svg>
+      Buy Property
+    </a>
+
+    <a href="#" onclick="showSection('portfolio')" class="sidebar-link flex gap-2 nav-item" id="sPortfolio">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <line x1="18" y1="20" x2="18" y2="10"/>
+        <line x1="12" y1="20" x2="12" y2="4"/>
+        <line x1="6" y1="20" x2="6" y2="14"/>
+      </svg>
+      My Portfolio
+    </a>
+
+    <a href="#" onclick="showSection('profile')" class="sidebar-link flex gap-2 nav-item" id="sProfile">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+      Profile
+    </a>
+  </nav>
+
+  <div style="padding:1.5rem;">
+    <button onclick="logoutUser()" class="btn-outline"
+            style="width:100%;text-align:center;padding:0.6rem;font-size:0.75rem;">
+      Sign Out
+    </button>
+  </div>
+
+</div>
 
   <!-- Main content -->
   <div style="background:var(--navy);overflow-y:auto;">
@@ -501,6 +605,34 @@ function logoutUser() {
 }
 
 loadOverview();
+</script>
+<script>
+const menuBtn = document.getElementById("menuBtn");
+const sidebar = document.getElementById("sidebar");
+const overlay = document.getElementById("sidebarOverlay");
+const navItems = document.querySelectorAll(".nav-item");
+
+function openSidebar() {
+  sidebar.classList.add("show");
+  overlay.classList.add("show");
+}
+
+function closeSidebar() {
+  sidebar.classList.remove("show");
+  overlay.classList.remove("show");
+}
+
+menuBtn.addEventListener("click", openSidebar);
+
+overlay.addEventListener("click", closeSidebar);
+
+navItems.forEach(item => {
+  item.addEventListener("click", () => {
+    if (window.innerWidth <= 768) {
+      closeSidebar();
+    }
+  });
+});
 </script>
 </body>
 </html>
