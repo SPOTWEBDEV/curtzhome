@@ -1,20 +1,52 @@
 <?php
 require "PHPMailer/PHPMailerAutoload.php";
-define('DB_HOST',    'localhost');
-define('DB_NAME',    'curtzhome');
-define('DB_USER',    'root');
-define('DB_PASS',    '');
+
+$isHttps =
+    (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+    || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443)
+    || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+
+
+if ($isHttps) {
+
+    // Production (HTTPS)
+    define('DB_HOST', 'localhost');
+    define('DB_NAME', 'curtzhom_curtzhom_curtz_home');
+    define('DB_USER', 'curtzhom_curtzhom_curtz_home');
+    define('DB_PASS', 'curtzhom_curtzhom_curtz_home');
+
+    define('APP_URL', 'https://curtzhome.top');
+
+} else {
+
+    // Local Development (HTTP)
+    define('DB_HOST', 'localhost');
+    define('DB_NAME', 'curtzhome');
+    define('DB_USER', 'root');
+    define('DB_PASS', '');
+
+    define('APP_URL', 'http://localhost/estate-site');
+}
+
 define('DB_CHARSET', 'utf8mb4');
 define('JWT_SECRET', 'CurtzHome_S3cr3t_K3y_2025!');
-define('APP_NAME',   'Curtz Home');
-define('APP_EMAIL',  'support@curtzhome.top');
-define('APP_URL',    'http://localhost/estate-site');
+define('APP_NAME', 'Curtz Home');
+define('APP_EMAIL', 'support@curtzhome.top');
 
+/*
+|--------------------------------------------------------------------------
+| Headers
+|--------------------------------------------------------------------------
+*/
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET,POST,PUT,DELETE,OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(204);
+    exit;
+}
 
 function getDB(): PDO {
     static $pdo = null;
