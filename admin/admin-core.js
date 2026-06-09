@@ -134,7 +134,7 @@ function showToast(msg, type) {
   setTimeout(function(){ t.className = ''; }, 3500);
 }
 function formatCurrency(n) {
-  return '₦' + parseFloat(n || 0).toLocaleString(undefined, { maximumFractionDigits: 0 });
+  return '$' + parseFloat(n || 0).toLocaleString(undefined, { maximumFractionDigits: 0 });
 }
 function formatDate(d) {
   return d ? new Date(d).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }) : '—';

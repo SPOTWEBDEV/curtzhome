@@ -41,7 +41,7 @@ if ($method === 'POST') {
 <div class='box'>
   <p><strong>Reference:</strong> $ref</p>
   <p><strong>Plan:</strong> " . ucfirst($inv['plan']) . " ({$inv['rate']}% p.a.)</p>
-  <p><strong>Amount:</strong> ₦" . number_format($inv['amount']) . "</p>
+  <p><strong>Amount:</strong> $" . number_format($inv['amount']) . "</p>
   <p><strong>Status:</strong> $label</p>" .
   ($adminNote ? "<p><strong>Note from us:</strong> $adminNote</p>" : "") . "
 </div>

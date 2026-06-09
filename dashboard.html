@@ -167,11 +167,11 @@
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-bottom:2.5rem;" class="overview-cards">
           <div style="padding:1.5rem;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.15);">
             <p style="font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.6rem;">Total Invested</p>
-            <p style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--gold);font-weight:600;" id="totalInvested">₦0</p>
+            <p style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--gold);font-weight:600;" id="totalInvested">$0</p>
           </div>
           <div style="padding:1.5rem;background:rgba(76,175,125,0.06);border:1px solid rgba(76,175,125,0.15);">
             <p style="font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.6rem;">Returns Earned</p>
-            <p style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--success);font-weight:600;" id="totalReturns">₦0</p>
+            <p style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--success);font-weight:600;" id="totalReturns">$0</p>
           </div>
           <div style="padding:1.5rem;background:rgba(26,51,86,0.5);border:1px solid rgba(201,168,76,0.1);">
             <p style="font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.6rem;">Properties</p>
@@ -222,8 +222,8 @@
                   </select>
                 </div>
                 <div>
-                  <label class="form-label">Amount (₦)</label>
-                  <input type="number" name="amount" id="invAmount" class="form-input" placeholder="Min. ₦500,000" min="500000" required oninput="updateInvPreview()"/>
+                  <label class="form-label">Amount ($)</label>
+                  <input type="number" name="amount" id="invAmount" class="form-input" placeholder="Min. $500,000" min="500000" required oninput="updateInvPreview()"/>
                 </div>
                 <div>
                   <label class="form-label">Tenure</label>
@@ -304,13 +304,13 @@
                   <label class="form-label">Property of Interest</label>
                   <select name="property_id" class="form-input">
                     <option value="">-- Select a property --</option>
-                    <option value="1">Oceanfront Penthouse — ₦420M (VI, Lagos)</option>
-                    <option value="3">Heritage Villa — ₦195M (PH GRA)</option>
-                    <option value="4">Garden Terrace Apt — ₦85M (Lekki)</option>
-                    <option value="5">Lakeside Estate — ₦260M (Jabi, Abuja)</option>
-                    <option value="7">Colonial Court — ₦120M (Enugu)</option>
-                    <option value="8">Marina Heights — ₦180M (Eko Atlantic)</option>
-                    <option value="9">Presidential Lodge — ₦500M (Asokoro)</option>
+                    <option value="1">Oceanfront Penthouse — $420M (VI, Lagos)</option>
+                    <option value="3">Heritage Villa — $195M (PH GRA)</option>
+                    <option value="4">Garden Terrace Apt — $85M (Lekki)</option>
+                    <option value="5">Lakeside Estate — $260M (Jabi, Abuja)</option>
+                    <option value="7">Colonial Court — $120M (Enugu)</option>
+                    <option value="8">Marina Heights — $180M (Eko Atlantic)</option>
+                    <option value="9">Presidential Lodge — $500M (Asokoro)</option>
                     <option value="other">Other (specify below)</option>
                   </select>
                 </div>
@@ -367,7 +367,7 @@
               <p style="font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem;">Initial Deposit</p>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;" class="form-2col">
                 <div>
-                  <label class="form-label">Deposit Amount (₦)</label>
+                  <label class="form-label">Deposit Amount ($)</label>
                   <input type="number" name="deposit_amount" class="form-input" placeholder="Initial deposit / commitment fee"/>
                 </div>
                 <div>
@@ -500,8 +500,8 @@ function updateInvPreview() {
   const total = amount + ret;
   const maturity = new Date();
   maturity.setMonth(maturity.getMonth() + tenure);
-  document.getElementById('prevReturn').textContent = amount ? '₦' + Math.round(ret).toLocaleString() : '—';
-  document.getElementById('prevTotal').textContent = amount ? '₦' + Math.round(total).toLocaleString() : '—';
+  document.getElementById('prevReturn').textContent = amount ? '$' + Math.round(ret).toLocaleString() : '—';
+  document.getElementById('prevTotal').textContent = amount ? '$' + Math.round(total).toLocaleString() : '—';
   document.getElementById('prevDate').textContent = amount ? maturity.toLocaleDateString('en-NG',{month:'short',year:'numeric'}) : '—';
 }
 
@@ -550,10 +550,10 @@ async function loadPortfolio() {
       tbody.innerHTML = investRes.data.investments.map(i => `
         <tr>
           <td>${i.plan}</td>
-          <td>₦${parseInt(i.amount).toLocaleString()}</td>
+          <td>$${parseInt(i.amount).toLocaleString()}</td>
           <td>${i.rate}%</td>
           <td>${i.tenure} months</td>
-          <td style="color:var(--gold);">₦${parseInt(i.expected_return).toLocaleString()}</td>
+          <td style="color:var(--gold);">$${parseInt(i.expected_return).toLocaleString()}</td>
           <td><span class="badge badge-${i.status==='active'?'success':'pending'}">${i.status}</span></td>
           <td>${formatDate(i.created_at)}</td>
         </tr>`).join('');
@@ -569,7 +569,7 @@ async function loadPortfolio() {
           <td>${p.property_name}</td>
           <td>${p.location}</td>
           <td>${p.purchase_type}</td>
-          <td>₦${parseInt(p.price).toLocaleString()}</td>
+          <td>$${parseInt(p.price).toLocaleString()}</td>
           <td><span class="badge badge-${p.status==='completed'?'success':'pending'}">${p.status}</span></td>
           <td>${formatDate(p.created_at)}</td>
         </tr>`).join('');
@@ -580,8 +580,8 @@ async function loadPortfolio() {
 async function loadOverview() {
   const res = await apiRequest('user/overview.php');
   if (res.ok && res.data) {
-    document.getElementById('totalInvested').textContent = '₦' + parseInt(res.data.total_invested||0).toLocaleString();
-    document.getElementById('totalReturns').textContent = '₦' + parseInt(res.data.total_returns||0).toLocaleString();
+    document.getElementById('totalInvested').textContent = '$' + parseInt(res.data.total_invested||0).toLocaleString();
+    document.getElementById('totalReturns').textContent = '$' + parseInt(res.data.total_returns||0).toLocaleString();
     document.getElementById('totalProps').textContent = res.data.total_properties || 0;
   }
 }

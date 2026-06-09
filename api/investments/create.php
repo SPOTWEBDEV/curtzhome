@@ -20,7 +20,7 @@ $currency = strtoupper($data['currency'] ?? 'USD');
 if (!in_array($currency, ['USD', 'GBP', 'EUR', 'NGN'])) $currency = 'USD';
 
 // Currency symbol map
-$symbols = ['USD' => '$', 'GBP' => '£', 'EUR' => '€', 'NGN' => '₦'];
+$symbols = ['USD' => '$', 'GBP' => '£', 'EUR' => '€', 'NGN' => '$'];
 $symbol  = $symbols[$currency] ?? '$';
 
 $amount = floatval($data['amount']);
