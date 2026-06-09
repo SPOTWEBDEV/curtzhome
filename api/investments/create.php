@@ -12,29 +12,38 @@ foreach ($required as $f) {
     if (empty($data[$f])) jsonError("Field '$f' is required.");
 }
 
-$planRates = ['starter' => 18, 'growth' => 26, 'elite' => 35];
 $plan = strtolower($data['plan']);
-if (!isset($planRates[$plan])) jsonError('Invalid investment plan.');
+$db   = getDB();
+
+// Load plan config from DB
+$planStmt = $db->prepare("SELECT * FROM investment_plans WHERE id = ?");
+$planStmt->execute([$plan]);
+$planConfig = $planStmt->fetch();
+if (!$planConfig) jsonError('Invalid investment plan.');
+
+$rate   = floatval($planConfig['rate']);
+$minUSD = floatval($planConfig['min_usd']);
 
 $currency = strtoupper($data['currency'] ?? 'USD');
 if (!in_array($currency, ['USD', 'GBP', 'EUR', 'NGN'])) $currency = 'USD';
 
-// Currency symbol map
-$symbols = ['USD' => '$', 'GBP' => '£', 'EUR' => '€', 'NGN' => '$'];
+$symbols = ['USD' => '$', 'GBP' => '£', 'EUR' => '€', 'NGN' => '₦'];
 $symbol  = $symbols[$currency] ?? '$';
 
 $amount = floatval($data['amount']);
-
-// Min amounts in USD; for other currencies convert at rough parity check
-$minAmounts = ['starter' => 500, 'growth' => 2000, 'elite' => 10000]; // in USD equiv
 if ($amount <= 0) jsonError('Amount must be greater than zero.');
-if ($amount < $minAmounts[$plan]) {
-    jsonError("Minimum investment for the " . ucfirst($plan) . " plan is {$symbol}" . number_format($minAmounts[$plan]));
+if ($amount < $minUSD) {
+    jsonError("Minimum investment for the " . ucfirst($plan) . " plan is $" . number_format($minUSD));
 }
 
-$rate   = $planRates[$plan];
-$tenure = intval($data['tenure_months']);
-if ($tenure < 1 || $tenure > 36) jsonError('Tenure must be between 1 and 36 months.');
+$tenure    = intval($data['tenure_months']);
+$tenureMin = intval($planConfig['tenure_min']);
+$tenureMax = intval($planConfig['tenure_max']);
+if ($tenure < $tenureMin || $tenure > $tenureMax) {
+    jsonError("Tenure for the " . ucfirst($plan) . " plan must be between {$tenureMin} and {$tenureMax} months.");
+}
+
+// ... rest of the file stays exactly the same
 
 $expectedReturn = round($amount * ($rate / 100) * ($tenure / 12), 2);
 $totalValue     = round($amount + $expectedReturn, 2);

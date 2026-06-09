@@ -34,12 +34,12 @@
         text-transform: uppercase;
       }
 
-      @media(max-width: 900px) {
+      @media (max-width: 900px) {
         .prop-grid {
           grid-template-columns: repeat(2, 1fr);
         }
       }
-      @media(max-width: 560px) {
+      @media (max-width: 560px) {
         .prop-grid {
           grid-template-columns: 1fr;
         }
@@ -431,13 +431,112 @@
                   View Listing
                 </a>
 
-                <a href="billing.html" class="btn-gold"> Initiate Purchase </a>
+                <a onclick="purchases()" class="btn-gold"> Initiate Purchase </a>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- PURCHASE MODAL -->
+<div id="purchaseModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:300;overflow-y:auto;backdrop-filter:blur(4px);">
+  <div style="max-width:520px;margin:3rem auto;padding:1rem;">
+    <div style="background:#0D1F3C;border:1px solid rgba(201,168,76,0.25);">
+
+      <div style="padding:1.5rem;border-bottom:1px solid rgba(201,168,76,0.1);display:flex;justify-content:space-between;align-items:center;">
+        <h3 style="font-size:1.1rem;font-weight:400;color:var(--cream);">Initiate Purchase</h3>
+        <button onclick="closePurchaseModal()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.3rem;">×</button>
+      </div>
+
+      <div style="padding:1.5rem;">
+
+        <!-- Property summary (read-only) -->
+        <div style="background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.12);padding:1rem;margin-bottom:1.5rem;">
+          <p id="purchasePropName" style="color:var(--gold);font-size:0.85rem;font-weight:600;margin-bottom:0.3rem;"></p>
+          <p id="purchasePropPrice" style="color:var(--cream);font-size:1.1rem;"></p>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+          <div>
+            <label class="form-label">Full Name</label>
+            <input type="text" id="pFullName" class="form-input" placeholder="Your legal name"/>
+          </div>
+          <div>
+            <label class="form-label">Phone</label>
+            <input type="tel" id="pPhone" class="form-input" placeholder="+234..."/>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+          <div>
+            <label class="form-label">Purchase Type</label>
+            <select id="pPurchaseType" class="form-input">
+              <option value="outright">Outright</option>
+              <option value="mortgage">Mortgage</option>
+              <option value="installment">Installment</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">Payment Method</label>
+            <select id="pPayMethod" class="form-input">
+              <option value="bank_transfer">Bank Transfer</option>
+              <option value="card">Card</option>
+              <option value="crypto">Crypto</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+          <div>
+            <label class="form-label">Deposit Amount (USD)</label>
+            <input type="number" id="pDeposit" class="form-input" placeholder="Optional"/>
+          </div>
+          <div>
+            <label class="form-label">NIN / ID Number</label>
+            <input type="text" id="pNin" class="form-input" placeholder="Optional"/>
+          </div>
+        </div>
+
+        <div style="margin-bottom:1rem;">
+          <label class="form-label">Residential Address</label>
+          <input type="text" id="pAddress" class="form-input" placeholder="Your current address"/>
+        </div>
+
+        <div style="margin-bottom:1rem;">
+          <label class="form-label">Source of Funds</label>
+          <select id="pSourceFunds" class="form-input">
+            <option value="">Select…</option>
+            <option value="salary">Salary / Employment</option>
+            <option value="business">Business Income</option>
+            <option value="investment">Investment Returns</option>
+            <option value="inheritance">Inheritance</option>
+            <option value="savings">Personal Savings</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div style="margin-bottom:1rem;">
+          <label class="form-label">Transaction Reference <span style="color:var(--text-muted);font-weight:400;">(optional)</span></label>
+          <input type="text" id="pTxRef" class="form-input" placeholder="Bank / payment ref"/>
+        </div>
+
+        <div style="margin-bottom:1.5rem;">
+          <label class="form-label">Additional Notes <span style="color:var(--text-muted);font-weight:400;">(optional)</span></label>
+          <textarea id="pNotes" class="form-input" rows="3" style="resize:vertical;" placeholder="Any questions or special requirements…"></textarea>
+        </div>
+
+        <button id="submitPurchaseBtn" onclick="submitPurchase()" class="btn-gold" style="width:100%;text-align:center;padding:1rem;">
+          Submit Purchase Request
+        </button>
+        <p style="color:var(--text-muted);font-size:0.74rem;text-align:center;margin-top:1rem;line-height:1.6;">
+          Our team will contact you within 24 hours to confirm details and next steps.
+        </p>
+
+      </div>
+    </div>
+  </div>
+</div>
 
     <footer style="padding: 3rem 0 2rem">
       <div
@@ -513,9 +612,10 @@
             // Accessing the nested object structure you defined
 
             const p = item.property;
+           
 
             return `
-    <div class="card" style="cursor:pointer;" onclick="openModal(${p.id})">
+    <div class="card" style="cursor:pointer;" onclick="openModal(${p.zpid})">
       <div style="height:200px;background:linear-gradient(135deg,#0D1F3C,#1A3356);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;">
       
       <img 
@@ -560,12 +660,18 @@
           .join("");
       }
 
+      let  purchaseId = null
+
       function openModal(id) {
-        let p = properties.find((x) => x.id === id);
+        console.log("Opening modal for property ID:", id);
+        let p = properties.find((x) => x.property.zpid === id);
+
+
 
         if (!p) return;
 
         p = p.property;
+        purchaseId =  p.zpid
 
         document.getElementById("modalLocation").textContent =
           `${p.city}, ${p.state}`;
@@ -658,6 +764,93 @@
       }
       setGrid();
       window.addEventListener("resize", setGrid);
+
+     function purchases() {
+  if (typeof Auth !== 'undefined' && !Auth.isLoggedIn()) {
+    window.location.href = 'login.html?redirect=' + encodeURIComponent('housing.html');
+    return;
+  }
+
+  // Find the current property from the stored zpid
+  var prop = properties.find(function(x){ return x.property.zpid === purchaseId; });
+  if (!prop) return;
+  prop = prop.property;
+
+  // Pre-fill the summary strip
+  document.getElementById('purchasePropName').textContent  = prop.street_address + ', ' + prop.city + ', ' + prop.state;
+  document.getElementById('purchasePropPrice').textContent = '$' + prop.price.toLocaleString();
+
+  // Pre-fill name/phone from logged-in user if available
+  var user = typeof Auth !== 'undefined' ? Auth.getUser() : null;
+  if (user) {
+    document.getElementById('pFullName').value = (user.first_name || '') + ' ' + (user.last_name || '');
+    document.getElementById('pPhone').value    = user.phone || '';
+  }
+
+  // Clear previous values
+  ['pDeposit','pNin','pAddress','pTxRef','pNotes'].forEach(function(id){
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('pPurchaseType').value = 'outright';
+  document.getElementById('pPayMethod').value    = 'bank_transfer';
+  document.getElementById('pSourceFunds').value  = '';
+
+  document.getElementById('purchaseModal').style.display = 'block';
+}
+
+function closePurchaseModal() {
+  document.getElementById('purchaseModal').style.display = 'none';
+}
+
+// Close on backdrop click
+document.getElementById('purchaseModal').addEventListener('click', function(e){
+  if (e.target === this) closePurchaseModal();
+});
+
+async function submitPurchase() {
+  var fullName = document.getElementById('pFullName').value.trim();
+  var phone    = document.getElementById('pPhone').value.trim();
+
+  if (!fullName) { showToast('Please enter your full name.', 'error'); return; }
+  if (!phone)    { showToast('Please enter your phone number.', 'error'); return; }
+
+  // Get current property details
+  var prop = properties.find(function(x){ return x.property.zpid === purchaseId; });
+  if (!prop) return;
+  prop = prop.property;
+
+  var btn  = document.getElementById('submitPurchaseBtn');
+  var orig = btn.innerHTML;
+  setLoading(btn, true, orig);
+
+  var result = await apiRequest('properties/purchase.php', 'POST', {
+    property_id:     prop.zpid,
+    property_name:   prop.street_address,
+    location:        prop.city + ', ' + prop.state + ' ' + prop.zipcode,
+    price:           prop.price,
+    full_name:       fullName,
+    phone:           phone,
+    purchase_type:   document.getElementById('pPurchaseType').value,
+    payment_method:  document.getElementById('pPayMethod').value,
+    deposit_amount:  parseFloat(document.getElementById('pDeposit').value) || null,
+    nin:             document.getElementById('pNin').value.trim()         || null,
+    address:         document.getElementById('pAddress').value.trim()     || null,
+    source_of_funds: document.getElementById('pSourceFunds').value        || null,
+    tx_ref:          document.getElementById('pTxRef').value.trim()       || null,
+    notes:           document.getElementById('pNotes').value.trim()       || null
+  });
+
+  setLoading(btn, false, orig);
+
+  if (result.ok && result.data && result.data.purchase) {
+    showToast('Purchase request submitted! Ref: ' + result.data.purchase.ref, 'success');
+    closePurchaseModal();
+    closeModal();
+  } else {
+    var msg = (result.data && result.data.message) || result.message || 'Submission failed. Please try again.';
+    showToast(msg, 'error');
+  }
+}
     </script>
   </body>
 </html>

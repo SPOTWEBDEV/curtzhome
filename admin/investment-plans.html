@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Investment Plans — Curtz Home Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/admin.css"/>
+</head>
+<body>
+<script src="admin-core.js"></script>
+<script>
+adminGuard();
+injectAdminLayout('investment-plans');
+document.getElementById('pageTitle').textContent    = 'Investment Plans';
+document.getElementById('pageSubtitle').textContent = 'Manage plans shown on the public investment page';
+
+const content = document.getElementById('adminContent');
+content.innerHTML = `
+  <!-- Add / Edit Modal (same style as messages modal) -->
+  <div id="planModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:200;align-items:flex-start;justify-content:center;overflow-y:auto;padding:2rem;">
+    <div style="background:#12243D;border:1px solid rgba(201,168,76,0.25);width:100%;max-width:560px;">
+      <div style="padding:1.5rem;border-bottom:1px solid rgba(201,168,76,0.1);display:flex;justify-content:space-between;">
+        <h3 id="planModalTitle" style="font-size:1.1rem;font-weight:400;color:var(--cream);">Add Plan</h3>
+        <button onclick="closePlanModal()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.2rem;">×</button>
+      </div>
+      <div style="padding:1.5rem;">
+
+        <input type="hidden" id="editPlanId"/>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+          <div>
+            <label class="form-label">Plan ID (unique key)</label>
+            <input type="text" id="fId" class="form-input" placeholder="e.g. platinum"/>
+          </div>
+          <div>
+            <label class="form-label">Display Label</label>
+            <input type="text" id="fLabel" class="form-input" placeholder="e.g. Platinum"/>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+          <div>
+            <label class="form-label">Minimum Amount (USD)</label>
+            <input type="number" id="fMinUSD" class="form-input" placeholder="e.g. 500000"/>
+          </div>
+          <div>
+            <label class="form-label">Annual Rate (%)</label>
+            <input type="number" id="fRate" class="form-input" placeholder="e.g. 22"/>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+          <div>
+            <label class="form-label">Tenure Min (months)</label>
+            <input type="number" id="fTenureMin" class="form-input" placeholder="e.g. 6"/>
+          </div>
+          <div>
+            <label class="form-label">Tenure Max (months)</label>
+            <input type="number" id="fTenureMax" class="form-input" placeholder="e.g. 24"/>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+          <div>
+            <label class="form-label">Default Payout Frequency</label>
+            <select id="fFreq" class="form-input">
+              <option value="monthly">Monthly</option>
+              <option value="quarterly">Quarterly</option>
+              <option value="weekly">Weekly</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">Button Label</label>
+            <input type="text" id="fBtnLabel" class="form-input" placeholder="e.g. Join Now"/>
+          </div>
+        </div>
+
+        <div style="margin-bottom:1rem;">
+          <label class="form-label">Featured (Most Popular)</label>
+          <select id="fFeatured" class="form-input">
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+          </select>
+        </div>
+
+        <div style="margin-bottom:1.5rem;">
+          <label class="form-label">Perks (one per line)</label>
+           <textarea id="fPerks" class="form-input" rows="5" style="resize:vertical;">6 – 12 month tenure
+Quarterly payouts
+Secured by property title</textarea>
+        </div>
+
+        <div style="display:flex;gap:0.8rem;">
+          <button id="savePlanBtn" onclick="savePlan()" class="btn-gold" style="flex:1;padding:0.75rem;">Save Plan</button>
+          <button id="deletePlanBtn" onclick="deletePlan()" class="btn-outline" style="padding:0.75rem 1rem;font-size:0.78rem;display:none;">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header + Add button -->
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+    <p style="color:var(--text-muted);font-size:0.85rem;">Plans are shown live on the public investment page.</p>
+    <button onclick="openPlanModal()" class="btn-gold" style="padding:0.6rem 1.2rem;font-size:0.8rem;">+ Add Plan</button>
+  </div>
+
+  <div id="planList"></div>`;
+
+// ── State ──────────────────────────────────────────────────
+let currentEditId = null;
+
+// ── Load & Render ──────────────────────────────────────────
+async function loadPlans() {
+  document.getElementById('planList').innerHTML = spinner();
+  const {ok, data} = await adminFetch('../admin/investment-plans.php');
+  if (!ok) { document.getElementById('planList').innerHTML = emptyState('Failed to load plans.'); return; }
+
+  const plans = data.plans || [];
+  document.getElementById('planList').innerHTML = `
+    <div style="background:#060F1E;border:1px solid rgba(201,168,76,0.1);">
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Label</th><th>Min (USD)</th>
+              <th>Rate</th><th>Tenure</th><th>Freq</th>
+              <th>Featured</th><th>Sort</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+          ${plans.length ? plans.map(p => `
+            <tr>
+              <td style="color:var(--gold);font-family:monospace;">${p.id}</td>
+              <td style="color:var(--cream);font-weight:500;">${p.label}</td>
+              <td style="color:var(--text-muted);">$${Number(p.min_usd).toLocaleString()}</td>
+              <td style="color:var(--gold);">${p.rate}%</td>
+              <td style="color:var(--text-muted);">${p.tenure_min}–${p.tenure_max} mo</td>
+              <td style="text-transform:capitalize;font-size:0.8rem;">${p.freq_default}</td>
+              <td>${p.featured == 1 ? badge('active') : badge('inactive')}</td>
+              <td style="color:var(--text-muted);">${p.sort_order}</td>
+              <td><button onclick='editPlan(${JSON.stringify(p).replace(/"/g,"&quot;")})' class="btn-outline" style="padding:0.3rem 0.6rem;font-size:0.7rem;">Edit</button></td>
+            </tr>`).join('') :
+            `<tr><td colspan="9" style="text-align:center;padding:3rem;color:var(--text-muted);">No plans yet. Click "+ Add Plan" to create one.</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+// ── Open modal (add) ───────────────────────────────────────
+function openPlanModal() {
+  currentEditId = null;
+  document.getElementById('planModalTitle').textContent = 'Add Plan';
+  document.getElementById('editPlanId').value = '';
+  ['fId','fLabel','fMinUSD','fRate','fTenureMin','fTenureMax','fBtnLabel','fPerks'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('fFreq').value     = 'monthly';
+  document.getElementById('fFeatured').value = '0';
+  document.getElementById('fId').disabled    = false;
+  document.getElementById('deletePlanBtn').style.display = 'none';
+  document.getElementById('planModal').style.display = 'flex';
+}
+
+// ── Open modal (edit) ──────────────────────────────────────
+function editPlan(p) {
+  currentEditId = p.id;
+  document.getElementById('planModalTitle').textContent = 'Edit Plan — ' + p.label;
+  document.getElementById('editPlanId').value  = p.id;
+  document.getElementById('fId').value         = p.id;
+  document.getElementById('fId').disabled      = true;   // can't change the key
+  document.getElementById('fLabel').value      = p.label;
+  document.getElementById('fMinUSD').value     = p.min_usd;
+  document.getElementById('fRate').value       = p.rate;
+  document.getElementById('fTenureMin').value  = p.tenure_min;
+  document.getElementById('fTenureMax').value  = p.tenure_max;
+  document.getElementById('fFreq').value       = p.freq_default;
+  document.getElementById('fBtnLabel').value   = p.btn_label;
+  document.getElementById('fFeatured').value   = p.featured;
+  document.getElementById('fPerks').value      = (p.perks || []).join('\n');
+  document.getElementById('deletePlanBtn').style.display = 'inline-block';
+  document.getElementById('planModal').style.display = 'flex';
+}
+
+function closePlanModal() { document.getElementById('planModal').style.display = 'none'; }
+
+// ── Save (create or update) ────────────────────────────────
+async function savePlan() {
+  const payload = {
+    id:           currentEditId || document.getElementById('fId').value.trim().toLowerCase(),
+    label:        document.getElementById('fLabel').value.trim(),
+    min_usd:      parseFloat(document.getElementById('fMinUSD').value),
+    rate:         parseFloat(document.getElementById('fRate').value),
+    tenure_min:   parseInt(document.getElementById('fTenureMin').value),
+    tenure_max:   parseInt(document.getElementById('fTenureMax').value),
+    freq_default: document.getElementById('fFreq').value,
+    btn_label:    document.getElementById('fBtnLabel').value.trim(),
+    featured:     parseInt(document.getElementById('fFeatured').value),
+    perks:        document.getElementById('fPerks').value.split('\n').map(s=>s.trim()).filter(Boolean),
+    action:       currentEditId ? 'update' : 'create'
+  };
+
+  if (!payload.id || !payload.label || !payload.min_usd || !payload.rate) {
+    showToast('Please fill in all required fields.', 'error'); return;
+  }
+
+  const btn = document.getElementById('savePlanBtn'); const orig = btn.innerHTML;
+  setLoading(btn, true, orig);
+  const {ok, data} = await adminFetch('../admin/investment-plans.php', 'POST', payload);
+  setLoading(btn, false, orig);
+
+  if (ok) { showToast('Plan saved.', 'success'); closePlanModal(); loadPlans(); }
+  else showToast(data.message || 'Save failed.', 'error');
+}
+
+// ── Delete ─────────────────────────────────────────────────
+async function deletePlan() {
+  if (!confirm('Delete this plan? This cannot be undone.')) return;
+  const {ok} = await adminFetch('../admin/investment-plans.php', 'POST', {
+    action: 'delete', id: currentEditId
+  });
+  if (ok) { showToast('Plan deleted.', 'success'); closePlanModal(); loadPlans(); }
+  else showToast('Delete failed.', 'error');
+}
+
+loadPlans();
+</script>
+</body>
+</html>

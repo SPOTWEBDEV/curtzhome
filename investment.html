@@ -395,90 +395,29 @@
 ═══════════════════════════════════════════════ -->
 <script src="js/main.js"></script>
 <script>
-/* ═══════════════════════════════════════════════════════════════
-   ▶  PLANS ARRAY — edit or add plans here
-   ═══════════════════════════════════════════════════════════════
-   Fields:
-     id          – unique key used internally
-     label       – display name
-     minUSD      – minimum investment in US dollars
-     rate        – annual return percentage (number, e.g. 18 = 18%)
-     tenureMin   – minimum tenure in months
-     tenureMax   – maximum tenure in months
-     freqDefault – default payout frequency: 'monthly' | 'quarterly' | 'weekly'
-     featured    – true = highlighted "Most Popular" card
-     btnLabel    – CTA text on the plan card
-     perks       – array of bullet-point feature strings
-═══════════════════════════════════════════════════════════════ */
-var PLANS = [
-  {
-    id:          'starter',
-    label:       'Starter',
-    minUSD:      100000,
-    rate:        18,
-    tenureMin:   6,
-    tenureMax:   12,
-    freqDefault: 'quarterly',
-    featured:    false,
-    btnLabel:    'Get Started',
-    perks: [
-      '6 – 12 month tenure',
-      'Quarterly payouts',
-      'Secured by property title',
-      'Online portfolio dashboard'
-    ]
-  },
-  {
-    id:          'growth',
-    label:       'Growth',
-    minUSD:      500000,
-    rate:        26,
-    tenureMin:   12,
-    tenureMax:   24,
-    freqDefault: 'monthly',
-    featured:    true,
-    btnLabel:    'Invest Now',
-    perks: [
-      '12 – 24 month tenure',
-      'Monthly payouts',
-      'Secured by property title',
-      'Dedicated relationship manager',
-      'Priority property access'
-    ]
-  },
-  {
-    id:          'elite',
-    label:       'Elite',
-    minUSD:      1000000,
-    rate:        35,
-    tenureMin:   24,
-    tenureMax:   36,
-    freqDefault: 'weekly',
-    featured:    false,
-    btnLabel:    'Apply Now',
-    perks: [
-      '24 – 36 month tenure',
-      'Weekly payouts',
-      'Co-ownership deeds',
-      'Private wealth concierge',
-      'Exclusive off-market deals'
-    ]
-  }
-  /* ── Add more plans below this line:
-  ,{
-    id:          'platinum',
-    label:       'Platinum',
-    minUSD:      500000,
-    rate:        22,
-    tenureMin:   6,
-    tenureMax:   18,
-    freqDefault: 'monthly',
-    featured:    false,
-    btnLabel:    'Join Now',
-    perks: ['Custom tenure', 'Monthly payouts', 'Secured by deeds']
-  }
-  ── */
-];
+var PLANS   = [];
+var PLAN_MAP = {};
+var currentPlanId = '';
+
+async function loadPlans() {
+  var result = await apiRequest('admin/investment-plans.php', 'GET');
+  if (!result.ok) return;
+  console.log('Fetched plans:', result.data.plans);
+  PLANS = result.data.plans.map(function(p) {
+    p.perks       = Array.isArray(p.perks) ? p.perks : JSON.parse(p.perks || '[]');
+    p.minUSD      = parseFloat(p.min_usd);
+    p.freqDefault = p.freq_default;
+    p.tenureMin   = parseInt(p.tenure_min);
+    p.tenureMax   = parseInt(p.tenure_max);
+    p.btnLabel    = p.btn_label;
+    PLAN_MAP[p.id] = p;
+    return p;
+  });
+  currentPlanId = (PLANS.find(function(p){ return p.featured == 1; }) || PLANS[0] || {}).id || '';
+  renderPlanCards();
+  populateCalcSelect();
+  calculateROI();
+}
 
 /* ─── helpers ─── */
 var FREQ_PER_YEAR = { monthly: 12, quarterly: 4, weekly: 52 };
@@ -489,7 +428,7 @@ function fmt(n) { return '$' + Math.round(n).toLocaleString('en-US'); }
 var PLAN_MAP = {};
 PLANS.forEach(function(p){ PLAN_MAP[p.id] = p; });
 
-var currentPlanId = (PLANS.find(function(p){ return p.featured; }) || PLANS[0]).id;
+// var currentPlanId = (PLANS.find(function(p){ return p.featured; }) || PLANS[0]).id;
 
 /* ═══════════════════════════════════════════════
    RENDER PLAN CARDS
@@ -714,9 +653,7 @@ if (typeof showToast === 'undefined') {
 }
 
 /* ─── Init ─── */
-renderPlanCards();
-populateCalcSelect();
-calculateROI();
+loadPlans();
 </script>
 </body>
 </html>

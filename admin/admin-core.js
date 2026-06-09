@@ -57,13 +57,14 @@ function injectAdminLayout(activePage) {
   var user     = JSON.parse(localStorage.getItem('admin_user') || '{}');
   var initials = (user.first_name ? user.first_name[0] : 'A') + (user.last_name ? user.last_name[0] : 'D');
 
-  var links = [
-    { id:'dashboard',   href:'dashboard.html',  icon:'M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z',                                label:'Dashboard'    },
-    { id:'users',       href:'users.html',       icon:'M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M12 7a4 4 0 100 8 4 4 0 000-8z',         label:'Users'        },
-    { id:'investments', href:'investments.html', icon:'M22 12l-4 0-3 9-6-18-3 9-4 0',                                                   label:'Investments'  },
-    { id:'purchases',   href:'purchases.html',   icon:'M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z',                                label:'Purchases'    },
-    { id:'messages',    href:'messages.html',    icon:'M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z', label:'Messages'     },
-    { id:'history',     href:'history.html',     icon:'M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z',                 label:'Activity Log' },
+var links = [
+    { id:'dashboard',    href:'dashboard.html',   icon:'M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z',                               label:'Dashboard'    },
+    { id:'users',        href:'users.html',       icon:'M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M12 7a4 4 0 100 8 4 4 0 000-8z',        label:'Users'        },
+    { id:'investments',  href:'investments.html', icon:'M22 12l-4 0-3 9-6-18-3 9-4 0',                                                   label:'Investments'  },
+    { id:'create-plan',  href:'investment-plans.html', icon:'M12 5v14m-7-7h14',                                                              label:'Create Investment Plan' },
+    { id:'purchases',    href:'purchases.html',   icon:'M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z',                               label:'Purchases'    },
+    { id:'messages',     href:'messages.html',    icon:'M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z', label:'Messages'     },
+    { id:'history',      href:'history.html',     icon:'M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z',                label:'Activity Log' },
   ];
 
   var sidebarLinks = links.map(function(l) {
