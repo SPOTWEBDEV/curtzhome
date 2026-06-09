@@ -119,7 +119,7 @@ function insertNavbar(activePage) {
 
     <div class="nav-actions">
       <a href="login.html"    class="btn-n-outline nav-login">Login</a>
-      <a href="billing.html"  class="btn-n-gold nav-dashboard" style="display:none;">Dashboard</a>
+      <a href="dashboard.html"  class="btn-n-gold nav-dashboard" style="display:none;">Dashboard</a>
       <button                 class="btn-n-outline nav-logout" style="display:none;">Logout</button>
       <button id="nav-burger" onclick="toggleMobileMenu()" aria-label="Toggle menu">
         <span></span><span></span><span></span>
@@ -137,7 +137,7 @@ function insertNavbar(activePage) {
   <a href="contact.html"    class="${activePage==='contact'    ?'active':''}">Contact</a>
   <div class="mob-actions">
     <a href="login.html"   style="border:1px solid #C9A84C;color:#C9A84C;" class="nav-login mob-btn">Login</a>
-    <a href="billing.html" style="background:linear-gradient(135deg,#9A7A2E,#C9A84C,#E8C97A);color:#0B1629;" class="nav-dashboard mob-btn" style="display:none;">Dashboard</a>
+    <a href="dashboard.html" style="background:linear-gradient(135deg,#9A7A2E,#C9A84C,#E8C97A);color:#0B1629;" class="nav-dashboard mob-btn" style="display:none;">Dashboard</a>
     <button                style="border:1px solid #C9A84C;color:#C9A84C;background:none;" class="nav-logout mob-btn" style="display:none;">Logout</button>
   </div>
 </div>
